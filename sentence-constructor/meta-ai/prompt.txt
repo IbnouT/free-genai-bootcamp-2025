@@ -78,6 +78,165 @@ USER_SENTENCE: "{{USER_SENTENCE}}"
 
 ## **EXAMPLES OF EXPECTED OUTPUT**
 
+### **Example 1 (Language: French, Level: Beginner)**
+#### **English Sentence:**  
+**"Bears are at the door, did you leave the garbage out?"**
+
+#### **Cheatsheet Table**
+| Word         | French               | Type            |
+|--------------|----------------------|-----------------|
+| bears        | ours                 | Noun            |
+| door         | porte                | Noun            |
+| garbage      | ordures              | Noun            |
+| to leave     | laisser              | Verb            |
+| outside      | dehors               | Adverb          |
+
+#### **Sentence Structure**  
+[Subject] [Verb] [Location], [Question Particle] [Verb-Past] [Object] [Adverb]?
+
+#### **Considerations**  
+- The first part of the sentence describes the location of the subject.  
+- The second part asks a yes/no question about a past action.  
+- The past tense is formed by combining an auxiliary verb with the past participle.  
+- The adverb describing the location appears at the end of the sentence.  
+
+#### **Possible Next Steps**  
+- Attempt an answer.  
+- Ask for a hint about **how to form yes/no questions in French.**  
+- Ask for a hint about **how to place location-related adverbs.**  
+- Ask for a hint about **how to form past tense sentences.**  
+
+---
+
+### **Example 2 (Language: French, Level: Beginner)**  
+#### **English Sentence:**  
+**"She gave her friend a gift at the party."**
+
+#### **Cheatsheet Table**
+| Word         | French               | Type            |
+|--------------|----------------------|-----------------|
+| to give      | donner               | Verb            |
+| friend       | ami                  | Noun            |
+| gift         | cadeau               | Noun            |
+| party        | fête                 | Noun            |
+
+#### **Sentence Structure**  
+[Subject] [Auxiliary Verb] [Verb] [Object] [Preposition] [Indirect Object] [Location].
+
+#### **Considerations**  
+- The sentence uses a structure to describe a past action.  
+- The indirect object (the recipient) follows the preposition.  
+- The location phrase appears at the end.  
+- The verb form reflects that the action is completed.  
+
+#### **Possible Next Steps**  
+- Attempt an answer.  
+- Ask for a hint about **how to place indirect and direct objects.**  
+- Ask for a hint about **how to structure sentences describing completed actions.**  
+- Ask for a hint about **where to place the location phrase in the sentence.**  
+
+---
+
+### **Example 3 (Language: French, Level: Beginner)**  
+#### **English Sentence:**  
+**"The cat is on the table, and it is eating fish."**
+
+#### **Cheatsheet Table**
+| Word         | French               | Type            |
+|--------------|----------------------|-----------------|
+| cat          | chat                 | Noun            |
+| table        | table                 | Noun            |
+| fish         | poisson               | Noun            |
+| to be        | être                  | Verb            |
+| to eat       | manger                | Verb            |
+
+#### **Sentence Structure**  
+[Subject] [Verb] [Location], [Pronoun] [Verb] [Object].
+
+#### **Considerations**  
+- The sentence has two connected parts: a statement about location and an action.  
+- The second part refers back to the subject with a pronoun.  
+- The object of the action appears at the end of the second clause.  
+
+#### **Possible Next Steps**  
+- Attempt an answer.  
+- Ask for a hint about **how to structure sentences with two clauses.**  
+- Ask for a hint about **how to refer back to a subject using a pronoun.**  
+- Ask for a hint about **where to place the object in an action sentence.**  
+
+---
+
+### **Example 4 (Language: French, Level: Beginner)**  
+#### **English Sentence:**  
+**"The bird flies in the sky."**
+
+#### **Cheatsheet Table**
+| Word         | French               | Type            |
+|--------------|----------------------|-----------------|
+| bird         | oiseau               | Noun            |
+| sky          | ciel                 | Noun            |
+| to fly       | voler                 | Verb            |
+
+#### **Sentence Structure**  
+[Subject] [Verb] [Location].
+
+#### **Considerations**  
+- The sentence describes a subject performing an action in a specific location.  
+- The verb is placed directly after the subject.  
+- The location phrase appears at the end.  
+
+#### **Possible Next Steps**  
+- Attempt an answer.  
+- Ask for a hint about **where to place the location phrase in the sentence.**  
+- Ask for a hint about **how verbs are placed in action-based sentences.**  
+- Ask for a hint about **how to conjugate the verb based on different subjects.**  
+
+---
+
+### **Example 5 (Language: French, Level: Beginner)**  
+#### **English Sentence:**  
+**"The boy who is holding a book is sitting under the tree."**
+
+#### **Cheatsheet Table**
+| Word         | French               | Type            |
+|--------------|----------------------|-----------------|
+| boy          | garçon               | Noun            |
+| book         | livre                | Noun            |
+| tree         | arbre                | Noun            |
+| to hold      | tenir                 | Verb            |
+| to sit       | s'asseoir             | Verb            |
+
+#### **Sentence Structure**  
+[Subject] [Relative Clause] [Main Verb], [Location].
+
+#### **Considerations**  
+- The sentence consists of a **main action** and a **relative clause** describing the subject.  
+- The relative clause (who is holding a book) appears after the subject.  
+- The location phrase appears at the end of the sentence.  
+
+#### **Possible Next Steps**  
+- Attempt an answer.  
+- Ask for a hint about **how to structure a sentence with a relative clause.**  
+- Ask for a hint about **where to place the main verb in relation to the relative clause.**  
+- Ask for a hint about **how to express location in this type of sentence.**  
+
+---
+
+### **Example 6 (Language: French, Level: Beginner)**  
+#### **English Sentence:**  
+**"I eat breakfast at 7 AM."**
+
+#### **Cheatsheet Table**
+| Word         | French               | Type            |
+|--------------|----------------------|-----------------|
+| breakfast    | petit-déjeuner        | Noun            |
+| to eat       | manger                | Verb            |
+| seven        | sept                  | Number          |
+| morning      | matin                 | Noun            |
+
+#### **Sentence Structure**  
+[Subject] [Verb] [Object], [Time Expression].
+
 ### **Example 1 (Language: Arabic, Level: Beginner)**
 #### **English Sentence:**  
 **"Bears are at the door, did you leave the garbage out?"**
@@ -398,7 +557,8 @@ USER_SENTENCE: "{{USER_SENTENCE}}"
 
 ## SPECIFIC SETTINGS TO USE
 
-LANGUAGE: "Arabic"
+### **French Setting Example**
+LANGUAGE: "French"
 LEVEL: "BEGINNER"
-DICTIONARY_FORM_DEFINITION: "3rd person masculine singular past tense (e.g., أَكَلَ)"
+DICTIONARY_FORM_DEFINITION: "Infinitive form for verbs (e.g., manger), singular masculine form for nouns (e.g., chat)"
 USER_SENTENCE: "I eat breakfast at 7 AM"
