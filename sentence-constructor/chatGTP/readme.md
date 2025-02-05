@@ -106,24 +106,18 @@ The LLM occasionally summarized or described the process instead of executing th
 ---
 
 ## Lessons Learned
-
 ### Key Takeaways:
-
 1. **Clear Inputs Ensure Execution:**
-
    - Replacing placeholders with explicit values prevents execution failures.
 
 2. **Strict Rule Enforcement is Essential:**
-
    - Imperative instructions improve compliance and prevent summarization errors.
 
-3. **Further Testing is Needed:**
+3. **Refining Approach to Multilingual Support:**
+   - The recommended approach is to develop dedicated prompts for each language rather than relying on a universal one. This allows better accommodation of specific linguistic nuances while maintaining clarity and simplicity.
 
+4. **Further Testing is Needed:**
    - While improvements have been made, testing across additional LLMs is required to assess robustness and identify potential refinements.
-
-4. **Universal Prompts Require Balance:**
-
-   - While universality is possible, prompts must be adaptable to accommodate language-specific nuances.
 
 ---
 
@@ -132,11 +126,11 @@ The LLM occasionally summarized or described the process instead of executing th
 ### **Next Steps:**
 
 1. **Expand Multilingual Support:**
-   - Test the prompt with additional languages (e.g., Arabic, Japanese, Spanish) to ensure flexibility.
+   - While the prompt has been successfully tested with French, Japanese, and Arabic, additional languages (e.g., Spanish, German) can be explored to further validate flexibility.
 2. **Automate Testing:**
    - Develop test cases to verify prompt consistency across different LLMs.
 3. **Gather User Feedback:**
-   - Collect real-world input to refine prompt clarity and effectiveness.
+   - Collect real-world input to refine prompt clarity, especially in the context of successfully tested languages.
 
 ---
 
