@@ -1,10 +1,18 @@
-import { useState } from 'react'
+import { ThemeProvider } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
+import { Typography, Container } from '@mui/material'
+import { theme } from './theme'
 
 function App() {
   return (
-    <div>
-      <h1>Language Learning Portal</h1>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Container>
+        <Typography variant="h3" component="h1">
+          Language Learning Portal
+        </Typography>
+      </Container>
+    </ThemeProvider>
   )
 }
 
