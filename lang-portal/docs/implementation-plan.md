@@ -38,8 +38,8 @@
 
 - [ ] Step 2: MVP - Words Management
   - [ ] Review specifications for Word model and endpoints
-  - [ ] Backend:
-    - [ ] Word model (following spec schema)
+  - [x] Backend:
+    - [x] Word model (following spec schema)
     - [ ] GET /words with pagination
     - [ ] Sample word seeding
   - [ ] Frontend:
@@ -47,7 +47,7 @@
     - [ ] Pagination controls
     - [ ] Sort functionality
   - [ ] Tests:
-    - [ ] Word model CRUD tests
+    - [x] Word model CRUD tests
     - [ ] API endpoint tests
     - [ ] Frontend component tests
   - [ ] Integration: Complete words list feature
@@ -55,7 +55,7 @@
 
 - [ ] Step 3: MVP - Groups & Organization
   - [ ] Backend:
-    - [ ] Group model + WordGroup relationship
+    - [x] Group model + WordGroup relationship
     - [ ] Groups endpoints (GET /groups, GET /groups/:id)
   - [ ] Frontend:
     - [ ] Groups page implementation
@@ -65,7 +65,7 @@
 
 - [ ] Step 4: MVP - Study Activities
   - [ ] Backend:
-    - [ ] StudyActivity model
+    - [x] StudyActivity model
     - [ ] Activity endpoints
     - [ ] Basic flashcard implementation
   - [ ] Frontend:
@@ -76,8 +76,8 @@
 
 - [ ] Step 5: MVP - Study Sessions
   - [ ] Backend:
-    - [ ] StudySession model
-    - [ ] WordReviewItem model
+    - [x] StudySession model
+    - [x] WordReviewItem model
     - [ ] Session tracking endpoints
   - [ ] Frontend:
     - [ ] Session progress UI
@@ -94,6 +94,11 @@
     - [ ] Theme customization
     - [ ] Responsive design
   - [ ] Tests: Full system coverage
+
+- [x] Database Migrations Setup
+  - [x] Alembic initialization
+  - [x] Initial migration for all models
+  - [x] Migration tests and verification
 
 Each step:
 1. Start by reviewing relevant sections of both specs

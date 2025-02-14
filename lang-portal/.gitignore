@@ -1,8 +1,14 @@
+# SQLite database
+backend/sql_app.db
+
 # Python
 venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 .pytest_cache/
+.coverage
+htmlcov/
 
 # Node
 node_modules/
@@ -19,4 +25,7 @@ coverage/
 *.swp
 
 # OS
-.DS_Store 
+.DS_Store
+
+# Alembic
+alembic/versions/__pycache__/ 

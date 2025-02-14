@@ -130,4 +130,4 @@ Implementation examples:
 ## 7. Summary
 
 A **FastAPI + SQLite** back end provides the REST endpoints needed by the front end.  
-By following these specs (models, routes, seed/reset logic), developers or AI code generators can produce a robust server that manages multi-language words, groups, sessions, and aggregated stats for each user’s study progress.
+By following these specs (models, routes, seed/reset logic), developers or AI code generators can produce a robust server that manages multi-language words, groups, sessions, and aggregated stats for each user's study progress.

@@ -2,7 +2,7 @@ from sqlalchemy import text
 from app.database import engine, Base
 
 def reset_database():
-    """Drop all tables and recreate them"""
+    """Drop all tables and recreate them. Use only in development!"""
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
