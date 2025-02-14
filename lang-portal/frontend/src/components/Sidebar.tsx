@@ -1,13 +1,9 @@
-import Drawer from '@mui/material/Drawer'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemText from '@mui/material/ListItemText'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import { Link } from 'react-router-dom'
-import DashboardIcon from '@mui/icons-material/Dashboard'
-import BookIcon from '@mui/icons-material/Book'
-import GroupIcon from '@mui/icons-material/Group'
-import SettingsIcon from '@mui/icons-material/Settings'
+import { Box, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Link } from 'react-router-dom';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import BookIcon from '@mui/icons-material/Book';
+import GroupIcon from '@mui/icons-material/Group';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
@@ -16,36 +12,28 @@ const menuItems = [
   { text: 'Groups', icon: <GroupIcon />, path: '/groups' },
   { text: 'Sessions', icon: <BookIcon />, path: '/sessions' },
   { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
-]
+];
 
 function Sidebar() {
   return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: 240,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: 240,
-          boxSizing: 'border-box',
-        },
-      }}
-    >
+    // The sidebar itself is sticky relative to its container
+    <Box sx={{ 
+      position: 'sticky', 
+      top: 0,
+      borderRight: '1px solid',
+      borderColor: 'divider',
+      bgcolor: 'background.paper',
+    }}>
       <List>
         {menuItems.map((item) => (
-          <ListItem
-            button
-            key={item.text}
-            component={Link}
-            to={item.path}
-          >
+          <ListItem button key={item.text} component={Link} to={item.path}>
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>
         ))}
       </List>
-    </Drawer>
-  )
+    </Box>
+  );
 }
 
-export default Sidebar 
+export default Sidebar;

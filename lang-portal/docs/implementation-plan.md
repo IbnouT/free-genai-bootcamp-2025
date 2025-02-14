@@ -20,8 +20,14 @@
   - [x] Frontend:
     - [x] Basic React + Vite setup
     - [x] Material UI installation
-    - [ ] Basic layout (Topbar + Sidebar)
-    - [ ] Initial routing setup
+    - [x] Basic layout (Topbar + Sidebar)
+      - [x] Topbar with app title
+      - [x] Sidebar with navigation links
+      - [x] Proper scroll behavior implementation
+    - [x] Initial routing setup
+      - [x] Route configuration
+      - [x] Layout structure
+      - [x] Page components scaffolding
     - [x] `index.html` and `main.tsx` setup
   - [x] Tests:
     - [x] Database connection tests
