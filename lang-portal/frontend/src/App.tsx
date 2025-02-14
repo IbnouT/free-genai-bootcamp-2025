@@ -5,16 +5,26 @@ import { theme } from './theme'
 import Topbar from './components/Topbar'
 import Sidebar from './components/Sidebar'
 
-function App() {
+function App({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Topbar />
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ 
+        display: 'flex',
+        minHeight: '100vh'
+      }}>
         <Sidebar />
-        <Container sx={{ mt: 2 }}>
-          {/* Future content will go here */}
-        </Container>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            marginLeft: '240px'  // Match sidebar width
+          }}
+        >
+          {children}
+        </Box>
       </Box>
     </ThemeProvider>
   )
