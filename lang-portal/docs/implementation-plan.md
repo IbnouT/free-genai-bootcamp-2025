@@ -37,10 +37,10 @@
   - [x] Verify implementation matches specifications
 
 - [ ] Step 2: MVP - Words Management
-  - [ ] Review specifications for Word model and endpoints
+  - [x] Review specifications for Word model and endpoints
   - [x] Backend:
     - [x] Word model (following spec schema)
-    - [ ] GET /words with pagination
+    - [x] GET /words with pagination
     - [ ] Sample word seeding
   - [ ] Frontend:
     - [ ] Words page with Material table
@@ -48,7 +48,7 @@
     - [ ] Sort functionality
   - [ ] Tests:
     - [x] Word model CRUD tests
-    - [ ] API endpoint tests
+    - [x] API endpoint tests
     - [ ] Frontend component tests
   - [ ] Integration: Complete words list feature
   - [ ] Verify implementation matches specifications
@@ -99,6 +99,8 @@
   - [x] Alembic initialization
   - [x] Initial migration for all models
   - [x] Migration tests and verification
+
+- [x] Fix database session management in tests
 
 Each step:
 1. Start by reviewing relevant sections of both specs

@@ -13,20 +13,26 @@ def get_db_url():
 def get_test_db_url():
     return "sqlite:///:memory:"
 
-# Use production database by default
-SQLALCHEMY_DATABASE_URL = get_db_url()
+# Make engine configurable
+engine = None
+SessionLocal = None
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False} if SQLALCHEMY_DATABASE_URL.startswith("sqlite") else {}
-)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+def setup_db(db_url: str):
+    global engine, SessionLocal
+    engine = create_engine(
+        db_url,
+        connect_args={"check_same_thread": False},
+    )
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    return engine
 
 # Use the new import location
 Base = declarative_base()
 
 # Dependency
 def get_db():
+    if SessionLocal is None:
+        raise RuntimeError("Database not initialized. Call setup_db first.")
     db = SessionLocal()
     try:
         yield db
