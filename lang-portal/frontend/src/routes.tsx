@@ -2,9 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import App from './App'
 import Layout from './components/Layout'
 import DashboardPage from './pages/Dashboard/DashboardPage'
+import StudyActivitiesPage from './pages/StudyActivities/StudyActivitiesPage'
 
 // Placeholder components for our routes
-const StudyActivities = () => <div>Study Activities Page</div>
 const Words = () => <div>Words Page</div>
 const Groups = () => <div>Groups Page</div>
 const Sessions = () => <div>Sessions Page</div>
@@ -18,7 +18,7 @@ function AppRoutes() {
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/study-activities" element={<StudyActivities />} />
+            <Route path="/study-activities" element={<StudyActivitiesPage />} />
             <Route path="/words" element={<Words />} />
             <Route path="/groups" element={<Groups />} />
             <Route path="/sessions" element={<Sessions />} />

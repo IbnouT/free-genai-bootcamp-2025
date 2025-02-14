@@ -8,13 +8,14 @@ interface LayoutProps {
 function Layout({ children }: LayoutProps) {
   return (
     <Box sx={{ 
-      minHeight: '100vh',
+      minHeight: 'calc(100vh - 64px)',
       display: 'flex',
       flexDirection: 'column'
     }}>
       <Box sx={{ flex: 1 }}>
         {children}
       </Box>
+      {/* Footer */}
       <Box sx={{ 
         py: 0,
         textAlign: 'center',

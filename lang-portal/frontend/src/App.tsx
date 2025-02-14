@@ -39,7 +39,10 @@ function App({ children }: { children: React.ReactNode }) {
             component="main"
             sx={{
               flexGrow: 1,
-              p: 3,
+              pt: 0,
+              pl: 0,
+              pr: 3,
+              pb: 3,
             }}
           >
             {children}
