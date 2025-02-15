@@ -7,11 +7,10 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 def get_db_url():
-    db_path = os.path.join(BASE_DIR, "sql_app.db")
-    return f"sqlite:///{db_path}"
+    return "sqlite:///./app.db"   # Production database
 
 def get_test_db_url():
-    return "sqlite:///:memory:"
+    return "sqlite:///./test.db"  # Test database
 
 # Make engine configurable
 engine = None

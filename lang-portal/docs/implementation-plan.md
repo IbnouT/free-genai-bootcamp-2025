@@ -46,9 +46,12 @@
       - [x] Migration for language table and relationship
     - [x] GET /words with pagination
     - [x] Add language filter to GET /words?language_code=code
-    - [ ] Seed data:
-      - [ ] Add initial languages (ja, fr, es, etc.)
-      - [ ] Add sample words for each language
+    - [x] Seed data:
+      - [x] Add initial languages (ja, fr, ar, es + inactive: zh, ko, ru, de)
+      - [x] Add sample words for each language (12 words/language)
+      - [x] Create word groups with proper categorization
+      - [x] Setup word-group relationships (multi-group support)
+      - [x] Add study activities
   - [ ] Frontend:
     - [ ] Language selection page
       - [ ] Show active languages
