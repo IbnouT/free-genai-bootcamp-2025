@@ -29,8 +29,9 @@ export default function LanguageSelectionPage() {
             if (result.data) {
                 setLanguages(result.data);
             }
-        } catch (error) {
-            console.error('Failed to load languages:', error);
+        } catch (err) {
+            console.error('Failed to load languages:', err);
+            setError(err as ApiError);
         } finally {
             setLoading(false);
         }
@@ -83,8 +84,7 @@ export default function LanguageSelectionPage() {
             minHeight: '100vh', 
             display: 'flex', 
             flexDirection: 'column',
-            maxWidth: '100vw',  // Ensure it doesn't exceed viewport width
-            overflow: 'hidden'  // Prevent horizontal scrolling
+            overflow: 'auto'
         }}>
             <Header />
             
@@ -93,67 +93,84 @@ export default function LanguageSelectionPage() {
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
+                    justifyContent: 'center',
                     padding: {
                         xs: '2rem 1rem',
-                        sm: '3rem 2rem',
-                        md: '4rem 2rem'
+                        sm: '2rem',
+                        md: '2rem'
                     },
-                    maxWidth: 1200,
-                    margin: '0 auto',
                     width: '100%',
-                    boxSizing: 'border-box'  // Include padding in width calculation
+                    maxWidth: '1200px',
+                    mx: 'auto',
+                    boxSizing: 'border-box'
                 }}
             >
-                <Typography 
-                    variant="h2" 
-                    gutterBottom 
-                    sx={{ 
-                        textAlign: 'center',
-                        fontWeight: 'bold',
-                        mb: 6,
-                        fontSize: {
-                            xs: '2rem',    // smaller on mobile
-                            sm: '2.5rem',
-                            md: '3rem'
-                        }
-                    }}
-                >
-                    Select your learning language
-                </Typography>
-                
-                <Grid container spacing={3} sx={{ width: '100%' }}>
-                    {languages.map(lang => (
-                        <Grid item xs={12} md={6} key={lang.code}>
-                            <LanguageCard 
-                                language={lang}
-                                selected={selectedLanguage === lang.code}
-                                onSelect={() => handleLanguageSelect(lang.code)}
-                            />
+                <Box sx={{ width: '100%' }}>
+                    <Typography 
+                        variant="h2" 
+                        gutterBottom 
+                        sx={{ 
+                            textAlign: 'center',
+                            fontWeight: 'bold',
+                            mb: 4,
+                            fontSize: {
+                                xs: '1.75rem',
+                                sm: '2.25rem',
+                                md: '2.75rem'
+                            }
+                        }}
+                    >
+                        Select your learning language
+                    </Typography>
+                    
+                    <Box 
+                        sx={{ 
+                            width: '100%',
+                            maxWidth: '900px',
+                            mx: 'auto',
+                            mb: 4
+                        }}
+                    >
+                        <Grid 
+                            container 
+                            spacing={3}
+                            justifyContent="center"
+                        >
+                            {languages.map(lang => (
+                                <Grid item xs={12} md={6} key={lang.code}>
+                                    <LanguageCard 
+                                        language={lang}
+                                        selected={selectedLanguage === lang.code}
+                                        onSelect={() => handleLanguageSelect(lang.code)}
+                                    />
+                                </Grid>
+                            ))}
                         </Grid>
-                    ))}
-                </Grid>
+                    </Box>
 
-                <Button
-                    variant="contained"
-                    size="large"
-                    disabled={!selectedLanguage}
-                    onClick={handleStartSession}
-                    sx={{
-                        mt: 6,
-                        py: 2,
-                        px: 6,
-                        borderRadius: 50,
-                        fontSize: '1rem',
-                        textTransform: 'uppercase',
-                        backgroundColor: '#1976d2',
-                        '&:hover': {
-                            backgroundColor: '#1565c0'
-                        }
-                    }}
-                >
-                    Proceed to Session Start
-                </Button>
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <Button
+                            variant="contained"
+                            size="large"
+                            disabled={!selectedLanguage}
+                            onClick={handleStartSession}
+                            data-testid="proceed-button"
+                            sx={{
+                                py: 1.25,
+                                px: 4,
+                                borderRadius: 50,
+                                fontSize: '0.9rem',
+                                textTransform: 'uppercase',
+                                minWidth: {
+                                    xs: '90%',
+                                    sm: 250
+                                }
+                            }}
+                        >
+                            Proceed to Session Start
+                        </Button>
+                    </Box>
+                </Box>
             </Box>
 
             <Box 
@@ -161,7 +178,8 @@ export default function LanguageSelectionPage() {
                     padding: '1rem',
                     textAlign: 'center',
                     borderTop: '1px solid',
-                    borderColor: 'divider'
+                    borderColor: 'divider',
+                    backgroundColor: 'background.paper'
                 }}
             >
                 <Typography variant="body2" color="text.secondary">

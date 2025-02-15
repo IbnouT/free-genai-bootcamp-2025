@@ -18,6 +18,7 @@ export default function LanguageCard({ language, selected, onSelect }: LanguageC
     return (
         <Card
             onClick={onSelect}
+            data-testid="language-card"
             sx={{
                 cursor: 'pointer',
                 display: 'flex',
@@ -27,12 +28,14 @@ export default function LanguageCard({ language, selected, onSelect }: LanguageC
                 minHeight: 120,
                 border: '1px solid',
                 borderColor: selected ? 'primary.main' : 'divider',
-                borderRadius: 2,
-                boxShadow: selected ? 3 : 1,
+                borderRadius: '16px',
+                backgroundColor: 'background.paper',
+                boxShadow: selected ? 2 : 1,
                 transition: 'all 0.2s ease-in-out',
                 '&:hover': {
-                    boxShadow: 3,
-                    borderColor: 'primary.main'
+                    boxShadow: 2,
+                    borderColor: 'primary.light',
+                    backgroundColor: 'action.hover'
                 }
             }}
         >

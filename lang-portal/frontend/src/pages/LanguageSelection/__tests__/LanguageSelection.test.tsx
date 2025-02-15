@@ -1,56 +1,73 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { screen, waitFor, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { vi } from 'vitest'
 import LanguageSelectionPage from '../LanguageSelectionPage'
-import { renderWithProviders } from '../../../test/utils'
+import { getActiveLanguages } from '../../../api/languages'
+import { TestWrapper } from '../../../test/utils'
+
+// Mock the API call
+vi.mock('../../../api/languages')
 
 // Mock navigation
 const mockNavigate = vi.fn()
-vi.mock('react-router-dom', async () => ({
-    ...(await vi.importActual('react-router-dom')),
-    useNavigate: () => mockNavigate
-}))
+vi.mock('react-router-dom', async () => {
+    const actual = await vi.importActual('react-router-dom')
+    return {
+        ...actual,
+        useNavigate: () => mockNavigate
+    }
+})
 
 describe('Language Selection', () => {
     beforeEach(() => {
-        mockNavigate.mockClear()
-        global.fetch = vi.fn(() =>
-            Promise.resolve({
-                ok: true,
-                json: () => Promise.resolve([
-                    { code: "ja", active: true },
-                    { code: "fr", active: true }
-                ])
-            }) as any
-        )
+        vi.clearAllMocks()
+        // Clear console to avoid noise in tests
+        vi.spyOn(console, 'log').mockImplementation(() => {})
+        vi.spyOn(console, 'error').mockImplementation(() => {})
     })
 
-    it('allows selecting a language', async () => {
-        renderWithProviders(<LanguageSelectionPage />)
-        
-        // Wait for languages to load
-        await waitForLanguagesToLoad()
-        
-        // Select a language
-        const languages = await screen.findAllByRole('button')
-        fireEvent.click(languages[0])
-        
-        // Verify language selection triggered navigation
-        expect(mockNavigate).toHaveBeenCalled()
+    afterEach(() => {
+        vi.restoreAllMocks()
+    })
+
+    it('allows language selection and navigation', async () => {
+        const mockLanguages = [
+            { code: 'ja', name: 'Japanese', active: true },
+            { code: 'fr', name: 'French', active: true }
+        ]
+        vi.mocked(getActiveLanguages).mockResolvedValue({ data: mockLanguages })
+
+        render(<LanguageSelectionPage />, { wrapper: TestWrapper })
+
+        // Wait for loading to complete
+        await waitFor(() => {
+            const languageCards = screen.getAllByTestId('language-card')
+            expect(languageCards.length).toBe(mockLanguages.length)
+        })
+
+        // Get proceed button and verify initial disabled state
+        const proceedButton = screen.getByTestId('proceed-button')
+        expect(proceedButton).toBeDisabled()
+
+        // Select first language card
+        const languageCards = screen.getAllByTestId('language-card')
+        fireEvent.click(languageCards[0])
+
+        // Verify proceed button is now enabled and click it
+        expect(proceedButton).not.toBeDisabled()
+        fireEvent.click(proceedButton)
+
+        // Verify navigation
+        expect(mockNavigate).toHaveBeenCalledWith('/dashboard')
     })
 
     it('handles API errors', async () => {
-        global.fetch = vi.fn(() => Promise.reject())
-        renderWithProviders(<LanguageSelectionPage />)
-        
-        // Verify error state
-        await waitForLanguagesToLoad()
-        expect(mockNavigate).not.toHaveBeenCalled()
-    })
-})
+        const mockError = { message: 'API Error', status: 500 };
+        vi.mocked(getActiveLanguages).mockRejectedValue(mockError);
 
-// Helper to wait for loading to finish
-async function waitForLanguagesToLoad() {
-    await waitFor(() => {
-        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+        render(<LanguageSelectionPage />, { wrapper: TestWrapper });
+
+        await waitFor(() => {
+            expect(screen.getByRole('alert')).toBeInTheDocument();
+        });
     })
-} 
+}) 
