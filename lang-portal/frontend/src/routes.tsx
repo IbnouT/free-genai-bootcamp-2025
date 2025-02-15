@@ -3,6 +3,7 @@ import App from './App'
 import Layout from './components/Layout'
 import DashboardPage from './pages/Dashboard/DashboardPage'
 import StudyActivitiesPage from './pages/StudyActivities/StudyActivitiesPage'
+import LanguageSelectionPage from './pages/LanguageSelection/LanguageSelectionPage'
 
 // Placeholder components for our routes
 const Words = () => <div>Words Page</div>
@@ -23,6 +24,7 @@ function AppRoutes() {
             <Route path="/groups" element={<Groups />} />
             <Route path="/sessions" element={<Sessions />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/test-language" element={<LanguageSelectionPage />} />
           </Routes>
         </Layout>
       </App>
