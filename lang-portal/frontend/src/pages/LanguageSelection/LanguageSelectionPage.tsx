@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Typography, Alert, CircularProgress, Box } from '@mui/material';
+import { Grid, Typography, Alert, CircularProgress, Box, Button } from '@mui/material';
 import { useLanguage } from '../../context/LanguageContext';
 import { Language } from '../../types/language';
 import { ApiError } from '../../types/api';
 import { getActiveLanguages } from '../../api/languages';
 import LanguageCard from './components/LanguageCard';
+import Header from './components/Header';
 
 export default function LanguageSelectionPage() {
     const [languages, setLanguages] = useState<Language[]>([]);
@@ -13,6 +14,7 @@ export default function LanguageSelectionPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<ApiError | null>(null);
+    const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
 
     useEffect(() => {
         console.log('LanguageSelectionPage mounted');
@@ -35,8 +37,14 @@ export default function LanguageSelectionPage() {
     }
 
     const handleLanguageSelect = (code: string) => {
-        setLanguage(code);
-        navigate('/dashboard');  // Change from '/words' to '/dashboard'
+        setSelectedLanguage(code);
+    };
+
+    const handleStartSession = () => {
+        if (selectedLanguage) {
+            setLanguage(selectedLanguage);
+            navigate('/dashboard');
+        }
     };
 
     if (loading) {
@@ -71,20 +79,95 @@ export default function LanguageSelectionPage() {
     }
 
     return (
-        <div style={{ padding: '2rem' }}>
-            <Typography variant="h4" gutterBottom>
-                Select a Language
-            </Typography>
-            <Grid container spacing={3}>
-                {languages.map(lang => (
-                    <Grid item xs={12} sm={6} md={4} key={lang.code}>
-                        <LanguageCard 
-                            language={lang}
-                            onSelect={() => handleLanguageSelect(lang.code)}
-                        />
-                    </Grid>
-                ))}
-            </Grid>
-        </div>
+        <Box sx={{ 
+            minHeight: '100vh', 
+            display: 'flex', 
+            flexDirection: 'column',
+            maxWidth: '100vw',  // Ensure it doesn't exceed viewport width
+            overflow: 'hidden'  // Prevent horizontal scrolling
+        }}>
+            <Header />
+            
+            <Box 
+                sx={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    padding: {
+                        xs: '2rem 1rem',
+                        sm: '3rem 2rem',
+                        md: '4rem 2rem'
+                    },
+                    maxWidth: 1200,
+                    margin: '0 auto',
+                    width: '100%',
+                    boxSizing: 'border-box'  // Include padding in width calculation
+                }}
+            >
+                <Typography 
+                    variant="h2" 
+                    gutterBottom 
+                    sx={{ 
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                        mb: 6,
+                        fontSize: {
+                            xs: '2rem',    // smaller on mobile
+                            sm: '2.5rem',
+                            md: '3rem'
+                        }
+                    }}
+                >
+                    Select your learning language
+                </Typography>
+                
+                <Grid container spacing={3} sx={{ width: '100%' }}>
+                    {languages.map(lang => (
+                        <Grid item xs={12} md={6} key={lang.code}>
+                            <LanguageCard 
+                                language={lang}
+                                selected={selectedLanguage === lang.code}
+                                onSelect={() => handleLanguageSelect(lang.code)}
+                            />
+                        </Grid>
+                    ))}
+                </Grid>
+
+                <Button
+                    variant="contained"
+                    size="large"
+                    disabled={!selectedLanguage}
+                    onClick={handleStartSession}
+                    sx={{
+                        mt: 6,
+                        py: 2,
+                        px: 6,
+                        borderRadius: 50,
+                        fontSize: '1rem',
+                        textTransform: 'uppercase',
+                        backgroundColor: '#1976d2',
+                        '&:hover': {
+                            backgroundColor: '#1565c0'
+                        }
+                    }}
+                >
+                    Proceed to Session Start
+                </Button>
+            </Box>
+
+            <Box 
+                sx={{ 
+                    padding: '1rem',
+                    textAlign: 'center',
+                    borderTop: '1px solid',
+                    borderColor: 'divider'
+                }}
+            >
+                <Typography variant="body2" color="text.secondary">
+                    © {new Date().getFullYear()} LangLearning. All rights reserved.
+                </Typography>
+            </Box>
+        </Box>
     );
 } 
