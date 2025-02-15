@@ -40,14 +40,15 @@
   - [x] Review specifications for Word model and endpoints
   - [x] Backend:
     - [x] Word model (following spec schema)
-    - [ ] Language support:
-      - [ ] Create Language model (code, name, active)
-      - [ ] Add language_id to Word model
-      - [ ] Migration for language table and relationship
+    - [x] Language support:
+      - [x] Create Language model (code, name, active)
+      - [x] Add language_code to Word model
+      - [x] Migration for language table and relationship
     - [x] GET /words with pagination
-    - [ ] Add language filter to GET /words?language=code
-    - [ ] Sample word seeding
-    - [ ] Add seed data for languages and words
+    - [x] Add language filter to GET /words?language_code=code
+    - [ ] Seed data:
+      - [ ] Add initial languages (ja, fr, es, etc.)
+      - [ ] Add sample words for each language
   - [ ] Frontend:
     - [ ] Language selection page
       - [ ] Show active languages
@@ -58,6 +59,7 @@
     - [ ] Sort functionality
   - [ ] Tests:
     - [x] Word model CRUD tests
+    - [x] Language model tests
     - [x] API endpoint tests
     - [ ] Frontend component tests
   - [ ] Integration: Complete words list feature

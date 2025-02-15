@@ -76,15 +76,13 @@ We will use **SQLAlchemy** (with SQLite) for our ORM. Below are the main entitie
 - **GET /languages**
   - Returns list of active languages
   - Query params: `active` (boolean, optional) - filter active/inactive languages
-  - Response: `{ "items": [{ "code": string, "name": string, "active": boolean }] }`
+  - Response: Array of `{ "code": string, "name": string, "active": boolean }`
   - Example response:
     ```json
-    {
-      "items": [
-        { "code": "ja", "name": "Japanese", "active": true },
-        { "code": "fr", "name": "French", "active": true }
-      ]
-    }
+    [
+      { "code": "ja", "name": "Japanese", "active": true },
+      { "code": "fr", "name": "French", "active": true }
+    ]
     ```
 
 ### 4.2 Words

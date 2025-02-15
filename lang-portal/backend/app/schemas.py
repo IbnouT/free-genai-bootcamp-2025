@@ -1,11 +1,12 @@
 from pydantic import BaseModel, ConfigDict
-from typing import List
+from typing import List, Optional
 
 # Word schemas
 class WordBase(BaseModel):
     script: str
-    transliteration: str | None = None
+    transliteration: Optional[str] = None
     meaning: str
+    language_code: str
 
 class Word(WordBase):
     id: int
@@ -17,3 +18,11 @@ class PaginatedWords(BaseModel):
     items: List[Word]
     page: int
     per_page: int
+
+class LanguageBase(BaseModel):
+    code: str
+    name: str
+    active: bool = True
+
+class Language(LanguageBase):
+    model_config = ConfigDict(from_attributes=True)

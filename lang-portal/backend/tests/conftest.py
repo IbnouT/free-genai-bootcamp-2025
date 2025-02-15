@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import sessionmaker
 from app.database import Base, get_test_db_url, get_db, setup_db, get_db_url
 from app.main import app
+from sqlalchemy import create_engine
 
 @pytest.fixture(scope="session", autouse=True)
 def test_db():
@@ -12,21 +13,24 @@ def test_db():
     yield engine
     Base.metadata.drop_all(bind=engine)
 
-@pytest.fixture(scope="function")
-def db_session(test_db):
-    connection = test_db.connect()
-    transaction = connection.begin()
-
-    Session = sessionmaker(autocommit=False, autoflush=False, bind=connection)
-    session = Session()
-
+@pytest.fixture
+def db_session():
+    # Create test database
+    engine = create_engine(get_test_db_url())
+    Base.metadata.create_all(bind=engine)
+    
+    # Create session
+    TestingSessionLocal = sessionmaker(bind=engine)
+    session = TestingSessionLocal()
+    
     try:
         yield session
     finally:
-        if transaction.is_active:
-            transaction.rollback()  # First rollback the transaction
-        session.close()            # Then close the session
-        connection.close()         # Finally close the connection
+        # Always rollback and close, even if test passed
+        session.rollback()
+        session.close()
+        # Drop all tables after each test
+        Base.metadata.drop_all(bind=engine)
 
 @pytest.fixture
 def client(db_session):

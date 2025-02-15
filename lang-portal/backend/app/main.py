@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app.database import setup_db, engine, Base, get_db_url
 from app.models import Word, Group, WordGroup
-from app.routers import words
+from app.routers import words, languages
 
 # Setup production database on app startup
 setup_db(get_db_url())
@@ -22,4 +22,5 @@ app = FastAPI(
 async def health_check():
     return {"status": "healthy"}
 
-app.include_router(words.router) 
+app.include_router(words.router)
+app.include_router(languages.router) 

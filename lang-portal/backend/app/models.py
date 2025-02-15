@@ -3,12 +3,27 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
 
+class Language(Base):
+    __tablename__ = "languages"
+    
+    code = Column(String, primary_key=True)
+    name = Column(String, nullable=False)
+    active = Column(Boolean, default=True)
+    
+    # Relationship to words
+    words = relationship("Word", back_populates="language")
+
 class Word(Base):
     __tablename__ = "words"
-    id = Column(Integer, primary_key=True, index=True)
+    
+    id = Column(Integer, primary_key=True)
     script = Column(String, nullable=False)
-    transliteration = Column(String, nullable=True)
+    transliteration = Column(String)
     meaning = Column(String, nullable=False)
+    language_code = Column(String, ForeignKey("languages.code"), nullable=False)
+    
+    # Relationship to language
+    language = relationship("Language", back_populates="words")
     
     groups = relationship("Group", secondary="word_groups", back_populates="words")
     review_items = relationship("WordReviewItem", back_populates="word")
