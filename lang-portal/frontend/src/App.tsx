@@ -1,4 +1,5 @@
-import { ThemeProvider } from '@mui/material/styles';
+import { useState } from 'react';
+import { ThemeProvider } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Box } from '@mui/material';
 import { theme } from './theme';
@@ -7,6 +8,8 @@ import Sidebar from './components/Sidebar';
 import { LanguageProvider } from './context/LanguageContext';
 
 function App({ children }: { children: React.ReactNode }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
   return (
     <ThemeProvider theme={theme}>
       <LanguageProvider>
@@ -20,7 +23,9 @@ function App({ children }: { children: React.ReactNode }) {
           }}
         >
           {/* Topbar is part of the natural flow */}
-          <Topbar />
+          <Topbar 
+            title="Learning Portal"
+          />
           {/* Flex container for Sidebar and Main content */}
           <Box sx={{ display: 'flex' }}>
             {/* Sidebar Column:

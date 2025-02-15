@@ -64,8 +64,13 @@
       - [x] Example API usage with curl commands
   - [ ] Frontend:
     - [ ] Language selection page
-      - [ ] Show active languages
-      - [ ] Store selected language in session
+      - [x] Show active languages
+      - [x] Store selected language in session
+      - [x] Add language selection UI
+      - [x] Implement language switching
+      - [x] Add loading states
+      - [x] Handle API errors
+      - [x] Add navigation to dashboard
     - [ ] Words page with Material table
     - [ ] Filter by selected language
     - [ ] Pagination controls
@@ -135,3 +140,10 @@ Each step:
 5. Get validation before proceeding
 
 Ready to proceed with the next part of Step 1: Basic layout and routing? 
+
+- [ ] Frontend:
+    - [ ] Basic layout components
+      - [x] Create reusable Logo component
+      - [x] Style header with logo
+      - [x] Add topbar with title
+      - [x] Add navigation back to language selection 

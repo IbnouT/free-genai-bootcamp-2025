@@ -1,5 +1,5 @@
-import { Box, Button, Typography } from '@mui/material';
-import LanguageIcon from '@mui/icons-material/Language';
+import { Box, Button } from '@mui/material';
+import Logo from '../../../components/common/Logo';
 
 export default function Header() {
     return (
@@ -16,16 +16,7 @@ export default function Header() {
                 boxSizing: 'border-box'
             }}
         >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <LanguageIcon sx={{ fontSize: 28, color: 'primary.main' }} />
-                <Typography 
-                    variant="h6" 
-                    fontWeight="bold"
-                    color="primary"
-                >
-                    LangLearner
-                </Typography>
-            </Box>
+            <Logo />
             
             <Button 
                 variant="text"
