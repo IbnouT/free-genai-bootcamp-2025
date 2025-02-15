@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models import Language, Word, Group, StudyActivity, WordGroup
+from app.utils.db_utils import reset_database
 
 def seed_languages(db: Session):
     languages = [
@@ -169,14 +170,23 @@ def seed_word_groups(db: Session, words: list, groups: list):
 
 def seed_all(db: Session):
     """Seed all tables with initial data"""
-    languages = seed_languages(db)
-    words = seed_words(db)
-    groups = seed_groups(db)
-    activities = seed_activities(db)
-    seed_word_groups(db, words, groups)
-    return {
-        "languages": languages,
-        "words": words,
-        "groups": groups,
-        "activities": activities
-    } 
+    try:
+        reset_database(db.get_bind())  # Pass the engine from session
+        
+        # Seed in correct order (due to foreign keys)
+        languages = seed_languages(db)
+        words = seed_words(db)
+        groups = seed_groups(db)
+        activities = seed_activities(db)
+        seed_word_groups(db, words, groups)
+        
+        db.commit()
+        return {
+            "languages": languages,
+            "words": words,
+            "groups": groups,
+            "activities": activities
+        }
+    except Exception as e:
+        db.rollback()
+        raise Exception(f"Error seeding database: {str(e)}") 

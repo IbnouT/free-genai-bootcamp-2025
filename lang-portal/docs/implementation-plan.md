@@ -52,6 +52,16 @@
       - [x] Create word groups with proper categorization
       - [x] Setup word-group relationships (multi-group support)
       - [x] Add study activities
+    - [x] Admin endpoints:
+      - [x] POST /admin/seed for database reset and seeding
+      - [x] Basic admin authentication dependency
+    - [x] Environment setup:
+      - [x] Development/Production configuration
+      - [x] Auto-seeding in development mode
+    - [x] Documentation:
+      - [x] API endpoints documentation
+      - [x] Setup and running instructions
+      - [x] Example API usage with curl commands
   - [ ] Frontend:
     - [ ] Language selection page
       - [ ] Show active languages

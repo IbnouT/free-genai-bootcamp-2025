@@ -1,12 +1,7 @@
 from sqlalchemy import text
-from app.database import engine, Base
+from app.database import Base
 
-def reset_database():
+def reset_database(engine):
     """Drop all tables and recreate them. Use only in development!"""
     Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
-
-def seed_database():
-    """Add initial test data"""
-    # This will be expanded when we add models
-    pass 
+    Base.metadata.create_all(bind=engine) 
