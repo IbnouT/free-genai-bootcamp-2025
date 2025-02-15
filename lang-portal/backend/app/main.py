@@ -7,6 +7,8 @@ from app.seed import seed_all
 from sqlalchemy.orm import Session
 import os
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
 
 # Load environment variables from .env file
 load_dotenv()
@@ -19,7 +21,7 @@ async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     
     # Auto-seed in development environment
-    if os.getenv("ENVIRONMENT") == "development":
+    if settings.ENVIRONMENT == "development":
         with Session(engine) as db:
             if not db.query(Language).first():  # Only seed if empty
                 seed_all(db)
@@ -37,4 +39,12 @@ async def health_check():
 
 app.include_router(words.router)
 app.include_router(languages.router)
-app.include_router(admin.router) 
+app.include_router(admin.router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[settings.FRONTEND_URL],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+) 

@@ -15,17 +15,24 @@ export default function LanguageSelectionPage() {
     const [error, setError] = useState<ApiError | null>(null);
 
     useEffect(() => {
-        async function fetchLanguages() {
-            const { data, error } = await getActiveLanguages();
-            setLoading(false);
-            if (error) {
-                setError(error);
-            } else if (data) {
-                setLanguages(data);
-            }
-        }
-        fetchLanguages();
+        console.log('LanguageSelectionPage mounted');
+        loadLanguages();
     }, []);
+
+    async function loadLanguages() {
+        try {
+            console.log('Loading languages...');
+            const result = await getActiveLanguages();
+            console.log('Languages loaded:', result);
+            if (result.data) {
+                setLanguages(result.data);
+            }
+        } catch (error) {
+            console.error('Failed to load languages:', error);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const handleLanguageSelect = (code: string) => {
         setLanguage(code);
