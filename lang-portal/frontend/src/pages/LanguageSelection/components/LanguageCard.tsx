@@ -1,5 +1,5 @@
-import { Card, CardContent, CardActionArea, Typography } from '@mui/material';
-import { Language } from '../../types/language';
+import { Card, CardContent, CardActionArea, Typography, Box } from '@mui/material';
+import { Language } from '../../../types/language';
 
 interface LanguageCardProps {
     language: Language;
@@ -8,15 +8,34 @@ interface LanguageCardProps {
 
 export default function LanguageCard({ language, onSelect }: LanguageCardProps) {
     return (
-        <Card>
-            <CardActionArea onClick={onSelect}>
+        <Card 
+            elevation={3}
+            sx={{ 
+                height: '100%',
+                transition: 'transform 0.2s',
+                '&:hover': {
+                    transform: 'scale(1.02)',
+                }
+            }}
+        >
+            <CardActionArea 
+                onClick={onSelect}
+                sx={{ height: '100%', padding: 2 }}
+            >
                 <CardContent>
-                    <Typography variant="h5" component="div">
+                    <Typography variant="h4" gutterBottom>
                         {language.name}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        {language.code.toUpperCase()}
-                    </Typography>
+                    <Box sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: 1,
+                        color: 'text.secondary'
+                    }}>
+                        <Typography variant="subtitle1">
+                            {language.code.toUpperCase()}
+                        </Typography>
+                    </Box>
                 </CardContent>
             </CardActionArea>
         </Card>

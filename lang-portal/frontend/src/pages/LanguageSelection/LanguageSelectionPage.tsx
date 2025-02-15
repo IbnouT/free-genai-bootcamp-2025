@@ -36,7 +36,7 @@ export default function LanguageSelectionPage() {
 
     const handleLanguageSelect = (code: string) => {
         setLanguage(code);
-        navigate('/words');  // Redirect to words page after selection
+        navigate('/dashboard');  // Change from '/words' to '/dashboard'
     };
 
     if (loading) {

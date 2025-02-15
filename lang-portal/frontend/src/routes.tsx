@@ -35,9 +35,8 @@ function AppRoutes() {
       {/* Protected routes */}
       <Route path="/*" element={
         <ProtectedRoute>
-          <Layout>
+          <App>
             <Routes>
-              <Route path="/" element={<Navigate to="/study" replace />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/study-activities" element={<StudyActivitiesPage />} />
               <Route path="/words" element={<Words />} />
@@ -45,7 +44,7 @@ function AppRoutes() {
               <Route path="/sessions" element={<Sessions />} />
               <Route path="/settings" element={<Settings />} />
             </Routes>
-          </Layout>
+          </App>
         </ProtectedRoute>
       } />
     </Routes>
