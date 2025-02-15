@@ -1,27 +1,67 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, Alert, CircularProgress, Box } from '@mui/material';
 import { useLanguage } from '../../context/LanguageContext';
 import { Language } from '../../types/language';
-import LanguageCard from './LanguageCard';
+import { ApiError } from '../../types/api';
+import { getActiveLanguages } from '../../api/languages';
+import LanguageCard from './components/LanguageCard';
 
 export default function LanguageSelectionPage() {
     const [languages, setLanguages] = useState<Language[]>([]);
     const { setLanguage } = useLanguage();
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<ApiError | null>(null);
 
     useEffect(() => {
-        // Fetch active languages
-        fetch('/api/languages?active=true')
-            .then(res => res.json())
-            .then(data => setLanguages(data))
-            .catch(console.error);
+        async function fetchLanguages() {
+            const { data, error } = await getActiveLanguages();
+            setLoading(false);
+            if (error) {
+                setError(error);
+            } else if (data) {
+                setLanguages(data);
+            }
+        }
+        fetchLanguages();
     }, []);
 
     const handleLanguageSelect = (code: string) => {
         setLanguage(code);
         navigate('/words');  // Redirect to words page after selection
     };
+
+    if (loading) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box p={3}>
+                <Alert severity="error">
+                    {error.message}
+                </Alert>
+                <Typography mt={2}>
+                    Please try refreshing the page or contact support if the problem persists.
+                </Typography>
+            </Box>
+        );
+    }
+
+    if (languages.length === 0) {
+        return (
+            <Box p={3}>
+                <Alert severity="info">
+                    No languages are currently available.
+                </Alert>
+            </Box>
+        );
+    }
 
     return (
         <div style={{ padding: '2rem' }}>

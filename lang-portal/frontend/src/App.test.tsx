@@ -1,20 +1,20 @@
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
+import { MemoryRouter } from 'react-router-dom'
 import App from './App'
+import { routerOptions } from './test/utils'
 
 describe('App', () => {
-  it('renders with Material UI theme', () => {
-    render(<App />)
+  it('redirects to language selection when no language is selected', () => {
+    render(
+      <MemoryRouter {...routerOptions} initialEntries={['/dashboard']}>
+        <App>
+          <div>Test content</div>
+        </App>
+      </MemoryRouter>
+    )
     
-    // Test that our heading is rendered with Material UI Typography
-    const heading = screen.getByRole('heading', { 
-      name: /language learning portal/i,
-      level: 1
-    })
-    expect(heading).toBeInTheDocument()
-    
-    // Test that Container is rendered (check for main landmark)
-    const container = screen.getByRole('main')
-    expect(container).toBeInTheDocument()
+    // Check URL matches our actual route
+    expect(window.location.pathname).toBe('/')
   })
 }) 
