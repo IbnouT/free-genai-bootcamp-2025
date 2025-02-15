@@ -40,10 +40,20 @@
   - [x] Review specifications for Word model and endpoints
   - [x] Backend:
     - [x] Word model (following spec schema)
+    - [ ] Language support:
+      - [ ] Create Language model (code, name, active)
+      - [ ] Add language_id to Word model
+      - [ ] Migration for language table and relationship
     - [x] GET /words with pagination
+    - [ ] Add language filter to GET /words?language=code
     - [ ] Sample word seeding
+    - [ ] Add seed data for languages and words
   - [ ] Frontend:
+    - [ ] Language selection page
+      - [ ] Show active languages
+      - [ ] Store selected language in session
     - [ ] Words page with Material table
+    - [ ] Filter by selected language
     - [ ] Pagination controls
     - [ ] Sort functionality
   - [ ] Tests:

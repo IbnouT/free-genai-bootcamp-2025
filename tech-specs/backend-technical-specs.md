@@ -15,6 +15,7 @@ backend/
 │   ├── models.py         # SQLAlchemy models
 │   ├── schemas.py        # Pydantic models (optional, for request/response)
 │   ├── routers/
+│   │   ├── languages.py  # Language endpoints
 │   │   ├── words.py
 │   │   ├── groups.py
 │   │   ├── activities.py
@@ -29,33 +30,39 @@ backend/
 
 We will use **SQLAlchemy** (with SQLite) for our ORM. Below are the main entities:
 
-### 3.1 Word
-- **id** (PK, auto-increment)  
-- **script** (String, required) – e.g., 食べる, كتاب, manger  
-- **transliteration** (String, optional) – e.g., taberu, kitāb (if relevant)  
-- **meaning** (String, required) – typically an English (or pivot) translation  
+### 3.1 Language
+- **code** (String, PK) – ISO 639-1 code, e.g., "ja", "fr", "es"  
+- **name** (String, required) – e.g., "Japanese", "French", "Spanish"  
+- **active** (Boolean, default True) – to enable/disable languages
 
-### 3.2 Group
+### 3.2 Word
+- **id** (PK, auto-increment)  
+- **script** (String, required) – the word in its original script  
+- **transliteration** (String, optional) – romanization if needed  
+- **meaning** (String, required) – English translation  
+- **language_code** (FK → languages.code) – reference to Language
+
+### 3.3 Group
 - **id** (PK, auto-increment)  
 - **name** (String, required)  
 - **words_count** (Integer, default 0) – optional counter cache  
 
-### 3.3 WordGroup (Join Table)
+### 3.4 WordGroup (Join Table)
 - **word_id** (FK → words.id, PK part)  
 - **group_id** (FK → groups.id, PK part)
 
-### 3.4 StudyActivity
+### 3.5 StudyActivity
 - **id** (PK, auto-increment)  
 - **name** (String, required) – e.g., "Flashcards"  
 - **url** (String, required) – the relative or absolute URL for the activity
 
-### 3.5 StudySession
+### 3.6 StudySession
 - **id** (PK, auto-increment)  
 - **group_id** (FK → groups.id)  
 - **study_activity_id** (FK → study_activities.id)  
 - **created_at** (Timestamp, default now)
 
-### 3.6 WordReviewItem
+### 3.7 WordReviewItem
 - **id** (PK, auto-increment)  
 - **word_id** (FK → words.id)  
 - **study_session_id** (FK → study_sessions.id)  
@@ -65,24 +72,44 @@ We will use **SQLAlchemy** (with SQLite) for our ORM. Below are the main entitie
 
 ## 4. Endpoints & Logic
 
-### 4.1 Words
+### 4.1 Languages
+- **GET /languages**
+  - Returns list of active languages
+  - Query params: `active` (boolean, optional) - filter active/inactive languages
+  - Response: `{ "items": [{ "code": string, "name": string, "active": boolean }] }`
+  - Example response:
+    ```json
+    {
+      "items": [
+        { "code": "ja", "name": "Japanese", "active": true },
+        { "code": "fr", "name": "French", "active": true }
+      ]
+    }
+    ```
+
+### 4.2 Words
 - **GET /words**  
-  - Query params: `page`, `per_page`, `sort_by` (script, transliteration, meaning, correct_count, wrong_count), `order` (asc, desc)  
+  - Query params: 
+    - `page`: int (default: 1)
+    - `per_page`: int (default: 10)
+    - `sort_by`: string (script, transliteration, meaning, correct_count, wrong_count)
+    - `order`: string (asc/desc)
+    - `language_code`: string (required) - ISO 639-1 code of the language
   - Returns a paginated list of words with their aggregated correct/wrong counts  
 
-### 4.2 Groups
+### 4.3 Groups
 - **GET /groups**  
   - Paginated, with possible sort by name or words_count  
 - **GET /groups/:id**  
   - Returns group details plus paginated words in that group  
 
-### 4.3 Study Activities
+### 4.4 Study Activities
 - **GET /study_activities**  
   - Returns a list of all activities (id, name, url)  
 - **GET /study_activities/:id**  
   - Detail if needed (e.g., references to past sessions)
 
-### 4.4 Study Sessions
+### 4.5 Study Sessions
 - **POST /study_sessions**  
   - Body: { "group_id": int, "study_activity_id": int }  
   - Creates a new session record  
@@ -94,7 +121,7 @@ We will use **SQLAlchemy** (with SQLite) for our ORM. Below are the main entitie
 - **GET /sessions/:id**  
   - Shows details of a specific session (words reviewed, correct/wrong)
 
-### 4.5 Dashboard
+### 4.6 Dashboard
 - **GET /dashboard/last_study_session**  
 - **GET /dashboard/study_progress**  
 - **GET /dashboard/quick_stats**  
@@ -107,6 +134,7 @@ Implementation examples:
 ## 5. Seed & Reset
 
 ### 5.1 Seed Data (seed.py)
+- Insert default languages (e.g., "ja", "fr", "ar" with their names)
 - Insert sample words in various languages (e.g., Japanese, Arabic, French).
 - Create default groups ("Core Verbs", "Common Phrases"), link some words via `word_groups`.
 - Create sample activities ("Flashcards", "Typing Tutor").
@@ -121,6 +149,9 @@ Implementation examples:
 
 - **SQLite**:  
   - For dev, store in a local file (e.g. `db.sqlite3`). For testing, could use in-memory (`:memory:`).
+- **Language Support**:
+  - Always validate language_code against Languages table
+  - Use language_code as query filter in Words endpoints
 - **Pagination**:  
   - Combine `limit` + `offset`, or a library, returning { page, per_page, total, data }.
 - **Performance**:  

@@ -31,8 +31,12 @@ frontend/
 │   │   └── shared/
 │   │       ├── Pagination.tsx
 │   │       ├── DataTable.tsx
+│   │       ├── LanguageSelector.tsx
 │   │       └── ...
 │   ├── pages/
+│   │   ├── LanguageSelection/
+│   │   │   ├── LanguageSelectionPage.tsx
+│   │   │   └── LanguageCard.tsx
 │   │   ├── Dashboard/
 │   │   │   ├── DashboardPage.tsx
 │   │   │   ├── LastSessionCard.tsx
@@ -56,8 +60,12 @@ frontend/
 │   │   └── AppRouter.tsx
 │   ├── services/
 │   │   └── api.ts
+│   ├── context/
+│   │   └── LanguageContext.tsx
 │   ├── theme/
 │   │   └── index.ts
+│   ├── types/
+│   │   └── language.ts        # Language interfaces
 │   ├── App.tsx
 │   └── main.tsx
 ├── index.html
@@ -73,7 +81,9 @@ frontend/
   - **pages/**: Major view pages (Dashboard, Study Activities, etc.).
   - **routes/**: Central routing logic with React Router.
   - **services/**: Axios configuration or other utilities.
+  - **context/**: Contexts and providers for global state management.
   - **theme/**: Custom Material UI theme definition.
+  - **types/**: Type definitions and interfaces.
   - **App.tsx & main.tsx**: App entry points.
 
 ---
@@ -83,7 +93,7 @@ frontend/
 - **Material UI** default theme with:
   - **Primary** color: e.g., `#1976d2` (pleasant blue).
   - **Secondary** color: a complementary hue (like pink or purple).
-  - **Dark Mode** toggle in **Settings** (using MUI’s theme switch).
+  - **Dark Mode** toggle in **Settings** (using MUI's theme switch).
 - **MainLayout** includes:
   - **Topbar**: The app title or logo at the top.
   - **Sidebar**: Main navigation links:
@@ -108,7 +118,7 @@ frontend/
 ## 4. Pages (Detailed)
 
 ### 4.1 Dashboard (URL: `/dashboard`)
-- **LastSessionCard**: Shows the user’s most recent study session (activity name, group, correct vs. wrong, date).  
+- **LastSessionCard**: Shows the user's most recent study session (activity name, group, correct vs. wrong, date).  
 - **QuickStatsCard**: Overall success rate, total words studied, mastery percentage, daily streak (if implemented).  
 - **Start Studying** button: Navigates to `/study-activities`.  
 - **Data** from:
@@ -116,7 +126,7 @@ frontend/
   - `GET /dashboard/quick_stats`
 
 ### 4.2 Study Activities (URL: `/study-activities`)
-- Displays a **grid** or **list** of “ActivityCard” components:
+- Displays a **grid** or **list** of "ActivityCard" components:
   - **Launch** button → user picks group, calls `POST /study_sessions` to create a new session.
   - **View** button → goes to `/study-activities/:id`, showing the activity detail or history.
 - **Data** from:  
@@ -156,6 +166,25 @@ frontend/
 - **Theme** toggle (Light / Dark / System).
 - **Reset Data** button (can call an admin endpoint to re-seed the DB or clear user data).
 
+### 4.7 Language Selection
+- Initial page shown before accessing main application
+- Shows list of active languages
+- User must select a language to proceed
+- Selected language stored in session storage
+- Language selection affects all subsequent views
+
+### 4.8 Words List Page
+- Material UI DataGrid/Table component
+- Columns:
+  - Original script
+  - Transliteration (if available)
+  - English meaning
+- Features:
+  - Pagination controls
+  - Sorting by any column
+  - Current language displayed in header
+  - All words filtered by selected language
+
 ---
 
 ## 5. Implementation Details
@@ -186,20 +215,31 @@ frontend/
     </Routes>
     ```
 - **Pagination**  
-  - Use either MUI’s built-in Table Pagination props or a custom `<Pagination>` component to handle `page`, `rowsPerPage`, etc.
+  - Use either MUI's built-in Table Pagination props or a custom `<Pagination>` component to handle `page`, `rowsPerPage`, etc.
 - **Dark Mode**  
-  - Store the theme preference in a global context or Redux store. Apply via Material UI’s `<ThemeProvider>`.
+  - Store the theme preference in a global context or Redux store. Apply via Material UI's `<ThemeProvider>`.
+- **Language Context**
+  ```tsx
+  // Example language context
+  interface LanguageContext {
+    currentLanguage: string;  // ISO code
+    setLanguage: (code: string) => void;
+  }
+  ```
+- **Route Protection**
+  - Redirect to language selection if no language is selected
+  - Maintain selected language in sessionStorage
 
 ---
 
 ## 6. Potential Enhancements
 
 - **Search** bar on Words or Groups pages (e.g., `GET /words?q=...`).  
-- **Localization** for UI strings (like i18n if we want multiple interface languages, distinct from the “script” field).  
+- **Localization** for UI strings (like i18n if we want multiple interface languages, distinct from the "script" field).  
 - **Admin Tools** if we add roles beyond a single user scenario.
 
 ---
 
 ## 7. Summary
 
-By following these guidelines, you’ll build a **React + TypeScript + Vite** front-end that integrates cleanly with the back-end API, enabling a multi-language, trackable study experience. The UI is structured around Material UI components, with each page mapped to a specific set of REST endpoints for data retrieval and updates.
+By following these guidelines, you'll build a **React + TypeScript + Vite** front-end that integrates cleanly with the back-end API, enabling a multi-language, trackable study experience. The UI is structured around Material UI components, with each page mapped to a specific set of REST endpoints for data retrieval and updates.
