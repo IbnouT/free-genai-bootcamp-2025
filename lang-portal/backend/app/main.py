@@ -15,10 +15,11 @@ load_dotenv()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Import routers here to avoid circular imports
-    from app.routers import words, languages, admin
-    app.include_router(words.router)
-    app.include_router(languages.router)
+    from app.routers import admin, groups, languages, words
     app.include_router(admin.router)
+    app.include_router(groups.router)
+    app.include_router(languages.router)
+    app.include_router(words.router)
 
     if os.getenv("TESTING") == "true":
         yield  # Skip lifespan for tests

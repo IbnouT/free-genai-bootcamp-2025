@@ -142,8 +142,42 @@ frontend/
 ### 4.4 Groups (URL: `/groups`)
 - Table or list of groups, each showing:
   - **name**, **words_count**.
-- Clicking a group → `/groups/:id`, listing the words in that group (similar to `/words`, but filtered).
+- Clicking a group → `/groups/:id`, listing the words in that group (similar to `/words`, but filtered) for the current language in context.
 - Possibly a **Start Study Session** button to begin a session for that group.
+
+#### Groups List Page (URL: `/groups`)
+- Material UI DataGrid/Table showing groups for current language:
+  - Group Name (clickable)
+  - Word Count (computed from relationship)
+- Features:
+  - Pagination controls
+  - Sorting by name or word count
+  - Column headers with sort indicators
+  - Filtered by current language context
+
+#### Group Details Page (URL: `/groups/:id`)
+- Header section:
+  - Group name
+  - Total word count
+- Words table for the language in context (Material UI DataGrid) showing:
+  - Script (clickable, opens word details)
+  - Transliteration
+  - Meaning
+  - Correct Count
+  - Wrong Count
+- Features:
+  - Pagination for words list
+  - Sorting on all columns
+  - Click on word script opens Word Details page
+  - Start Study Session button
+
+**Data Flow:**
+1. Groups List:
+   - Fetches from `GET /groups` with language_code and sort/pagination
+   - Updates URL with query params for sorting/pagination
+2. Group Details:
+   - Fetches from `GET /groups/{id}` with word list params
+   - Clicking word navigates to `/words/{id}`
 
 **Data** from:  
 - `GET /groups`

@@ -108,7 +108,6 @@ def test_group_creation(db_session):
     
     assert group.id is not None
     assert group.name == "Verbs"
-    assert group.words_count == 0
 
 def test_study_activity_creation(db_session):
     activity = StudyActivity(

@@ -33,7 +33,6 @@ class Group(Base):
     __tablename__ = "groups"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    words_count = Column(Integer, default=0)
     
     words = relationship("Word", secondary="word_groups", back_populates="groups")
 
@@ -51,8 +50,8 @@ class StudyActivity(Base):
 class StudySession(Base):
     __tablename__ = "study_sessions"
     id = Column(Integer, primary_key=True, index=True)
-    group_id = Column(Integer, ForeignKey("groups.id"))
-    study_activity_id = Column(Integer, ForeignKey("study_activities.id"))
+    group_id = Column(Integer, ForeignKey("groups.id"), nullable=False)
+    study_activity_id = Column(Integer, ForeignKey("study_activities.id"), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
 
 class WordReviewItem(Base):

@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import Optional
 from app.main import get_db
-from app.models import Word
+from app.models import Word, WordReviewItem
 from app.schemas import PaginatedWords
+from sqlalchemy import func, case, text
 
 router = APIRouter()
 
@@ -13,18 +14,26 @@ def get_words(
     page: int = Query(1, ge=1),
     per_page: int = Query(10, ge=1),
     sort_by: Optional[str] = None,
-    order: Optional[str] = "asc"
+    order: Optional[str] = "asc",
+    language_code: str = Query(..., description="ISO 639-1 code of the language"),
 ):
-    from sqlalchemy import inspect
-    inspector = inspect(db.bind)
-    tables = inspector.get_table_names()
-    print("client - Tables:", db, tables)
+    query = db.query(Word, 
+        func.count(case((WordReviewItem.correct == True, 1))).label("correct_count"),
+        func.count(case((WordReviewItem.correct == False, 1))).label("wrong_count")
+    )
 
-    query = db.query(Word)
+    # Filter by language (required)
+    query = query.filter(Word.language_code == language_code)
+    
+    # Add correct/wrong counts
+    query = query.outerjoin(WordReviewItem).group_by(Word.id)
 
     # Apply sorting
     if sort_by:
-        column = getattr(Word, sort_by)
+        if sort_by in ["correct_count", "wrong_count"]:
+            column = text(sort_by)
+        else:
+            column = getattr(Word, sort_by)
         if order == "desc":
             column = column.desc()
         query = query.order_by(column)
@@ -33,7 +42,14 @@ def get_words(
     total = query.count()
     
     # Apply pagination
-    items = query.offset((page - 1) * per_page).limit(per_page).all()
+    results = query.offset((page - 1) * per_page).limit(per_page).all()
+    
+    # Convert results to Word objects with counts
+    items = []
+    for word, correct, wrong in results:
+        word.correct_count = correct
+        word.wrong_count = wrong
+        items.append(word)
     
     return {
         "total": total,

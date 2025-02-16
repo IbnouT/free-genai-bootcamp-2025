@@ -10,6 +10,8 @@ class WordBase(BaseModel):
 
 class Word(WordBase):
     id: int
+    correct_count: int = 0
+    wrong_count: int = 0
     
     model_config = ConfigDict(from_attributes=True)
 
@@ -27,3 +29,21 @@ class LanguageBase(BaseModel):
 
 class Language(LanguageBase):
     model_config = ConfigDict(from_attributes=True)
+
+class GroupBase(BaseModel):
+    name: str
+
+class GroupCreate(GroupBase):
+    pass
+
+class Group(GroupBase):
+    id: int
+    words_count: int  # Computed field, not stored
+
+    model_config = ConfigDict(from_attributes=True)
+
+class PaginatedGroups(BaseModel):
+    total: int
+    items: List[Group]
+    page: int
+    per_page: int
