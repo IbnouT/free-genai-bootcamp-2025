@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, Query, HTTPException
+from sqlalchemy.orm import Session, joinedload
 from typing import Optional
 from app.main import get_db
 from app.models import Word, WordReviewItem
-from app.schemas import PaginatedWords
+from app.schemas import PaginatedWords, WordDetail
 from sqlalchemy import func, case, text
 
 router = APIRouter()
@@ -56,4 +56,44 @@ def get_words(
         "items": items,
         "page": page,
         "per_page": per_page
+    }
+
+@router.get("/words/{word_id}", response_model=WordDetail)
+def get_word(
+    word_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieves detailed information about a specific word, including its groups and review statistics.
+    """
+    # Query word with stats and groups
+    result = (
+        db.query(
+            Word,
+            func.count(case((WordReviewItem.correct == True, 1))).label("correct_count"),
+            func.count(case((WordReviewItem.correct == False, 1))).label("wrong_count")
+        )
+        .outerjoin(WordReviewItem)
+        .options(joinedload(Word.groups))  # Eager load groups
+        .filter(Word.id == word_id)
+        .group_by(Word.id)
+        .first()
+    )
+
+    if not result:
+        raise HTTPException(status_code=404, detail=f"Word with id {word_id} not found")
+
+    word, correct_count, wrong_count = result
+    # Format response according to spec
+    return {
+        "id": word.id,
+        "script": word.script,
+        "transliteration": word.transliteration,
+        "meaning": word.meaning,
+        "language_code": word.language_code,
+        "stats": {
+            "correct_count": correct_count,
+            "wrong_count": wrong_count
+        },
+        "groups": [{"id": g.id, "name": g.name} for g in word.groups]
     } 

@@ -47,3 +47,46 @@ class PaginatedGroups(BaseModel):
     items: List[Group]
     page: int
     per_page: int
+
+class WordStats(BaseModel):
+    correct_count: int
+    wrong_count: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+class GroupInWord(BaseModel):
+    id: int
+    name: str
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class WordDetail(WordBase):
+    id: int
+    groups: List[GroupInWord]
+    stats: WordStats
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class WordInGroup(BaseModel):
+    id: int
+    script: str
+    transliteration: Optional[str] = None
+    meaning: str
+    language_code: str
+    correct_count: int
+    wrong_count: int
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class PaginatedGroupWords(BaseModel):
+    items: List[WordInGroup]
+    page: int
+    per_page: int
+
+class GroupDetail(GroupBase):
+    id: int
+    # name: str
+    words_count: int
+    words: PaginatedGroupWords
+    
+    model_config = ConfigDict(from_attributes=True)
