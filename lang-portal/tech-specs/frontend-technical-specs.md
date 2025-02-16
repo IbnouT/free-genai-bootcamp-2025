@@ -127,7 +127,16 @@ frontend/
 
 ### 4.2 Study Activities (URL: `/study-activities`)
 - Displays a **grid** or **list** of "ActivityCard" components:
-  - **Launch** button → user picks group, calls `POST /study_sessions` to create a new session.
+  - **Launch** button flow:
+    1. Shows modal/dialog for group selection
+    2. On confirm, calls `POST /study_sessions` with:
+       ```json
+       {
+         "group_id": selected_group_id,
+         "study_activity_id": current_activity_id
+       }
+       ```
+    3. On success, redirects to activity URL with new session_id
   - **View** button → goes to `/study-activities/:id`, showing the activity detail or history.
 - **Data** from:  
   - `GET /study_activities`
@@ -183,14 +192,125 @@ frontend/
 - `GET /groups`
 - `GET /groups/:id`
 
-### 4.5 Sessions (URL: `/sessions`)
-- A table of all sessions:
-  - ID or date/time
-  - activity name
-  - group name
-  - correct/wrong summary
-- Clicking a session → `/sessions/:id` for detail:
-  - Each **word_review_item** with word, correct/wrong, timestamp.
+### 4.9 Study Sessions Page (URL: `/sessions`)
+Material UI DataGrid/Table showing:
+- Header section with:
+  - Column headers with sort indicators:
+    - Study Session ID (numeric)
+    - Activity Name (clickable link to `/activities/:id`)
+    - Group Name (clickable link to `/groups/:id`)
+    - Start Time (formatted datetime)
+    - Last Review Time (formatted datetime)
+    - Reviews Count (number of WordReviewItems)
+
+Features:
+- Pagination controls
+- Sorting by any column
+- Column headers with sort indicators
+- Clicking on activity/group names navigates to respective detail pages
+- Time formatting using a consistent format (e.g., "Feb 16, 2024 14:30")
+- Reviews count displayed as a badge or numeric indicator
+
+### 4.10 Study Session Details Page (URL: `/sessions/:id`)
+Header section showing:
+- Study Session ID
+- Activity Name (clickable link to `/activities/:id`)
+- Group Name (clickable link to `/groups/:id`)
+- Start Time (formatted datetime)
+- Last Review Time (formatted datetime)
+- Total Reviews Count (total WordReviewItems)
+
+Words section showing:
+- Material UI DataGrid/Table with:
+  - Columns:
+    - Word Script (clickable link to `/words/:id`) - opens word details in new view
+    - Transliteration (if available)
+    - Meaning
+    - Correct Count (from WordReviewItems for this session)
+    - Wrong Count (from WordReviewItems for this session)
+
+Features:
+- Pagination for words list
+- Sorting by any column
+- Column headers with sort indicators
+- Navigation links to related entities
+- Consistent time formatting
+- Clear visual hierarchy between header and words list
+- Loading states while fetching data
+- Error handling with user-friendly messages
+
+**Data Flow:**
+1. Sessions List:
+   - Fetches from `GET /study_sessions` with pagination/sorting
+   - Updates URL with query params
+   - Formats dates using consistent datetime formatter
+   - Updates when sorting/filtering changes
+2. Session Details:
+   - Fetches from `GET /study_sessions/:id` with words pagination/sorting
+   - Updates URL with query params for words list
+   - Handles loading and error states
+   - Updates word list when pagination/sorting changes
+
+**UI Components:**
+1. SessionsTable:
+   - Uses Material UI DataGrid
+   - Handles sorting and pagination
+   - Formats dates and counts
+   - Renders clickable links
+2. SessionHeader:
+   - Displays session metadata
+   - Contains navigation links
+3. WordsTable:
+   - Uses Material UI DataGrid
+   - Handles word list pagination
+   - Shows loading states
+   - Renders clickable word links
+
+### 4.11 Study Activity Flow
+#### Starting a Study Session:
+1. User clicks "Launch" on an activity
+2. GroupSelectionDialog opens:
+   - Shows list of groups with word counts
+   - Allows searching/filtering groups
+   - Displays selected group's details
+3. On group selection and confirmation:
+   - Calls `POST /study_sessions`
+   - Shows loading state during creation
+   - On success, redirects to activity URL
+   - On error, shows error message in dialog
+
+#### During Study Session:
+1. For each word review:
+   - User interacts with word (specific to activity type)
+   - On completion, calls `POST /study_sessions/{session_id}/reviews`:
+     ```json
+     {
+       "word_id": current_word_id,
+       "correct": boolean_result
+     }
+     ```
+   - Shows success/error feedback
+   - Updates progress indicators
+
+#### UI Components:
+1. GroupSelectionDialog:
+   - Material UI Dialog
+   - Search/filter input
+   - Groups list with selection
+   - Confirm/Cancel buttons
+   - Loading state
+2. StudyProgress:
+   - Shows current word count
+   - Displays success rate
+   - Indicates session duration
+
+#### Error Handling:
+- Network errors during session creation
+- Failed word review submissions
+- Invalid group selections
+- Session timeout scenarios
+
+---
 
 **Data** from:  
 - `GET /sessions`
@@ -219,10 +339,18 @@ frontend/
   - Current language displayed in header
   - All words filtered by selected language
 
----
+
 
 ## 5. Implementation Details
 
+### 5.1 Build Setup
+- **Vite**
+  - Modern build tool for React applications
+  - Fast development server with HMR
+  - Optimized production builds
+  - TypeScript support out of the box
+
+### 5.2 API Integration
 - **Axios**  
   - In `services/api.ts`, create an Axios instance:  
     ```ts

@@ -333,16 +333,150 @@ Retrieves detailed information about a specific group and its words in the speci
   - Detail if needed (e.g., references to past sessions)
 
 ### 4.5 Study Sessions
-- **POST /study_sessions**  
-  - Body: { "group_id": int, "study_activity_id": int }  
-  - Creates a new session record  
-- **POST /study_sessions/:id/review**  
-  - Body: { "word_id": int, "correct": bool }  
-  - Inserts a word_review_item for that session  
-- **GET /sessions**  
-  - Paginated list of all sessions  
-- **GET /sessions/:id**  
-  - Shows details of a specific session (words reviewed, correct/wrong)
+#### POST /study_sessions
+Creates a new study session.
+
+**Request Body:**
+```json
+{
+    "group_id": 1,
+    "study_activity_id": 1
+}
+```
+
+**Response Format:**
+```json
+{
+    "id": 1,
+    "group": {
+        "id": 1,
+        "name": "Core Verbs"
+    },
+    "activity": {
+        "id": 1,
+        "name": "Flashcards"
+    },
+    "created_at": "2024-02-16T14:30:00Z"
+}
+```
+
+**Error Responses:**
+- 404: Group or Activity not found
+- 400: Invalid request body
+
+#### POST /study_sessions/{session_id}/reviews
+Records a word review result for the given study session.
+
+**Request Body:**
+```json
+{
+    "word_id": 1,
+    "correct": true
+}
+```
+
+**Response Format:**
+```json
+{
+    "id": 1,
+    "word_id": 1,
+    "study_session_id": 1,
+    "correct": true,
+    "created_at": "2024-02-16T14:31:00Z"
+}
+```
+
+**Error Responses:**
+- 404: Session or Word not found
+- 400: Invalid request body
+
+#### GET /study_sessions
+Retrieves a paginated list of study sessions with their associated details.
+
+**Query Parameters:**
+- `page` (optional): Page number, default: 1
+- `per_page` (optional): Items per page, default: 10
+- `sort_by` (optional): Field to sort by (created_at, ended_at)
+- `order` (optional): Sort order ("asc" or "desc"), default: "desc"
+
+**Response Format:**
+```json
+{
+    "total": 100,
+    "items": [
+        {
+            "id": 1,
+            "group": {
+                "id": 1,
+                "name": "Core Verbs"
+            },
+            "activity": {
+                "id": 1,
+                "name": "Flashcards"
+            },
+            "created_at": "2024-02-16T14:30:00Z",
+            "last_review_at": "2024-02-16T14:35:00Z",  // Computed from last review
+            "reviews_count": 20
+        }
+    ],
+    "page": 1,
+    "per_page": 10
+}
+```
+
+#### GET /study_sessions/{session_id}
+Retrieves detailed information about a specific study session, including its words and review results.
+
+**Path Parameters:**
+- `session_id` (required): Integer - The ID of the study session
+
+**Query Parameters:**
+- `page` (optional): Page number for words list, default: 1
+- `per_page` (optional): Items per page for words list, default: 10
+- `sort_by` (optional): Field to sort words by (script, correct_count, wrong_count)
+- `order` (optional): Sort order ("asc" or "desc"), default: "asc"
+
+**Response Format:**
+```json
+{
+    "id": 1,
+    "group": {
+        "id": 1,
+        "name": "Core Verbs"
+    },
+    "activity": {
+        "id": 1,
+        "name": "Flashcards"
+    },
+    "created_at": "2024-02-16T14:30:00Z",
+    "last_review_at": "2024-02-16T14:35:00Z",  // Computed from last review
+    "reviews_count": 20,
+    "words": {
+        "total": 45,  // Total number of words in this session
+        "items": [
+            {
+                "id": 1,
+                "script": "食べる",
+                "transliteration": "taberu",
+                "meaning": "to eat",
+                "language_code": "ja",
+                "correct_count": 2,
+                "wrong_count": 1
+            }
+        ],
+        "page": 1,
+        "per_page": 10
+    }
+}
+```
+
+**Error Responses:**
+- 404: Session not found
+  ```json
+  {
+      "detail": "Study session with id {session_id} not found"
+  }
+  ```
 
 ### 4.6 Dashboard
 - **GET /dashboard/last_study_session**  
