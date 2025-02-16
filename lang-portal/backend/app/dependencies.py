@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Depends
-from app.database import get_db
+from app.main import get_db
 
 def admin_only():
     """Dependency for admin-only routes"""

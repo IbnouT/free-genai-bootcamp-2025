@@ -7,13 +7,6 @@ interface LanguageCardProps {
     onSelect: () => void;
 }
 
-const descriptions: Record<string, string> = {
-    ja: "Explore the rich culture and language of Japan, from its ancient traditions to modern innovations.",
-    fr: "Delve into the elegant language of France, known for its influence in art, cuisine, and diplomacy.",
-    ar: "Immerse yourself in the rich and diverse language of the Arab world, spoken by millions across continents.",
-    es: "Join the vibrant world of Spanish, a language of passion and history spoken by over 460 million people worldwide."
-};
-
 export default function LanguageCard({ language, selected, onSelect }: LanguageCardProps) {
     return (
         <Card
@@ -65,7 +58,7 @@ export default function LanguageCard({ language, selected, onSelect }: LanguageC
                     {language.name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" lineHeight={1.6}>
-                    {descriptions[language.code]}
+                    {language.promo_text}
                 </Typography>
             </Box>
         </Card>

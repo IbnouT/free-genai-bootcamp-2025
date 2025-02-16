@@ -1,45 +1,47 @@
 import pytest
+import os
+
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import sessionmaker
-from app.database import Base, get_test_db_url, get_db, setup_db, get_db_url
-from app.main import app
-from sqlalchemy import create_engine
+from app.database import Base, get_test_db_url, setup_db
+from app.main import app, get_db
 
-@pytest.fixture(scope="session", autouse=True)
-def test_db():
-    # Override with test DB before any tests run
-    engine = setup_db(get_test_db_url())
-    Base.metadata.create_all(bind=engine)
-    yield engine
-    Base.metadata.drop_all(bind=engine)
+os.environ["TESTING"] = "true"
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def db_session():
-    # Create test database
-    engine = create_engine(get_test_db_url())
+    engine,  _ = setup_db(get_test_db_url())
     Base.metadata.create_all(bind=engine)
-    
-    # Create session
-    TestingSessionLocal = sessionmaker(bind=engine)
+
+    # Create a single connection and bind it to the session
+    connection = engine.connect()
+    TestingSessionLocal = sessionmaker(bind=connection)
     session = TestingSessionLocal()
     
     try:
         yield session
     finally:
-        # Always rollback and close, even if test passed
-        session.rollback()
         session.close()
-        # Drop all tables after each test
+        connection.close()
         Base.metadata.drop_all(bind=engine)
+        engine.dispose()
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def client(db_session):
+    from sqlalchemy import inspect
+    inspector = inspect(db_session.bind)
+    tables = inspector.get_table_names()
+    print("client - Tables:", db_session, tables)
     def override_get_db():
+        inspector = inspect(db_session.bind)
+        tables = inspector.get_table_names()
+        print("client - override_get_db - Tables:", db_session, tables)
         try:
-            yield db_session  # Same session for all calls
+            yield db_session
         finally:
-            db_session.close() 
-    app.dependency_overrides[get_db] = override_get_db
-    yield TestClient(app)
-    print("Cleaning up test client...")
-    app.dependency_overrides.clear()
+            db_session.close()
+
+    with TestClient(app) as c:
+        app.dependency_overrides[get_db] = override_get_db
+        yield c
+        app.dependency_overrides.clear()

@@ -23,6 +23,7 @@ class LanguageBase(BaseModel):
     code: str
     name: str
     active: bool = True
+    promo_text: str | None = None
 
 class Language(LanguageBase):
     model_config = ConfigDict(from_attributes=True)

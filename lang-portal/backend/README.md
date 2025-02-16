@@ -27,9 +27,7 @@ ENVIRONMENT=development
 1. Start the server:
 ```bash
 uvicorn app.main:app --reload
-```
-
-The server will start at http://localhost:8000
+```The server will start at http://localhost:8000
 
 ## API Endpoints
 
@@ -60,6 +58,16 @@ curl 'http://localhost:8000/languages?active=true'
 - In development, database is auto-seeded with sample data
 - Use admin/seed endpoint to reset database
 
+#### Database Migrations
+When making changes to database schema:
+```bash
+# Reset database and run migrations (WARNING: This will delete all data!)
+python -m app.utils.reset_and_migrate
+
+# Create new migration
+alembic revision --autogenerate -m "add promo_text to language"
+```
+
 ### Testing
 ```bash
 pytest
@@ -68,3 +76,4 @@ pytest
 ## API Documentation
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc 
+

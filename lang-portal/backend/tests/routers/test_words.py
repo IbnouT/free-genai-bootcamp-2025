@@ -1,4 +1,3 @@
-from fastapi.testclient import TestClient
 from app.main import app
 from app.models import Word
 
@@ -16,9 +15,9 @@ def test_get_words_empty(client, db_session):
 def test_get_words_pagination(client, db_session):
     # Create test words
     words = [
-        Word(script="食べる", transliteration="taberu", meaning="to eat"),
-        Word(script="飲む", transliteration="nomu", meaning="to drink"),
-        Word(script="読む", transliteration="yomu", meaning="to read"),
+        Word(script="食べる", transliteration="taberu", meaning="to eat", language_code="ja"),
+        Word(script="飲む", transliteration="nomu", meaning="to drink", language_code="ja"),
+        Word(script="読む", transliteration="yomu", meaning="to read", language_code="ja"),
     ]
     db_session.add_all(words)
     db_session.commit()
@@ -47,9 +46,9 @@ def test_get_words_pagination(client, db_session):
 
 def test_get_words_sorting(client, db_session):
     words = [
-        Word(script="citron", meaning="lemon"),
-        Word(script="pomme", meaning="apple"),
-        Word(script="banane", meaning="banana"),
+        Word(script="citron", meaning="lemon", language_code="fr"),
+        Word(script="pomme", meaning="apple", language_code="fr"),
+        Word(script="banane", meaning="banana", language_code="fr"),
     ]
     db_session.add_all(words)
     db_session.commit()

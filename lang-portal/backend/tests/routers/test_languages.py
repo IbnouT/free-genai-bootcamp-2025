@@ -3,8 +3,8 @@ from app.models import Language
 def test_get_languages(client, db_session):
     # Create test languages
     languages = [
-        Language(code="ja", name="Japanese"),
-        Language(code="fr", name="French", active=False),
+        Language(code="ja", name="Japanese", promo_text="Test promo"),
+        Language(code="fr", name="French", active=False, promo_text="Test promo 2"),
     ]
     db_session.add_all(languages)
     db_session.commit()
@@ -15,6 +15,7 @@ def test_get_languages(client, db_session):
     data = response.json()
     assert len(data) == 2
     assert data[0]["code"] == "ja"
+    assert data[0]["promo_text"] == "Test promo"
     
     # Test filtering active languages
     response = client.get("/languages?active=true")

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import List
-from app.database import get_db
+from app.main import get_db
 from app.models import Language
 from app.schemas import Language as LanguageSchema
 

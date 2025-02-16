@@ -4,15 +4,51 @@ from app.utils.db_utils import reset_database
 
 def seed_languages(db: Session):
     languages = [
-        Language(code="ja", name="Japanese"),
-        Language(code="fr", name="French"),
-        Language(code="ar", name="Arabic"),
-        Language(code="es", name="Spanish"),
-        # Inactive languages (for future)
-        Language(code="zh", name="Chinese", active=False),
-        Language(code="ko", name="Korean", active=False),
-        Language(code="ru", name="Russian", active=False),
-        Language(code="de", name="German", active=False),
+        Language(
+            code="ja", 
+            name="Japanese",
+            promo_text="Explore the rich culture and language of Japan, from its ancient traditions to modern innovations."
+        ),
+        Language(
+            code="fr", 
+            name="French",
+            promo_text="Delve into the elegant language of France, known for its influence in art, cuisine, and diplomacy."
+        ),
+        Language(
+            code="ar", 
+            name="Arabic",
+            promo_text="Immerse yourself in the rich and diverse language of the Arab world, spoken by millions across continents."
+        ),
+        Language(
+            code="es", 
+            name="Spanish",
+            promo_text="Join the vibrant world of Spanish, a language of passion and history spoken by over 460 million people worldwide."
+        ),
+        # Inactive languages
+        Language(
+            code="zh", 
+            name="Chinese", 
+            active=False,
+            promo_text="Master the most spoken language in the world, with its unique characters and tonal system."
+        ),
+        Language(
+            code="ko", 
+            name="Korean", 
+            active=False,
+            promo_text="Learn the language of K-pop and Korean dramas, with its logical writing system and rich cultural heritage."
+        ),
+        Language(
+            code="ru", 
+            name="Russian", 
+            active=False,
+            promo_text="Discover the language of Tolstoy and Dostoevsky, spoken across the largest country in the world."
+        ),
+        Language(
+            code="de", 
+            name="German", 
+            active=False,
+            promo_text="Learn the language of philosophers and scientists, known for its precision and compound words."
+        ),
     ]
     db.add_all(languages)
     db.commit()

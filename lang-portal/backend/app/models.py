@@ -9,6 +9,7 @@ class Language(Base):
     code = Column(String, primary_key=True)
     name = Column(String, nullable=False)
     active = Column(Boolean, default=True)
+    promo_text = Column(String)
     
     # Relationship to words
     words = relationship("Word", back_populates="language")

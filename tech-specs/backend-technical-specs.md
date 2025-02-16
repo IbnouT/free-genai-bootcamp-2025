@@ -34,6 +34,7 @@ We will use **SQLAlchemy** (with SQLite) for our ORM. Below are the main entitie
 - **code** (String, PK) – ISO 639-1 code, e.g., "ja", "fr", "es"  
 - **name** (String, required) – e.g., "Japanese", "French", "Spanish"  
 - **active** (Boolean, default True) – to enable/disable languages
+- **promo_text** (String, optional) – Promotional description of the language
 
 ### 3.2 Word
 - **id** (PK, auto-increment)  
@@ -76,12 +77,12 @@ We will use **SQLAlchemy** (with SQLite) for our ORM. Below are the main entitie
 - **GET /languages**
   - Returns list of active languages
   - Query params: `active` (boolean, optional) - filter active/inactive languages
-  - Response: Array of `{ "code": string, "name": string, "active": boolean }`
+  - Response: Array of `{ "code": string, "name": string, "active": boolean, "promo_text": string | null }`
   - Example response:
     ```json
     [
-      { "code": "ja", "name": "Japanese", "active": true },
-      { "code": "fr", "name": "French", "active": true }
+      { "code": "ja", "name": "Japanese", "active": true, "promo_text": "Explore the rich culture..." },
+      { "code": "fr", "name": "French", "active": true, "promo_text": "Delve into the elegant..." }
     ]
     ```
 

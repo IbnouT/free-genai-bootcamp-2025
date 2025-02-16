@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import Optional
-from app.database import get_db
+from app.main import get_db
 from app.models import Word
 from app.schemas import PaginatedWords
 
@@ -15,6 +15,11 @@ def get_words(
     sort_by: Optional[str] = None,
     order: Optional[str] = "asc"
 ):
+    from sqlalchemy import inspect
+    inspector = inspect(db.bind)
+    tables = inspector.get_table_names()
+    print("client - Tables:", db, tables)
+
     query = db.query(Word)
 
     # Apply sorting
