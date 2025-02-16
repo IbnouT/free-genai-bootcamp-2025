@@ -24,6 +24,7 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
-    }
+    },
+    port: 5174,
   }
 } as UserConfig) 
