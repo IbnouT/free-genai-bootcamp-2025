@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models import Language, Word, Group, StudyActivity, WordGroup
+from app.models import Language, Word, Group, StudyActivity, WordGroup, StudySession, WordReviewItem
 from app.utils.db_utils import reset_database
 
 def seed_languages(db: Session):
@@ -159,9 +159,24 @@ def seed_groups(db: Session):
 
 def seed_activities(db: Session):
     activities = [
-        StudyActivity(name="Flashcards", url="/study/flashcards"),
-        StudyActivity(name="Typing Practice", url="/study/typing"),
-        StudyActivity(name="Multiple Choice", url="/study/quiz"),
+        StudyActivity(
+            name="Flashcards",
+            url="/study/flashcards",
+            description="Practice vocabulary with interactive flashcards. Test your memory and track your progress.",
+            image_url="/static/images/activities/flashcards.svg"
+        ),
+        StudyActivity(
+            name="Typing Practice",
+            url="/study/typing",
+            description="Improve your typing skills in your target language. Practice with real sentences and words.",
+            image_url="/static/images/activities/typing.svg"
+        ),
+        StudyActivity(
+            name="Multiple Choice",
+            url="/study/quiz",
+            description="Test your knowledge with multiple choice questions. A fun way to reinforce your learning.",
+            image_url="/static/images/activities/quiz.svg"
+        ),
     ]
     db.add_all(activities)
     db.commit()
@@ -204,7 +219,54 @@ def seed_word_groups(db: Session, words: list, groups: list):
     
     db.commit()
 
-def seed_all(db: Session):
+def seed_test_activity_data(db: Session, words: list, groups: list, activities: list):
+    """Generate test study sessions and review data for testing purposes"""
+    from datetime import datetime, timedelta
+    import random
+
+    # Create a few study sessions over the past week
+    base_time = datetime.now() - timedelta(days=7)
+    sessions = []
+    
+    # For each activity, create sessions with different groups
+    for activity in activities:
+        for group in groups[:3]:  # Use first 3 groups for test data
+            # Create 2-3 sessions per activity-group combination
+            for _ in range(random.randint(2, 3)):
+                session_time = base_time + timedelta(
+                    days=random.randint(0, 7),
+                    hours=random.randint(0, 23),
+                    minutes=random.randint(0, 59)
+                )
+                
+                session = StudySession(
+                    group_id=group.id,
+                    study_activity_id=activity.id,
+                    created_at=session_time
+                )
+                db.add(session)
+                db.flush()  # Get the session ID
+                sessions.append(session)
+                
+                # Add review items for this session
+                # Get words from the session's group
+                group_words = [w for w in words if group in w.groups]
+                
+                # Create reviews for 5-10 random words from the group
+                for word in random.sample(group_words, min(len(group_words), random.randint(5, 10))):
+                    review_time = session_time + timedelta(minutes=random.randint(1, 30))
+                    review = WordReviewItem(
+                        word_id=word.id,
+                        study_session_id=session.id,
+                        correct=random.choice([True, True, False]),  # 66% correct ratio
+                        created_at=review_time
+                    )
+                    db.add(review)
+    
+    db.commit()
+    return sessions
+
+def seed_all(db: Session, include_test_data: bool = False):
     """Seed all tables with initial data"""
     try:
         reset_database(db.get_bind())  # Pass the engine from session
@@ -216,12 +278,18 @@ def seed_all(db: Session):
         activities = seed_activities(db)
         seed_word_groups(db, words, groups)
         
+        # Optionally add test activity data
+        sessions = None
+        if include_test_data:
+            sessions = seed_test_activity_data(db, words, groups, activities)
+        
         db.commit()
         return {
             "languages": languages,
             "words": words,
             "groups": groups,
-            "activities": activities
+            "activities": activities,
+            "sessions": sessions if include_test_data else None
         }
     except Exception as e:
         db.rollback()

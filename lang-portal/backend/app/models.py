@@ -46,6 +46,11 @@ class StudyActivity(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     url = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    image_url = Column(String, nullable=True)
+
+    # Add relationship to sessions
+    sessions = relationship("StudySession", back_populates="activity")
 
 class StudySession(Base):
     __tablename__ = "study_sessions"
@@ -53,6 +58,11 @@ class StudySession(Base):
     group_id = Column(Integer, ForeignKey("groups.id"), nullable=False)
     study_activity_id = Column(Integer, ForeignKey("study_activities.id"), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
+
+    # Add relationships
+    activity = relationship("StudyActivity", back_populates="sessions")
+    group = relationship("Group")
+    review_items = relationship("WordReviewItem", back_populates="session")
 
 class WordReviewItem(Base):
     __tablename__ = "word_review_items"
@@ -62,4 +72,5 @@ class WordReviewItem(Base):
     correct = Column(Boolean)
     created_at = Column(DateTime, server_default=func.now())
     
-    word = relationship("Word", back_populates="review_items") 
+    word = relationship("Word", back_populates="review_items")
+    session = relationship("StudySession", back_populates="review_items") 

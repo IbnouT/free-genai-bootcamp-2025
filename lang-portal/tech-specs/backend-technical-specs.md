@@ -64,6 +64,8 @@ erDiagram
         int id PK
         string name
         string url
+        string description
+        string image_url
     }
     StudySession ||--o{ WordReviewItem : "contains"
     StudySession {
@@ -108,6 +110,8 @@ We will use **SQLAlchemy** (with SQLite) for our ORM. Below are the main entitie
 - **id** (PK, auto-increment)  
 - **name** (String, required) – e.g., "Flashcards"  
 - **url** (String, required) – the relative or absolute URL for the activity
+- **description** (String, required) - Detailed description of the activity
+- **image_url** (String, required) - Path to the activity's illustration image
 
 ### 3.6 StudySession
 - **id** (PK, auto-increment)  
@@ -327,13 +331,82 @@ Retrieves detailed information about a specific group and its words in the speci
   ```
 
 ### 4.4 Study Activities
-- **GET /study_activities**  
-  - Returns a list of all activities (id, name, url)  
-- **GET /study_activities/:id**  
-  - Detail if needed (e.g., references to past sessions)
+
+#### GET /study-activities
+Retrieves a list of all available study activities.
+
+**Response Format:**
+```json
+{
+    "items": [
+        {
+            "id": 1,
+            "name": "Typing Tutor",
+            "url": "/study/typing",
+            "description": "Practice typing words in their original script",
+            "image_url": "/assets/typing-tutor.png"
+        },
+        {
+            "id": 2,
+            "name": "Flashcards",
+            "url": "/study/flashcards",
+            "description": "Review words using digital flashcards",
+            "image_url": "/assets/flashcards.png"
+        }
+    ]
+}
+```
+
+#### GET /study-activities/{activity_id}
+Retrieves detailed information about a specific study activity, including its sessions history.
+
+**Path Parameters:**
+- `activity_id` (required): Integer - The ID of the study activity
+
+**Query Parameters:**
+- `page` (optional): Page number for sessions list, default: 1
+- `per_page` (optional): Items per page for sessions list, default: 10
+- `sort_by` (optional): Field to sort sessions by (created_at, last_review_at, reviews_count)
+- `order` (optional): Sort order ("asc" or "desc"), default: "desc"
+
+**Response Format:**
+```json
+{
+    "id": 1,
+    "name": "Typing Tutor",
+    "url": "/study/typing",
+    "description": "Practice typing words in their original script",
+    "image_url": "/assets/typing-tutor.png",
+    "sessions": {
+        "total": 25,
+        "items": [
+            {
+                "id": 1,
+                "group": {
+                    "id": 1,
+                    "name": "Core Verbs"
+                },
+                "created_at": "2024-02-16T14:30:00Z",
+                "last_review_at": "2024-02-16T14:35:00Z",
+                "reviews_count": 20
+            }
+        ],
+        "page": 1,
+        "per_page": 10
+    }
+}
+```
+
+**Error Responses:**
+- 404: Activity not found
+  ```json
+  {
+      "detail": "Study activity with id {activity_id} not found"
+  }
+  ```
 
 ### 4.5 Study Sessions
-#### POST /study_sessions
+#### POST /study-sessions
 Creates a new study session.
 
 **Request Body:**
@@ -364,7 +437,7 @@ Creates a new study session.
 - 404: Group or Activity not found
 - 400: Invalid request body
 
-#### POST /study_sessions/{session_id}/reviews
+#### POST /study-sessions/{session_id}/reviews
 Records a word review result for the given study session.
 
 **Request Body:**
@@ -390,7 +463,7 @@ Records a word review result for the given study session.
 - 404: Session or Word not found
 - 400: Invalid request body
 
-#### GET /study_sessions
+#### GET /study-sessions
 Retrieves a paginated list of study sessions with their associated details.
 
 **Query Parameters:**
@@ -424,7 +497,7 @@ Retrieves a paginated list of study sessions with their associated details.
 }
 ```
 
-#### GET /study_sessions/{session_id}
+#### GET /study-sessions/{session_id}
 Retrieves detailed information about a specific study session, including its words and review results.
 
 **Path Parameters:**

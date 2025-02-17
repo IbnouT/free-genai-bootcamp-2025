@@ -125,21 +125,130 @@ frontend/
   - `GET /dashboard/last_study_session`
   - `GET /dashboard/quick_stats`
 
-### 4.2 Study Activities (URL: `/study-activities`)
-- Displays a **grid** or **list** of "ActivityCard" components:
-  - **Launch** button flow:
-    1. Shows modal/dialog for group selection
-    2. On confirm, calls `POST /study_sessions` with:
-       ```json
-       {
-         "group_id": selected_group_id,
-         "study_activity_id": current_activity_id
-       }
-       ```
-    3. On success, redirects to activity URL with new session_id
-  - **View** button → goes to `/study-activities/:id`, showing the activity detail or history.
-- **Data** from:  
-  - `GET /study_activities`
+### 4.2 Study Activities
+
+#### Study Activities List Page (URL: `/study-activities`)
+- Material UI Grid layout showing activity cards
+- Each **ActivityCard** component contains:
+  - Activity name in header
+  - Activity illustration/image
+  - Two buttons:
+    - **Launch** button: Starts a new study session
+    - **View** button: Opens activity details page
+- Features:
+  - Responsive grid layout (1-3 columns based on screen size)
+  - Consistent card heights
+  - Loading states while fetching activities
+  - Error handling with user-friendly messages
+- **Data** from:
+  - `GET /study-activities`
+
+#### Study Activity Details Page (URL: `/study-activities/{activity_id}`)
+- Header section:
+  - Large activity card showing:
+    - Activity name (larger typography)
+    - Activity illustration/image
+    - Activity description
+    - Launch button
+- Sessions section:
+  - Material UI DataGrid/Table showing:
+    - Study Session ID
+    - Group Name (clickable link to `/groups/{group_id}`)
+    - Start Time (formatted datetime)
+    - Last Review Time (formatted datetime)
+    - Reviews Count
+  - Features:
+    - Pagination controls
+    - Sorting by any column
+    - Column headers with sort indicators
+    - Time formatting using consistent format
+    - Reviews count displayed as badge/numeric indicator
+- **Data** from:
+  - `GET /study-activities/{activity_id}`
+
+#### UI Components
+
+1. **ActivityCard**:
+   ```tsx
+   interface ActivityCardProps {
+     id: number;
+     name: string;
+     imageUrl: string;
+     description: string;
+     onLaunch: () => void;
+     onView: () => void;
+   }
+   ```
+   - Material UI Card component
+   - Image displayed at top
+   - Name and description in content area
+   - Action buttons in card actions area
+
+2. **GroupSelectionDialog**:
+   ```tsx
+   interface GroupSelectionDialogProps {
+     open: boolean;
+     onClose: () => void;
+     onConfirm: (groupId: number) => void;
+   }
+   ```
+   - Material UI Dialog
+   - List of available groups
+   - Search/filter functionality
+   - Confirm/Cancel buttons
+
+3. **SessionsTable**:
+   ```tsx
+   interface SessionsTableProps {
+     sessions: Array<{
+       id: number;
+       group: {
+         id: number;
+         name: string;
+       };
+       createdAt: string;
+       lastReviewAt: string;
+       reviewsCount: number;
+     }>;
+     page: number;
+     perPage: number;
+     total: number;
+     onPageChange: (page: number) => void;
+     onSortChange: (field: string, order: 'asc' | 'desc') => void;
+   }
+   ```
+   - Material UI DataGrid
+   - Clickable group names
+   - Formatted timestamps
+   - Sortable columns
+
+#### Data Flow
+1. Activities List:
+   - Fetches from `GET /study-activities`
+   - Displays loading state while fetching
+   - Renders grid of ActivityCard components
+   - Handles Launch/View button clicks
+
+2. Activity Details:
+   - Fetches from `GET /study-activities/{activity_id}`
+   - Updates URL with query params for sessions list
+   - Handles loading and error states
+   - Updates sessions list when pagination/sorting changes
+
+3. Launch Flow:
+   1. User clicks Launch button
+   2. Opens GroupSelectionDialog
+   3. On group selection:
+      - Creates new session via `POST /study-sessions`
+      - Shows loading state during creation
+      - On success, redirects to activity URL
+      - On error, shows error message
+
+#### Error Handling
+- Network errors during data fetching
+- Failed session creation
+- Invalid activity or group IDs
+- Session timeout scenarios
 
 ### 4.3 Words (URL: `/words`)
 - A table showing:
@@ -274,7 +383,7 @@ Features:
    - Allows searching/filtering groups
    - Displays selected group's details
 3. On group selection and confirmation:
-   - Calls `POST /study_sessions`
+   - Calls `POST /study-sessions`
    - Shows loading state during creation
    - On success, redirects to activity URL
    - On error, shows error message in dialog
@@ -282,7 +391,7 @@ Features:
 #### During Study Session:
 1. For each word review:
    - User interacts with word (specific to activity type)
-   - On completion, calls `POST /study_sessions/{session_id}/reviews`:
+   - On completion, calls `POST /study-sessions/{session_id}/reviews`:
      ```json
      {
        "word_id": current_word_id,

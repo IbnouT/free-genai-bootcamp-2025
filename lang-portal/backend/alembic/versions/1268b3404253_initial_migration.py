@@ -1,8 +1,8 @@
-"""create initial tables
+"""initial migration
 
-Revision ID: a2423aa02107
+Revision ID: 1268b3404253
 Revises: 
-Create Date: 2025-02-14 20:48:44.673787
+Create Date: 2025-02-17 17:29:14.931284
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'a2423aa02107'
+revision: str = '1268b3404253'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -23,35 +23,44 @@ def upgrade() -> None:
     op.create_table('groups',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('words_count', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_groups_id'), 'groups', ['id'], unique=False)
+    op.create_table('languages',
+    sa.Column('code', sa.String(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('active', sa.Boolean(), nullable=True),
+    sa.Column('promo_text', sa.String(), nullable=True),
+    sa.PrimaryKeyConstraint('code')
+    )
     op.create_table('study_activities',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('url', sa.String(), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('image_url', sa.String(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_study_activities_id'), 'study_activities', ['id'], unique=False)
-    op.create_table('words',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('script', sa.String(), nullable=False),
-    sa.Column('transliteration', sa.String(), nullable=True),
-    sa.Column('meaning', sa.String(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_words_id'), 'words', ['id'], unique=False)
     op.create_table('study_sessions',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('group_id', sa.Integer(), nullable=True),
-    sa.Column('study_activity_id', sa.Integer(), nullable=True),
+    sa.Column('group_id', sa.Integer(), nullable=False),
+    sa.Column('study_activity_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.ForeignKeyConstraint(['group_id'], ['groups.id'], ),
     sa.ForeignKeyConstraint(['study_activity_id'], ['study_activities.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_study_sessions_id'), 'study_sessions', ['id'], unique=False)
+    op.create_table('words',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('script', sa.String(), nullable=False),
+    sa.Column('transliteration', sa.String(), nullable=True),
+    sa.Column('meaning', sa.String(), nullable=False),
+    sa.Column('language_code', sa.String(), nullable=False),
+    sa.ForeignKeyConstraint(['language_code'], ['languages.code'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('word_groups',
     sa.Column('word_id', sa.Integer(), nullable=False),
     sa.Column('group_id', sa.Integer(), nullable=False),
@@ -78,12 +87,12 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_word_review_items_id'), table_name='word_review_items')
     op.drop_table('word_review_items')
     op.drop_table('word_groups')
+    op.drop_table('words')
     op.drop_index(op.f('ix_study_sessions_id'), table_name='study_sessions')
     op.drop_table('study_sessions')
-    op.drop_index(op.f('ix_words_id'), table_name='words')
-    op.drop_table('words')
     op.drop_index(op.f('ix_study_activities_id'), table_name='study_activities')
     op.drop_table('study_activities')
+    op.drop_table('languages')
     op.drop_index(op.f('ix_groups_id'), table_name='groups')
     op.drop_table('groups')
     # ### end Alembic commands ###
