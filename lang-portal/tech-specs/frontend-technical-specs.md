@@ -118,12 +118,125 @@ frontend/
 ## 4. Pages (Detailed)
 
 ### 4.1 Dashboard (URL: `/dashboard`)
-- **LastSessionCard**: Shows the user's most recent study session (activity name, group, correct vs. wrong, date).  
-- **QuickStatsCard**: Overall success rate, total words studied, mastery percentage, daily streak (if implemented).  
-- **Start Studying** button: Navigates to `/study-activities`.  
-- **Data** from:
-  - `GET /dashboard/last_study_session`
-  - `GET /dashboard/quick_stats`
+
+The dashboard provides a comprehensive overview of the user's learning progress in the selected language context.
+
+#### Components
+
+1. **LastSessionCard**
+   - Shows details of the most recent study session
+   - Displays:
+     - Activity name
+     - Group name (with link to group details)
+     - Date of session
+     - Performance metrics (correct vs. wrong counts)
+   - Material UI Card with clear visual hierarchy
+   - Loading state while fetching data
+   - "No sessions yet" state for new users
+   - **Data** from: `GET /dashboard/last-study-session`
+
+2. **StudyProgressCard**
+   - Shows progress over the last month
+   - Displays:
+     - Words studied count
+     - Total words count (from active groups)
+     - Progress percentage
+   - Features:
+     - Material UI LinearProgress for visual representation
+     - Percentage displayed prominently
+     - Tooltip explaining the calculation
+   - **Data** from: `GET /dashboard/study-progress`
+
+3. **QuickStatsCard**
+   - Grid layout of key statistics
+   - Displays:
+     - Success rate (percentage)
+     - Study sessions count
+     - Active groups count
+     - Study streak information
+   - Features:
+     - Material UI Grid with 2x2 layout
+     - Each stat in its own card with icon
+     - Streak displayed with calendar-style icon
+     - Tooltips explaining each metric
+   - **Data** from: `GET /dashboard/quick-stats`
+
+4. **Start Studying Button**
+   - Prominent CTA button
+   - Navigates to `/study-activities`
+   - Disabled if no groups available
+
+#### TypeScript Interfaces
+
+```typescript
+interface LastSession {
+  activity_name: string;
+  date: string;
+  stats: {
+    correct_count: number;
+    wrong_count: number;
+  };
+  group: {
+    id: number;
+    name: string;
+  };
+}
+
+interface StudyProgress {
+  words_studied: number;
+  total_words: number;
+  progress_percentage: number;
+}
+
+interface QuickStats {
+  success_rate: number;
+  study_sessions_count: number;
+  active_groups_count: number;
+  study_streak: {
+    days: number;
+    last_study_date: string;
+  };
+}
+```
+
+#### Data Flow
+1. On component mount:
+   - Fetch all dashboard data concurrently
+   - Show loading states while fetching
+   - Handle errors gracefully with error boundaries
+   - Refresh data periodically (e.g., every 5 minutes)
+
+2. Error States:
+   - Network errors: Show retry button
+   - No data: Show appropriate empty states
+   - Loading: Show skeletons for each card
+
+3. Language Context:
+   - All API calls include current language
+   - Dashboard updates when language changes
+   - Clear data when switching languages
+
+#### UI/UX Considerations
+1. Loading States:
+   - Skeleton loaders for each card
+   - Maintain layout during loading
+   - Smooth transitions when data arrives
+
+2. Error States:
+   - User-friendly error messages
+   - Retry buttons where appropriate
+   - Fallback UI for missing data
+
+3. Responsive Design:
+   - Cards stack on mobile
+   - Maintain readability at all breakpoints
+   - Touch-friendly interactions
+
+4. Accessibility:
+   - ARIA labels for statistics
+   - Keyboard navigation
+   - High contrast mode support
+   - Screen reader friendly content
 
 ### 4.2 Study Activities
 
@@ -132,16 +245,18 @@ frontend/
 - Each **ActivityCard** component contains:
   - Activity name in header
   - Activity illustration/image
+  - Activity description
   - Two buttons:
-    - **Launch** button: Starts a new study session
+    - **Launch** button: Opens group selection dialog
     - **View** button: Opens activity details page
 - Features:
   - Responsive grid layout (1-3 columns based on screen size)
   - Consistent card heights
   - Loading states while fetching activities
   - Error handling with user-friendly messages
+  - Language-aware filtering (shows both universal and language-specific activities)
 - **Data** from:
-  - `GET /study-activities`
+  - `GET /study-activities?language_code={code}`
 
 #### Study Activity Details Page (URL: `/study-activities/{activity_id}`)
 - Header section:
@@ -149,7 +264,7 @@ frontend/
     - Activity name (larger typography)
     - Activity illustration/image
     - Activity description
-    - Launch button
+    - Launch button (opens group selection)
 - Sessions section:
   - Material UI DataGrid/Table showing:
     - Study Session ID
@@ -159,12 +274,13 @@ frontend/
     - Reviews Count
   - Features:
     - Pagination controls
-    - Sorting by any column
+    - Sorting by any column (created_at, last_review_at, reviews_count)
+    - Sort order controls (asc/desc)
     - Column headers with sort indicators
     - Time formatting using consistent format
     - Reviews count displayed as badge/numeric indicator
 - **Data** from:
-  - `GET /study-activities/{activity_id}`
+  - `GET /study-activities/{activity_id}?language_code={code}`
 
 #### UI Components
 
@@ -173,8 +289,8 @@ frontend/
    interface ActivityCardProps {
      id: number;
      name: string;
-     imageUrl: string;
      description: string;
+     imageUrl: string;
      onLaunch: () => void;
      onView: () => void;
    }
@@ -190,11 +306,18 @@ frontend/
      open: boolean;
      onClose: () => void;
      onConfirm: (groupId: number) => void;
+     groups: Array<{
+       id: number;
+       name: string;
+       words_count: number;
+     }>;
+     loading: boolean;
    }
    ```
    - Material UI Dialog
-   - List of available groups
+   - List of available groups with word counts
    - Search/filter functionality
+   - Loading state while fetching groups
    - Confirm/Cancel buttons
 
 3. **SessionsTable**:
@@ -206,9 +329,9 @@ frontend/
          id: number;
          name: string;
        };
-       createdAt: string;
-       lastReviewAt: string;
-       reviewsCount: number;
+       created_at: string;
+       last_review_at: string;
+       reviews_count: number;
      }>;
      page: number;
      perPage: number;
@@ -221,16 +344,17 @@ frontend/
    - Clickable group names
    - Formatted timestamps
    - Sortable columns
+   - Pagination controls
 
 #### Data Flow
 1. Activities List:
-   - Fetches from `GET /study-activities`
+   - Fetches from `GET /study-activities?language_code={code}`
    - Displays loading state while fetching
    - Renders grid of ActivityCard components
    - Handles Launch/View button clicks
 
 2. Activity Details:
-   - Fetches from `GET /study-activities/{activity_id}`
+   - Fetches from `GET /study-activities/{activity_id}?language_code={code}`
    - Updates URL with query params for sessions list
    - Handles loading and error states
    - Updates sessions list when pagination/sorting changes
@@ -242,188 +366,438 @@ frontend/
       - Creates new session via `POST /study-sessions`
       - Shows loading state during creation
       - On success, redirects to activity URL
-      - On error, shows error message
+      - On error, shows error message in dialog
 
 #### Error Handling
 - Network errors during data fetching
 - Failed session creation
 - Invalid activity or group IDs
 - Session timeout scenarios
+- User-friendly error messages with retry options
 
-### 4.3 Words (URL: `/words`)
-- A table showing:
-  - **script**, **transliteration**, **meaning**, **correct_count**, **wrong_count**.
-- Paginated & sortable (via query params `?page=1&sort_by=script&order=asc`, etc.).
-- **Data** from:  
-  - `GET /words`
+#### Language Context Integration
+- All API calls include current language code
+- Activities filtered based on language support
+- Group selection filtered by language
+- Session history specific to language
 
-### 4.4 Groups (URL: `/groups`)
-- Table or list of groups, each showing:
-  - **name**, **words_count**.
-- Clicking a group → `/groups/:id`, listing the words in that group (similar to `/words`, but filtered) for the current language in context.
-- Possibly a **Start Study Session** button to begin a session for that group.
+### 4.3 Words
+
+#### Words List Page (URL: `/words`)
+- Material UI DataGrid/Table component showing:
+  - Original script
+  - Transliteration (if available)
+  - English meaning
+  - Correct count (from review history)
+  - Wrong count (from review history)
+- Features:
+  - Pagination controls
+  - Sorting by any column (script, transliteration, meaning, correct_count, wrong_count)
+  - Sort order controls (asc/desc)
+  - Column headers with sort indicators
+  - Current language displayed in header
+  - All words filtered by selected language
+  - Loading states while fetching data
+  - Error handling with user-friendly messages
+- **Data** from:
+  - `GET /words?language_code={code}&page={page}&per_page={per_page}&sort_by={field}&order={order}`
+
+#### Word Details Page (URL: `/words/{word_id}`)
+- Header section:
+  - Word in original script (large typography)
+  - Transliteration (if available)
+  - English meaning
+  - Performance metrics:
+    - Correct count
+    - Wrong count
+    - Success rate percentage
+- Groups section:
+  - List of groups containing this word
+  - Each group entry shows:
+    - Group name (clickable link to `/groups/{group_id}`)
+    - Word count in group
+  - Material UI List/Grid component
+- **Data** from:
+  - `GET /words/{word_id}`
+
+#### UI Components
+
+1. **WordsTable**:
+   ```tsx
+   interface WordsTableProps {
+     words: Array<{
+       id: number;
+       script: string;
+       transliteration: string | null;
+       meaning: string;
+       correct_count: number;
+       wrong_count: number;
+     }>;
+     page: number;
+     perPage: number;
+     total: number;
+     sortBy: string;
+     order: 'asc' | 'desc';
+     onPageChange: (page: number) => void;
+     onSortChange: (field: string, order: 'asc' | 'desc') => void;
+     loading: boolean;
+   }
+   ```
+   - Material UI DataGrid
+   - Sortable columns with indicators
+   - Pagination controls
+   - Loading state
+
+2. **WordDetailsCard**:
+   ```tsx
+   interface WordDetailsProps {
+     word: {
+       id: number;
+       script: string;
+       transliteration: string | null;
+       meaning: string;
+       correct_count: number;
+       wrong_count: number;
+       groups: Array<{
+         id: number;
+         name: string;
+         words_count: number;
+       }>;
+     };
+     loading: boolean;
+   }
+   ```
+   - Material UI Card
+   - Performance metrics display
+   - Groups list with links
+   - Loading state
+
+#### Data Flow
+1. Words List:
+   - Fetches from `GET /words` with query parameters
+   - Updates URL with pagination/sorting params
+   - Handles loading and error states
+   - Updates table when filters change
+
+2. Word Details:
+   - Fetches from `GET /words/{word_id}`
+   - Shows loading state while fetching
+   - Displays error messages on failure
+   - Updates when word ID changes
+
+#### Error Handling
+- Network errors during data fetching
+- Invalid word IDs
+- Missing language context
+- Empty results handling
+- User-friendly error messages with retry options
+
+#### Language Context Integration
+- All API calls include current language code
+- Words filtered by selected language
+- Performance metrics specific to language context
+- Groups list filtered by language
+
+### 4.4 Groups
 
 #### Groups List Page (URL: `/groups`)
 - Material UI DataGrid/Table showing groups for current language:
-  - Group Name (clickable)
-  - Word Count (computed from relationship)
+  - Group Name (clickable link to details)
+  - Word Count
 - Features:
   - Pagination controls
   - Sorting by name or word count
+  - Sort order controls (asc/desc)
   - Column headers with sort indicators
   - Filtered by current language context
+  - Loading states while fetching data
+  - Error handling with user-friendly messages
+- **Data** from:
+  - `GET /groups?language_code={code}&page={page}&per_page={per_page}&sort_by={field}&order={order}`
 
-#### Group Details Page (URL: `/groups/:id`)
+#### Group Details Page (URL: `/groups/{group_id}`)
 - Header section:
-  - Group name
+  - Group name (large typography)
   - Total word count
-- Words table for the language in context (Material UI DataGrid) showing:
-  - Script (clickable, opens word details)
-  - Transliteration
-  - Meaning
-  - Correct Count
-  - Wrong Count
-- Features:
-  - Pagination for words list
-  - Sorting on all columns
-  - Click on word script opens Word Details page
-  - Start Study Session button
-
-**Data Flow:**
-1. Groups List:
-   - Fetches from `GET /groups` with language_code and sort/pagination
-   - Updates URL with query params for sorting/pagination
-2. Group Details:
-   - Fetches from `GET /groups/{id}` with word list params
-   - Clicking word navigates to `/words/{id}`
-
-**Data** from:  
-- `GET /groups`
-- `GET /groups/:id`
-
-### 4.9 Study Sessions Page (URL: `/sessions`)
-Material UI DataGrid/Table showing:
-- Header section with:
-  - Column headers with sort indicators:
-    - Study Session ID (numeric)
-    - Activity Name (clickable link to `/activities/:id`)
-    - Group Name (clickable link to `/groups/:id`)
-    - Start Time (formatted datetime)
-    - Last Review Time (formatted datetime)
-    - Reviews Count (number of WordReviewItems)
-
-Features:
-- Pagination controls
-- Sorting by any column
-- Column headers with sort indicators
-- Clicking on activity/group names navigates to respective detail pages
-- Time formatting using a consistent format (e.g., "Feb 16, 2024 14:30")
-- Reviews count displayed as a badge or numeric indicator
-
-### 4.10 Study Session Details Page (URL: `/sessions/:id`)
-Header section showing:
-- Study Session ID
-- Activity Name (clickable link to `/activities/:id`)
-- Group Name (clickable link to `/groups/:id`)
-- Start Time (formatted datetime)
-- Last Review Time (formatted datetime)
-- Total Reviews Count (total WordReviewItems)
-
-Words section showing:
-- Material UI DataGrid/Table with:
-  - Columns:
-    - Word Script (clickable link to `/words/:id`) - opens word details in new view
+  - Start Study Session button (opens activity selection)
+- Words table for the language in context:
+  - Material UI DataGrid showing:
+    - Script (clickable, opens word details)
     - Transliteration (if available)
     - Meaning
-    - Correct Count (from WordReviewItems for this session)
-    - Wrong Count (from WordReviewItems for this session)
+    - Correct Count
+    - Wrong Count
+  - Features:
+    - Pagination for words list
+    - Sorting on all columns
+    - Sort order controls
+    - Loading states
+    - Error handling
+- **Data** from:
+  - `GET /groups/{group_id}?language_code={code}&page={page}&per_page={per_page}&sort_by={field}&order={order}`
 
-Features:
-- Pagination for words list
-- Sorting by any column
-- Column headers with sort indicators
-- Navigation links to related entities
-- Consistent time formatting
-- Clear visual hierarchy between header and words list
-- Loading states while fetching data
-- Error handling with user-friendly messages
+#### UI Components
 
-**Data Flow:**
-1. Sessions List:
-   - Fetches from `GET /study_sessions` with pagination/sorting
-   - Updates URL with query params
-   - Formats dates using consistent datetime formatter
-   - Updates when sorting/filtering changes
-2. Session Details:
-   - Fetches from `GET /study_sessions/:id` with words pagination/sorting
-   - Updates URL with query params for words list
+1. **GroupsTable**:
+   ```tsx
+   interface GroupsTableProps {
+     groups: Array<{
+       id: number;
+       name: string;
+       words_count: number;
+     }>;
+     page: number;
+     perPage: number;
+     total: number;
+     sortBy: string;
+     order: 'asc' | 'desc';
+     onPageChange: (page: number) => void;
+     onSortChange: (field: string, order: 'asc' | 'desc') => void;
+     loading: boolean;
+   }
+   ```
+   - Material UI DataGrid
+   - Sortable columns with indicators
+   - Pagination controls
+   - Loading state
+
+2. **GroupDetailsHeader**:
+   ```tsx
+   interface GroupDetailsHeaderProps {
+     group: {
+       id: number;
+       name: string;
+       words_count: number;
+     };
+     onStartStudy: () => void;
+     loading: boolean;
+   }
+   ```
+   - Material UI Card/Paper
+   - Action buttons
+   - Loading state
+
+3. **GroupWordsTable**:
+   ```tsx
+   interface GroupWordsTableProps {
+     words: Array<{
+       id: number;
+       script: string;
+       transliteration: string | null;
+       meaning: string;
+       correct_count: number;
+       wrong_count: number;
+     }>;
+     page: number;
+     perPage: number;
+     total: number;
+     sortBy: string;
+     order: 'asc' | 'desc';
+     onPageChange: (page: number) => void;
+     onSortChange: (field: string, order: 'asc' | 'desc') => void;
+     onWordClick: (wordId: number) => void;
+     loading: boolean;
+   }
+   ```
+   - Material UI DataGrid
+   - Sortable columns
+   - Pagination
+   - Loading state
+   - Word click handler
+
+#### Data Flow
+1. Groups List:
+   - Fetches from `GET /groups` with query parameters
+   - Updates URL with pagination/sorting params
    - Handles loading and error states
+   - Updates table when filters change
+
+2. Group Details:
+   - Fetches from `GET /groups/{group_id}` with query parameters
+   - Updates URL with words list params
+   - Shows loading states while fetching
    - Updates word list when pagination/sorting changes
 
-**UI Components:**
-1. SessionsTable:
-   - Uses Material UI DataGrid
-   - Handles sorting and pagination
-   - Formats dates and counts
-   - Renders clickable links
-2. SessionHeader:
-   - Displays session metadata
-   - Contains navigation links
-3. WordsTable:
-   - Uses Material UI DataGrid
-   - Handles word list pagination
-   - Shows loading states
-   - Renders clickable word links
+3. Study Session Flow:
+   1. User clicks "Start Study Session"
+   2. Opens activity selection dialog
+   3. On activity selection:
+      - Creates new session via `POST /study-sessions`
+      - Shows loading state during creation
+      - On success, redirects to activity URL
+      - On error, shows error message in dialog
 
-### 4.11 Study Activity Flow
-#### Starting a Study Session:
-1. User clicks "Launch" on an activity
-2. GroupSelectionDialog opens:
-   - Shows list of groups with word counts
-   - Allows searching/filtering groups
-   - Displays selected group's details
-3. On group selection and confirmation:
-   - Calls `POST /study-sessions`
-   - Shows loading state during creation
-   - On success, redirects to activity URL
-   - On error, shows error message in dialog
+#### Error Handling
+- Network errors during data fetching
+- Invalid group IDs
+- Missing language context
+- Empty results handling
+- Failed session creation
+- User-friendly error messages with retry options
 
-#### During Study Session:
-1. For each word review:
-   - User interacts with word (specific to activity type)
-   - On completion, calls `POST /study-sessions/{session_id}/reviews`:
-     ```json
-     {
-       "word_id": current_word_id,
-       "correct": boolean_result
-     }
-     ```
-   - Shows success/error feedback
-   - Updates progress indicators
+#### Language Context Integration
+- All API calls include current language code
+- Groups filtered by selected language
+- Words list filtered by language context
+- Performance metrics specific to language
 
-#### UI Components:
-1. GroupSelectionDialog:
-   - Material UI Dialog
-   - Search/filter input
-   - Groups list with selection
-   - Confirm/Cancel buttons
+### 4.5 Study Sessions
+
+#### Study Sessions List Page (URL: `/study-sessions`)
+- Material UI DataGrid/Table showing:
+  - Study Session ID
+  - Activity Name (clickable link to `/study-activities/{id}`)
+  - Group Name (clickable link to `/groups/{id}`)
+  - Start Time (formatted datetime)
+  - Last Review Time (formatted datetime)
+  - Reviews Count
+- Features:
+  - Pagination controls
+  - Sorting by any column (created_at, last_review_at, reviews_count)
+  - Sort order controls (asc/desc)
+  - Column headers with sort indicators
+  - Time formatting using consistent format
+  - Reviews count displayed as badge/numeric indicator
+  - Loading states while fetching data
+  - Error handling with user-friendly messages
+- **Data** from:
+  - `GET /study-sessions?language_code={code}&page={page}&per_page={per_page}&sort_by={field}&order={order}`
+
+#### Study Session Details Page (URL: `/study-sessions/{session_id}`)
+- Header section:
+  - Study Session ID
+  - Activity Name (clickable link to `/study-activities/{id}`)
+  - Group Name (clickable link to `/groups/{id}`)
+  - Start Time (formatted datetime)
+  - Last Review Time (formatted datetime)
+  - Total Reviews Count
+- Words section:
+  - Material UI DataGrid/Table showing:
+    - Word Script (clickable link to `/words/{id}`)
+    - Transliteration (if available)
+    - Meaning
+    - Correct Count (from this session)
+    - Wrong Count (from this session)
+  - Features:
+    - Pagination controls
+    - Sorting by any column
+    - Sort order controls
+    - Loading states
+    - Error handling
+- **Data** from:
+  - `GET /study-sessions/{session_id}`
+
+#### UI Components
+
+1. **SessionsTable**:
+   ```tsx
+   interface SessionsTableProps {
+     sessions: Array<{
+       id: number;
+       activity: {
+         id: number;
+         name: string;
+       };
+       group: {
+         id: number;
+         name: string;
+       };
+       created_at: string;
+       last_review_at: string;
+       reviews_count: number;
+     }>;
+     page: number;
+     perPage: number;
+     total: number;
+     sortBy: string;
+     order: 'asc' | 'desc';
+     onPageChange: (page: number) => void;
+     onSortChange: (field: string, order: 'asc' | 'desc') => void;
+     loading: boolean;
+   }
+   ```
+   - Material UI DataGrid
+   - Sortable columns with indicators
+   - Pagination controls
    - Loading state
-2. StudyProgress:
-   - Shows current word count
-   - Displays success rate
-   - Indicates session duration
 
-#### Error Handling:
-- Network errors during session creation
-- Failed word review submissions
-- Invalid group selections
-- Session timeout scenarios
+2. **SessionDetailsHeader**:
+   ```tsx
+   interface SessionDetailsHeaderProps {
+     session: {
+       id: number;
+       activity: {
+         id: number;
+         name: string;
+       };
+       group: {
+         id: number;
+         name: string;
+       };
+       created_at: string;
+       last_review_at: string;
+       reviews_count: number;
+     };
+     loading: boolean;
+   }
+   ```
+   - Material UI Card/Paper
+   - Formatted timestamps
+   - Loading state
 
----
+3. **SessionWordsTable**:
+   ```tsx
+   interface SessionWordsTableProps {
+     words: Array<{
+       id: number;
+       script: string;
+       transliteration: string | null;
+       meaning: string;
+       correct_count: number;
+       wrong_count: number;
+     }>;
+     page: number;
+     perPage: number;
+     total: number;
+     sortBy: string;
+     order: 'asc' | 'desc';
+     onPageChange: (page: number) => void;
+     onSortChange: (field: string, order: 'asc' | 'desc') => void;
+     onWordClick: (wordId: number) => void;
+     loading: boolean;
+   }
+   ```
+   - Material UI DataGrid
+   - Sortable columns
+   - Pagination
+   - Loading state
+   - Word click handler
 
-**Data** from:  
-- `GET /sessions`
-- `GET /sessions/:id`
+#### Data Flow
+1. Sessions List:
+   - Fetches from `GET /study-sessions` with query parameters
+   - Updates URL with pagination/sorting params
+   - Handles loading and error states
+   - Updates table when filters change
+
+2. Session Details:
+   - Fetches from `GET /study-sessions/{session_id}`
+   - Shows loading states while fetching
+   - Updates word list when pagination/sorting changes
+   - Handles navigation to related entities
+
+#### Error Handling
+- Network errors during data fetching
+- Invalid session IDs
+- Missing language context
+- Empty results handling
+- User-friendly error messages with retry options
+
+#### Language Context Integration
+- All API calls include current language code
+- Sessions filtered by selected language
+- Word details specific to language context
+- Performance metrics language-aware
 
 ### 4.6 Settings (URL: `/settings`)
 - **Theme** toggle (Light / Dark / System).
@@ -447,8 +821,6 @@ Features:
   - Sorting by any column
   - Current language displayed in header
   - All words filtered by selected language
-
-
 
 ## 5. Implementation Details
 
