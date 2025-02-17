@@ -4,13 +4,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Get the absolute path to the backend directory
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 Base = declarative_base()
 
 # Production database
 def get_db_url():
-    db_path = BASE_DIR / "app.db"
+    db_path = BASE_DIR / "app" / "app.db"
     return f"sqlite:///{db_path}"
 
 def get_test_db_url():

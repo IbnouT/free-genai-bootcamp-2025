@@ -44,12 +44,20 @@ def get_words(
     # Apply pagination
     results = query.offset((page - 1) * per_page).limit(per_page).all()
     
-    # Convert results to Word objects with counts
+    # Convert results to Word objects with stats
     items = []
     for word, correct, wrong in results:
-        word.correct_count = correct
-        word.wrong_count = wrong
-        items.append(word)
+        word_dict = {
+            "id": word.id,
+            "script": word.script,
+            "transliteration": word.transliteration,
+            "meaning": word.meaning,
+            "stats": {
+                "correct_count": correct,
+                "wrong_count": wrong
+            }
+        }
+        items.append(word_dict)
     
     return {
         "total": total,
@@ -90,7 +98,6 @@ def get_word(
         "script": word.script,
         "transliteration": word.transliteration,
         "meaning": word.meaning,
-        "language_code": word.language_code,
         "stats": {
             "correct_count": correct_count,
             "wrong_count": wrong_count

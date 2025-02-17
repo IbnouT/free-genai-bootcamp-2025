@@ -65,7 +65,7 @@ def test_transliteration_is_optional(db_session):
 def test_word_group_relationship(db_session):
     language = create_test_language(db_session)
     word = Word(script="食べる", meaning="to eat", language_code=language.code)
-    group = Group(name="Verbs")
+    group = Group(name="Verbs", language_code=language.code)
     
     db_session.add(word)
     db_session.add(group)
@@ -82,7 +82,7 @@ def test_word_group_relationship(db_session):
 def test_word_group_join_table(db_session):
     language = create_test_language(db_session)
     word = Word(script="食べる", meaning="to eat", language_code=language.code)
-    group = Group(name="Verbs")
+    group = Group(name="Verbs", language_code=language.code)
     
     db_session.add(word)
     db_session.add(group)
@@ -102,27 +102,43 @@ def test_word_group_join_table(db_session):
     assert word_group.group_id == group.id
 
 def test_group_creation(db_session):
-    group = Group(name="Verbs")
+    language = create_test_language(db_session)
+    group = Group(name="Verbs", language_code=language.code)
     db_session.add(group)
     db_session.commit()
     
     assert group.id is not None
     assert group.name == "Verbs"
+    assert group.language_code == language.code
 
 def test_study_activity_creation(db_session):
     activity = StudyActivity(
         name="Flashcards",
-        url="/activities/flashcards"
+        url="/activities/flashcards",
+        description="Practice vocabulary with interactive flashcards",
+        image_url="/static/images/activities/flashcards.svg",
+        is_language_specific=False
     )
     db_session.add(activity)
     db_session.commit()
     
     assert activity.id is not None
     assert activity.name == "Flashcards"
+    assert activity.url == "/activities/flashcards"
+    assert activity.description == "Practice vocabulary with interactive flashcards"
+    assert activity.image_url == "/static/images/activities/flashcards.svg"
+    assert activity.is_language_specific is False
 
 def test_study_session_creation(db_session):
-    group = Group(name="Verbs")
-    activity = StudyActivity(name="Flashcards", url="/activities/flashcards")
+    language = create_test_language(db_session)
+    group = Group(name="Verbs", language_code=language.code)
+    activity = StudyActivity(
+        name="Flashcards",
+        url="/activities/flashcards",
+        description="Practice vocabulary with interactive flashcards",
+        image_url="/static/images/activities/flashcards.svg",
+        is_language_specific=False
+    )
     db_session.add_all([group, activity])
     db_session.commit()
     
@@ -135,12 +151,20 @@ def test_study_session_creation(db_session):
     
     assert session.id is not None
     assert session.created_at is not None
+    assert session.group_id == group.id
+    assert session.study_activity_id == activity.id
 
 def test_word_review_creation(db_session):
     language = create_test_language(db_session)
     word = Word(script="食べる", meaning="to eat", language_code=language.code)
-    group = Group(name="Verbs")
-    activity = StudyActivity(name="Flashcards", url="/activities/flashcards")
+    group = Group(name="Verbs", language_code=language.code)
+    activity = StudyActivity(
+        name="Flashcards",
+        url="/activities/flashcards",
+        description="Practice vocabulary with interactive flashcards",
+        image_url="/static/images/activities/flashcards.svg",
+        is_language_specific=False
+    )
     db_session.add_all([word, group, activity])
     db_session.commit()
     
@@ -159,6 +183,8 @@ def test_word_review_creation(db_session):
     assert review.id is not None
     assert review.correct is True
     assert review.created_at is not None
+    assert review.word_id == word.id
+    assert review.study_session_id == session.id
 
 def test_language_creation(db_session):
     language = Language(code="ja", name="Japanese")

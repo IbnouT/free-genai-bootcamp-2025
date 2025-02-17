@@ -29,7 +29,6 @@ async def lifespan(app: FastAPI):
     print("TESTING:", os.getenv("TESTING"))
     print("Using DB URL:", engine.url)
 
-    # engine, SessionLocal = setup_db(get_db_url())
     app.state.engine = engine
     app.state.SessionLocal = SessionLocal
 
@@ -38,7 +37,9 @@ async def lifespan(app: FastAPI):
     if settings.ENVIRONMENT == "development":
         with Session(engine) as db:
             if not db.query(Language).first():
-                seed_all(db)
+                print("No data found. Seeding database with test data...")
+                seed_all(db, include_test_data=True)
+                print("Database seeding completed!")
     yield
     engine.dispose()
 

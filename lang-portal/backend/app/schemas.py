@@ -6,12 +6,19 @@ class WordBase(BaseModel):
     script: str
     transliteration: Optional[str] = None
     meaning: str
-    language_code: str
 
-class Word(WordBase):
-    id: int
+class WordCreate(WordBase):
+    language_code: str  # Keep language_code for creation/requests
+
+class WordStats(BaseModel):
     correct_count: int = 0
     wrong_count: int = 0
+
+    model_config = ConfigDict(from_attributes=True)
+    
+class Word(WordBase):
+    id: int
+    stats: WordStats
     
     model_config = ConfigDict(from_attributes=True)
 
@@ -25,7 +32,7 @@ class LanguageBase(BaseModel):
     code: str
     name: str
     active: bool = True
-    promo_text: str | None = None
+    promo_text: Optional[str] = None
 
 class Language(LanguageBase):
     model_config = ConfigDict(from_attributes=True)
@@ -34,7 +41,7 @@ class GroupBase(BaseModel):
     name: str
 
 class GroupCreate(GroupBase):
-    pass
+    language_code: str  # Keep language_code for creation/requests
 
 class Group(GroupBase):
     id: int
@@ -47,12 +54,6 @@ class PaginatedGroups(BaseModel):
     items: List[Group]
     page: int
     per_page: int
-
-class WordStats(BaseModel):
-    correct_count: int
-    wrong_count: int
-
-    model_config = ConfigDict(from_attributes=True)
 
 class GroupInWord(BaseModel):
     id: int
@@ -72,9 +73,7 @@ class WordInGroup(BaseModel):
     script: str
     transliteration: Optional[str] = None
     meaning: str
-    language_code: str
-    correct_count: int
-    wrong_count: int
+    stats: WordStats
     
     model_config = ConfigDict(from_attributes=True)
 
@@ -85,7 +84,6 @@ class PaginatedGroupWords(BaseModel):
 
 class GroupDetail(GroupBase):
     id: int
-    # name: str
     words_count: int
     words: PaginatedGroupWords
     

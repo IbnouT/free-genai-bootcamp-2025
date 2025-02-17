@@ -430,8 +430,10 @@ interface QuickStats {
        script: string;
        transliteration: string | null;
        meaning: string;
-       correct_count: number;
-       wrong_count: number;
+       stats: {
+           correct_count: number;
+           wrong_count: number;
+       };
      }>;
      page: number;
      perPage: number;
@@ -456,8 +458,10 @@ interface QuickStats {
        script: string;
        transliteration: string | null;
        meaning: string;
-       correct_count: number;
-       wrong_count: number;
+       stats: {
+           correct_count: number;
+           wrong_count: number;
+       };
        groups: Array<{
          id: number;
          name: string;
@@ -534,7 +538,7 @@ interface QuickStats {
     - Loading states
     - Error handling
 - **Data** from:
-  - `GET /groups/{group_id}?language_code={code}&page={page}&per_page={per_page}&sort_by={field}&order={order}`
+  - `GET /groups/{group_id}?page={page}&per_page={per_page}&sort_by={field}&order={order}`
 
 #### UI Components
 
@@ -585,8 +589,10 @@ interface QuickStats {
        script: string;
        transliteration: string | null;
        meaning: string;
-       correct_count: number;
-       wrong_count: number;
+       stats: {
+          correct_count: number;
+          wrong_count: number;
+       };
      }>;
      page: number;
      perPage: number;
@@ -613,7 +619,7 @@ interface QuickStats {
    - Updates table when filters change
 
 2. Group Details:
-   - Fetches from `GET /groups/{group_id}` with query parameters
+   - Fetches from `GET /groups/{group_id}?page={page}&per_page={per_page}&sort_by={field}&order={order}`
    - Updates URL with words list params
    - Shows loading states while fetching
    - Updates word list when pagination/sorting changes
@@ -753,8 +759,10 @@ interface QuickStats {
        script: string;
        transliteration: string | null;
        meaning: string;
-       correct_count: number;
-       wrong_count: number;
+       stats: {
+          correct_count: number;
+          wrong_count: number;
+       };
      }>;
      page: number;
      perPage: number;

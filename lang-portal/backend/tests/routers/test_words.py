@@ -22,14 +22,17 @@ def test_get_words_pagination(client, db_session):
     db_session.commit()
 
     # Create a group first
-    group = Group(name="Core Verbs")
+    group = Group(name="Core Verbs", language_code="ja")
     db_session.add(group)
     db_session.commit()
 
     # Create a study activity
     study_activity = StudyActivity(
         name="Flashcards",
-        url="/activities/flashcards"  # Required field from specs
+        url="/activities/flashcards",
+        description="Practice vocabulary with interactive flashcards",
+        image_url="/static/images/activities/flashcards.svg",
+        is_language_specific=False
     )
     db_session.add(study_activity)
     db_session.commit()
@@ -64,8 +67,8 @@ def test_get_words_pagination(client, db_session):
     assert data["items"][0]["script"] == "食べる"
     assert data["items"][0]["transliteration"] == "taberu"
     assert data["items"][0]["meaning"] == "to eat"
-    assert data["items"][0]["correct_count"] == 2
-    assert data["items"][0]["wrong_count"] == 1
+    assert data["items"][0]["stats"]["correct_count"] == 2
+    assert data["items"][0]["stats"]["wrong_count"] == 1
 
     # Test second page
     response = client.get("/words?language_code=ja&page=2&per_page=2")
@@ -76,6 +79,7 @@ def test_get_words_pagination(client, db_session):
     assert len(data["items"]) == 1
 
 def test_get_words_sorting(client, db_session):
+    # Create test words
     words = [
         Word(script="citron", meaning="lemon", language_code="fr"),
         Word(script="pomme", meaning="apple", language_code="fr"),
@@ -85,14 +89,17 @@ def test_get_words_sorting(client, db_session):
     db_session.commit()
 
     # Create a group
-    group = Group(name="Fruits")
+    group = Group(name="Fruits", language_code="fr")
     db_session.add(group)
     db_session.commit()
 
     # Create a study activity
     study_activity = StudyActivity(
         name="Flashcards",
-        url="/activities/flashcards"  # Required field from specs
+        url="/activities/flashcards",
+        description="Practice vocabulary with interactive flashcards",
+        image_url="/static/images/activities/flashcards.svg",
+        is_language_specific=False
     )
     db_session.add(study_activity)
     db_session.commit()
@@ -129,12 +136,12 @@ def test_get_words_sorting(client, db_session):
     assert data["page"] == 1
     assert data["per_page"] == 10
     assert data["total"] == 3
-    assert data["items"][0]["correct_count"] == 2
-    assert data["items"][0]["wrong_count"] == 1
-    assert data["items"][1]["correct_count"] == 1
-    assert data["items"][1]["wrong_count"] == 1
-    assert data["items"][2]["correct_count"] == 0
-    assert data["items"][2]["wrong_count"] == 0
+    assert data["items"][0]["stats"]["correct_count"] == 2
+    assert data["items"][0]["stats"]["wrong_count"] == 1
+    assert data["items"][1]["stats"]["correct_count"] == 1
+    assert data["items"][1]["stats"]["wrong_count"] == 1
+    assert data["items"][2]["stats"]["correct_count"] == 0
+    assert data["items"][2]["stats"]["wrong_count"] == 0
 
 def test_get_word_details(client, db_session):
     # Create a word
@@ -149,8 +156,8 @@ def test_get_word_details(client, db_session):
 
     # Create groups and link them to the word
     groups = [
-        Group(name="Core Verbs"),
-        Group(name="Food & Drink")
+        Group(name="Core Verbs", language_code="ja"),
+        Group(name="Food & Drink", language_code="ja")
     ]
     db_session.add_all(groups)
     db_session.commit()
@@ -164,7 +171,13 @@ def test_get_word_details(client, db_session):
     db_session.commit()
 
     # Create some review items
-    study_activity = StudyActivity(name="Flashcards", url="/activities/flashcards")
+    study_activity = StudyActivity(
+        name="Flashcards",
+        url="/activities/flashcards",
+        description="Practice vocabulary with interactive flashcards",
+        image_url="/static/images/activities/flashcards.svg",
+        is_language_specific=False
+    )
     db_session.add(study_activity)
     db_session.commit()
 
@@ -195,7 +208,6 @@ def test_get_word_details(client, db_session):
         "script": "食べる",
         "transliteration": "taberu",
         "meaning": "to eat",
-        "language_code": "ja",
         "stats": {
             "correct_count": 2,
             "wrong_count": 1

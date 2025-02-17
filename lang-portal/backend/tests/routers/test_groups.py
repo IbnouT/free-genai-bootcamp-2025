@@ -16,9 +16,15 @@ def test_get_groups(client, db_session):
     groups = [
         Group(
             name="Core Verbs",
+            language_code="ja"
         ),
         Group(
             name="Food & Drink",
+            language_code="ja"
+        ),
+        Group(  # Add a French group
+            name="Verbes",
+            language_code="fr"
         )
     ]
     db_session.add_all(groups)
@@ -33,27 +39,36 @@ def test_get_groups(client, db_session):
     db_session.add_all(words)
     db_session.commit()
 
-    # Link words to groups
-    db_session.add(WordGroup(word_id=words[0].id, group_id=groups[0].id))
-    db_session.add(WordGroup(word_id=words[1].id, group_id=groups[0].id))
-    db_session.add(WordGroup(word_id=words[1].id, group_id=groups[1].id))
-    db_session.add(WordGroup(word_id=words[2].id, group_id=groups[0].id))
-    db_session.add(WordGroup(word_id=words[2].id, group_id=groups[1].id))
+    # Link words to groups (only matching languages)
+    db_session.add(WordGroup(word_id=words[0].id, group_id=groups[0].id))  # Japanese word to Japanese group
+    db_session.add(WordGroup(word_id=words[1].id, group_id=groups[0].id))  # Japanese word to Japanese group
+    db_session.add(WordGroup(word_id=words[1].id, group_id=groups[1].id))  # Japanese word to Japanese group
+    db_session.add(WordGroup(word_id=words[2].id, group_id=groups[2].id))  # French word to French group
     db_session.commit()
 
+    # Test Japanese groups
     response = client.get("/groups?language_code=ja")
     assert response.status_code == 200
     data = response.json()
     
-    assert len(data["items"]) == 2
+    assert len(data["items"]) == 2  # Only Japanese groups
     assert data["items"][0]["name"] == "Core Verbs"
     assert data["items"][0]["words_count"] == 2  # Two Japanese words
     assert data["items"][1]["name"] == "Food & Drink"
     assert data["items"][1]["words_count"] == 1  # One Japanese word
 
+    # Test French groups
+    response = client.get("/groups?language_code=fr")
+    assert response.status_code == 200
+    data = response.json()
+    
+    assert len(data["items"]) == 1  # Only French group
+    assert data["items"][0]["name"] == "Verbes"
+    assert data["items"][0]["words_count"] == 1  # One French word
+
 def test_get_group_details(client, db_session):
     # Create a group
-    group = Group(name="Core Verbs")
+    group = Group(name="Core Verbs", language_code="ja")
     db_session.add(group)
     db_session.commit()
 
@@ -61,21 +76,28 @@ def test_get_group_details(client, db_session):
     words = [
         Word(script="食べる", transliteration="taberu", meaning="to eat", language_code="ja"),
         Word(script="飲む", transliteration="nomu", meaning="to drink", language_code="ja"),
-        Word(script="manger", transliteration=None, meaning="to eat", language_code="fr")
+        Word(script="manger", transliteration=None, meaning="to eat", language_code="fr")  # French word
     ]
     db_session.add_all(words)
     db_session.commit()
 
-    # Link words to group
+    # Link only Japanese words to Japanese group
     word_groups = [
-        WordGroup(word_id=word.id, group_id=group.id)
-        for word in words
+        WordGroup(word_id=words[0].id, group_id=group.id),  # Japanese word
+        WordGroup(word_id=words[1].id, group_id=group.id)   # Japanese word
+        # Intentionally NOT linking the French word
     ]
     db_session.add_all(word_groups)
     db_session.commit()
 
-    # Add some review items
-    study_activity = StudyActivity(name="Flashcards", url="/activities/flashcards")
+    # Create a study activity
+    study_activity = StudyActivity(
+        name="Flashcards",
+        url="/activities/flashcards",
+        description="Practice vocabulary with interactive flashcards",
+        image_url="/static/images/activities/flashcards.svg",
+        is_language_specific=False
+    )
     db_session.add(study_activity)
     db_session.commit()
 
@@ -96,7 +118,7 @@ def test_get_group_details(client, db_session):
     db_session.commit()
 
     # Test Japanese words
-    response = client.get(f"/groups/{group.id}?language_code=ja")
+    response = client.get(f"/groups/{group.id}")
     assert response.status_code == 200
     data = response.json()
 
@@ -111,24 +133,30 @@ def test_get_group_details(client, db_session):
                     "script": "食べる",
                     "transliteration": "taberu",
                     "meaning": "to eat",
-                    "language_code": "ja",
-                    "correct_count": 2,
-                    "wrong_count": 1
+                    "stats": {
+                        "correct_count": 2,
+                        "wrong_count": 1
+                    }
                 },
                 {
                     "id": words[1].id,
                     "script": "飲む",
                     "transliteration": "nomu",
                     "meaning": "to drink",
-                    "language_code": "ja",
-                    "correct_count": 0,
-                    "wrong_count": 0
+                    "stats": {
+                        "correct_count": 0,
+                        "wrong_count": 0
+                    }
                 }
             ],
             "page": 1,
             "per_page": 10
         }
     }
+
+    # Verify French word is not included
+    french_words = [item for item in data["words"]["items"] if item["script"] == "manger"]
+    assert len(french_words) == 0
 
 def test_get_group_not_found(client, db_session):
     response = client.get("/groups/999?language_code=ja")
@@ -137,7 +165,7 @@ def test_get_group_not_found(client, db_session):
 
 def test_get_group_empty_words(client, db_session):
     # Create a group without any words
-    group = Group(name="Empty Group")
+    group = Group(name="Empty Group", language_code="ja")
     db_session.add(group)
     db_session.commit()
 

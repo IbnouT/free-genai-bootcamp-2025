@@ -296,9 +296,10 @@ Retrieves a paginated list of words with their review statistics (aggregated cor
             "script": "食べる",
             "transliteration": "taberu",
             "meaning": "to eat",
-            "language_code": "ja",
-            "correct_count": 5,
-            "wrong_count": 2
+            "stats": {
+                "correct_count": 5,
+                "wrong_count": 2
+            }
         },
         // ... more items
     ],
@@ -332,7 +333,6 @@ Retrieves detailed information about a specific word, including its groups and r
     "script": "食べる",
     "transliteration": "taberu",
     "meaning": "to eat",
-    "language_code": "ja",
     "stats": {
         "correct_count": 5,
         "wrong_count": 2
@@ -392,13 +392,12 @@ Retrieves a paginated list of groups with their word counts in specified languag
 ```
 
 #### GET /groups/{group_id}
-Retrieves detailed information about a specific group and its words in the specified language.
+Retrieves detailed information about a specific group and its words. The language context is derived from the group itself.
 
 **Path Parameters:**
 - `group_id` (required): Integer - The ID of the group
 
 **Query Parameters:**
-- `language_code` (required): ISO 639-1 language code (e.g., "ja", "fr")
 - `page` (optional): Page number for words list, default: 1
 - `per_page` (optional): Items per page for words list, default: 10
 - `sort_by` (optional): Field to sort words by (script, transliteration, meaning, correct_count, wrong_count)
@@ -409,7 +408,7 @@ Retrieves detailed information about a specific group and its words in the speci
 {
     "id": 1,
     "name": "Core Verbs",
-    "words_count": 50,
+    "words_count": 25,
     "words": {
         "items": [
             {
@@ -417,9 +416,10 @@ Retrieves detailed information about a specific group and its words in the speci
                 "script": "食べる",
                 "transliteration": "taberu",
                 "meaning": "to eat",
-                "language_code": "ja",
-                "correct_count": 5,
-                "wrong_count": 2
+                "stats": {
+                    "correct_count": 5,
+                    "wrong_count": 2
+                }
             }
         ],
         "page": 1,
@@ -647,9 +647,10 @@ Retrieves detailed information about a specific study session, including its wor
                 "script": "食べる",
                 "transliteration": "taberu",
                 "meaning": "to eat",
-                "language_code": "ja",
-                "correct_count": 2,
-                "wrong_count": 1
+                "stats": {
+                    "correct_count": 2,
+                    "wrong_count": 1
+                }
             }
         ],
         "page": 1,
