@@ -28,14 +28,7 @@ def db_session():
 
 @pytest.fixture(scope="function")
 def client(db_session):
-    from sqlalchemy import inspect
-    inspector = inspect(db_session.bind)
-    tables = inspector.get_table_names()
-    print("client - Tables:", db_session, tables)
     def override_get_db():
-        inspector = inspect(db_session.bind)
-        tables = inspector.get_table_names()
-        print("client - override_get_db - Tables:", db_session, tables)
         try:
             yield db_session
         finally:
