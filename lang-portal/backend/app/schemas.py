@@ -161,3 +161,33 @@ class WordReview(BaseModel):
     created_at: str
     
     model_config = ConfigDict(from_attributes=True)
+
+# Dashboard schemas
+class LastStudySessionStats(BaseModel):
+    correct_count: int
+    wrong_count: int
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class LastStudySession(BaseModel):
+    activity_name: str
+    date: str
+    stats: LastStudySessionStats
+    group: GroupInSession
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class StudyProgress(BaseModel):
+    words_studied: int
+    total_words: int
+    progress_percentage: float
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class QuickStats(BaseModel):
+    success_rate: float
+    study_sessions: int
+    active_groups: int
+    study_streak: int
+    
+    model_config = ConfigDict(from_attributes=True)
