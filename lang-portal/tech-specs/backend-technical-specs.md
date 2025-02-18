@@ -25,6 +25,7 @@ to help maintain consistent test data across environments.
 
 ![Project Structure Diagram](./project_structure_diagram.png)
 
+```
 backend/
 ├── app/
 │   ├── main.py           # FastAPI entry point, middleware for language context
@@ -56,10 +57,9 @@ backend/
 │   └── README.md            # Project documentation
 ├── requirements.txt
 └── README.md
+```
 
 ## 4. Data Models
-
-![Database Entity Relationship Diagram](./data_model_mermaid_diagram.png)
 
 ### Entity Relationship Diagram
 ```mermaid

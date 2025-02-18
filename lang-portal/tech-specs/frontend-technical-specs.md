@@ -17,7 +17,7 @@ This document outlines the **React + TypeScript + Vite** front-end for our multi
 ## 2. Project Structure
 
 Below is an example directory layout:
-
+```
 frontend/
 ├── public/
 │   └── favicon.ico
@@ -71,6 +71,7 @@ frontend/
 ├── index.html
 ├── package.json
 └── tsconfig.json
+```
 
 ### Explanation of Key Folders
 
