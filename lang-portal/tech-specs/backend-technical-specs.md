@@ -23,8 +23,6 @@ to help maintain consistent test data across environments.
 
 ## 3. Project Structure
 
-![Project Structure Diagram](./project_structure_diagram.png)
-
 ```
 backend/
 ├── app/
