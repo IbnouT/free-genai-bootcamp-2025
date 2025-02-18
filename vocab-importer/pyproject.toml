@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vocab-importer"
+version = "0.1.0"
+authors = [
+    { name = "Ibnou Toure", email = "ibnou.toure001@gmail.com" }
+]
+description = "A Streamlit-based tool for generating and managing vocabulary lists"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "streamlit>=1.31.1",
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "groq>=0.4.2",
+    "openai>=1.12.0",
+    "google-generativeai>=0.3.2",
+    "python-dotenv>=1.0.0",
+    "requests>=2.31.0",
+    "jsonschema>=4.21.1",
+    "watchdog>=6.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "isort",
+    "mypy",
+    "ruff"
+]
+
+[tool.setuptools]
+packages = ["vocab_importer"] 

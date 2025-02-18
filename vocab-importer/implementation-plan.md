@@ -12,11 +12,11 @@ This implementation plan outlines the steps to build the Vocab Importer tool, a 
 - [ ] Tool successfully imports/exports vocabulary in correct JSON format
 
 ## Phase 1: Project Setup and Basic Structure
-- [ ] 1.1. Create project structure
-  - [ ] Set up virtual environment
-  - [ ] Create requirements.txt with initial dependencies (streamlit, pytest, pytest-cov)
-  - [ ] Create README.md with setup instructions
-  - [ ] Set up basic project directories (src, tests, data)
+- [x] 1.1. Create project structure
+  - [x] Set up virtual environment
+  - [x] Create requirements.txt with initial dependencies (streamlit, pytest, pytest-cov)
+  - [x] Create README.md with setup instructions
+  - [x] Set up basic project directories (src, tests, data)
 - [ ] 1.2. Set up testing framework
   - [ ] Configure pytest
   - [ ] Set up test coverage reporting
@@ -38,10 +38,10 @@ This implementation plan outlines the steps to build the Vocab Importer tool, a 
   - [ ] Write tests for LLM integration
 
 ## Phase 3: Streamlit UI Implementation
-- [ ] 3.1. Basic UI Layout
-  - [ ] Create main page structure
-  - [ ] Implement language selection
-  - [ ] Implement category input/selection
+- [x] 3.1. Basic UI Layout
+  - [x] Create main page structure
+  - [x] Implement language selection
+  - [x] Implement category input/selection
 - [ ] 3.2. Vocabulary Generation UI
   - [ ] Create generation interface
   - [ ] Implement progress indicators
@@ -90,7 +90,7 @@ We will commit changes at logical points:
 
 Each commit will have a descriptive message following the format:
 ```
-[Phase X.Y] Brief description
+[Vocab Importer][Phase X.Y] Brief description
 
 - Detailed point 1
 - Detailed point 2
