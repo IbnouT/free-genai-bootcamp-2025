@@ -1,0 +1,48 @@
+
+You have been tasked as an expert in full-stack development and in AI prompting to help build a Vocab Importer for our learning portal (you can see all the details of that portal requirement in the backend and frontend technical specs files I've attached)
+Now we need to build an internal tool for generating and/or importing list of vocabularies for the different languages (for now we do support Japanese, French, Arabic, Spanish) but other languages will follow soon.
+
+The following is the task description given by our Fractional CTO:
+ 
+---
+Business Goal: 
+The prototype of the language learning app is built, but we need to quickly populate the application with word and word groups so students can begin testing the system.
+
+There is currently no interface for manually adding words or words groups and the process would be too tedious. 
+
+You have been asked to:
+- Create an internal facing tool to generate vocab 
+- Be able to export the generated vocab to json for later import
+- Be able  to import to import json files
+
+Technical Restrictions
+Since this is an internal facing tool the fractional CTO wants you to use an app prototyping framework like Streamlit.
+
+You need to use an LLM in order to generate the target words and word groups.
+You can use either an:
+- Managed/Serverless LLM API
+- Local LLM serving the model via OPEA
+---
+
+But for the LLM API part we will start testing a managed LLM API. GroqCloud seems a good starting point, we will use an API key created from @https://console.groq.com/keys.
+
+In a second steps, we might explore other options with running local LLM via OPEA  (that's good to keep it in mind in our implementation plan but we will not develop much that idea for now).
+
+You see in the attached screenshots some examples of what those vacab list could look like. But bear in mind that what might be better for Japanese might not be relevant for other language (for example Japanese has script while French do not have specific script). Try to make sense of the screenshots and come up with a rich format that could benefit our all our target languages.
+Remember this is for learning vacabulary and how to read and/or write them properly.
+Use the images provided as general guide but feel free to propose something better or more expressive.
+
+For the UI, the user should provide a category/type/group of word and we generate multiple enriched vocabularies that we could export in JSON format. There should be consistency in the format and that should make a lot of sense. The UI should allow to save those files in specific folder at the backend.
+The UI should also allow to import the files of the same JSON format in backend folder.
+Importing, export should take care of the language and keep files for each language separated.
+We can also think of putting those json format in a SQLLite database if that makes sense of just keep them as files in the App repo, use your jugement to propose best approach, but remember this is a prototype App we need to build quickly, so the less complicated the better however we should not sacrifice robustness in simplicity.
+
+- As a first step, we need a general analysis of the feasibility of this prototype internal App, the framework to use (possibly with streamlit).
+
+- As a second step we need a proposal of the format of the JSON file and some examples of content for each language.
+
+- As a third step Technical specification document(s) (get inspiration on the specs docs I attached). Also consider if we need frontend and backend or only a single app.
+
+- As a forth step, we need an implementation plan (similar to the one I shared) that include the current scope as well high level bullet point of exploraty option with local LLM via OPEA (just a couple of bullet points to remind us about that but no detail needed for now for that part)
+
+Let's do each step one by one. I will let you know when we can move to next step.
