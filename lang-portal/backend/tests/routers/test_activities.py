@@ -133,4 +133,77 @@ def test_get_study_activity_details(client, db_session):
 def test_get_nonexistent_activity(client):
     response = client.get("/study-activities/999?language_code=ja")
     assert response.status_code == 404
-    assert response.json()["detail"] == "Study activity with id 999 not found" 
+    assert response.json()["detail"] == "Study activity with id 999 not found"
+
+def test_get_study_activity_details_with_sorting(client, db_session):
+    """Test different sorting options for study activity sessions."""
+    # Create test activity
+    activity = StudyActivity(
+        name="Flashcards",
+        url="/study/flashcards",
+        description="Practice with flashcards",
+        image_url="/images/flashcards.png",
+        is_language_specific=False
+    )
+    db_session.add(activity)
+    db_session.commit()
+    
+    # Create language and group
+    language = Language(code="ja", name="Japanese")
+    db_session.add(language)
+    db_session.commit()
+    
+    group = Group(name="Core Verbs", language_code="ja")
+    db_session.add(group)
+    db_session.commit()
+    
+    # Create sessions with reviews at different times
+    sessions = []
+    base_time = datetime.now()
+    
+    for i in range(3):
+        session = StudySession(
+            group_id=group.id,
+            study_activity_id=activity.id,
+            created_at=base_time - timedelta(days=i)  # Different creation times
+        )
+        db_session.add(session)
+        db_session.commit()
+        sessions.append(session)
+        
+        # Add reviews with different last review times
+        review_time = base_time - timedelta(hours=i*2)  # Different review times
+        review = WordReviewItem(
+            word_id=1,  # Dummy word ID
+            study_session_id=session.id,
+            correct=True,
+            created_at=review_time
+        )
+        db_session.add(review)
+        db_session.commit()
+    
+    # Test sorting by last_review_at in descending order
+    response = client.get(
+        f"/study-activities/{activity.id}?language_code=ja&sort_by=last_review_at&order=desc"
+    )
+    assert response.status_code == 200
+    data = response.json()
+    items = data["sessions"]["items"]
+    
+    # Most recent review should be first
+    assert items[0]["id"] == sessions[0].id
+    assert items[1]["id"] == sessions[1].id
+    assert items[2]["id"] == sessions[2].id
+    
+    # Test sorting by last_review_at in ascending order
+    response = client.get(
+        f"/study-activities/{activity.id}?language_code=ja&sort_by=last_review_at&order=asc"
+    )
+    assert response.status_code == 200
+    data = response.json()
+    items = data["sessions"]["items"]
+    
+    # Oldest review should be first
+    assert items[0]["id"] == sessions[2].id
+    assert items[1]["id"] == sessions[1].id
+    assert items[2]["id"] == sessions[0].id 

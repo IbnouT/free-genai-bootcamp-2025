@@ -303,3 +303,195 @@ def test_get_quick_stats_broken_streak(client, db_session: Session):
     data = response.json()
     
     assert data["study_streak"] == 2  # Only counts the last two consecutive days 
+
+def test_study_progress_broken_streak(client, db_session):
+    """Test study progress with a broken streak (gap > 1 day)."""
+    # Create test data
+    language = Language(code="ja", name="Japanese")
+    db_session.add(language)
+    db_session.commit()
+    
+    group = Group(name="Core Verbs", language_code="ja")
+    db_session.add(group)
+    db_session.commit()
+    
+    activity = StudyActivity(
+        name="Flashcards",
+        url="/study/flashcards",
+        description="Practice with flashcards",
+        image_url="/images/flashcards.png",
+        is_language_specific=False
+    )
+    db_session.add(activity)
+    db_session.commit()
+    
+    # Create sessions with a gap to break the streak
+    # Today's session
+    today_session = StudySession(
+        group_id=group.id,
+        study_activity_id=activity.id,
+        created_at=datetime.utcnow()
+    )
+    db_session.add(today_session)
+    
+    # Session from 3 days ago (creates a gap)
+    old_session = StudySession(
+        group_id=group.id,
+        study_activity_id=activity.id,
+        created_at=datetime.utcnow() - timedelta(days=3)
+    )
+    db_session.add(old_session)
+    db_session.commit()
+    
+    # Add some reviews to make the sessions valid
+    review = WordReviewItem(
+        word_id=1,  # Dummy word ID
+        study_session_id=today_session.id,
+        correct=True
+    )
+    db_session.add(review)
+    db_session.commit()
+    
+    # Test the quick-stats endpoint
+    response = client.get("/dashboard/quick-stats?language_code=ja")
+    assert response.status_code == 200
+    data = response.json()
+    
+    # The streak should be 1 (only today) because of the gap
+    assert data["study_streak"] == 1 
+
+def test_study_streak_consecutive_gap(client, db_session):
+    """Test streak calculation when there's a gap between consecutive study dates."""
+    # Create test data
+    language = Language(code="ja", name="Japanese")
+    db_session.add(language)
+    db_session.commit()
+    
+    group = Group(name="Core Verbs", language_code="ja")
+    db_session.add(group)
+    db_session.commit()
+    
+    activity = StudyActivity(
+        name="Flashcards",
+        url="/study/flashcards",
+        description="Practice with flashcards",
+        image_url="/images/flashcards.png",
+        is_language_specific=False
+    )
+    db_session.add(activity)
+    db_session.commit()
+    
+    # Create sessions with specific dates to test gap detection
+    base_date = datetime.utcnow().date()
+    
+    # Yesterday's session (to pass the first condition)
+    yesterday = base_date - timedelta(days=1)
+    yesterday_session = StudySession(
+        group_id=group.id,
+        study_activity_id=activity.id,
+        created_at=yesterday
+    )
+    db_session.add(yesterday_session)
+    
+    # Session from 4 days ago
+    four_days_ago = base_date - timedelta(days=4)
+    four_days_ago_session = StudySession(
+        group_id=group.id,
+        study_activity_id=activity.id,
+        created_at=four_days_ago
+    )
+    db_session.add(four_days_ago_session)
+    
+    # Session from 5 days ago
+    five_days_ago = base_date - timedelta(days=5)
+    five_days_ago_session = StudySession(
+        group_id=group.id,
+        study_activity_id=activity.id,
+        created_at=five_days_ago
+    )
+    db_session.add(five_days_ago_session)
+    db_session.commit()
+    
+    # Add reviews for each session
+    for session in [yesterday_session, four_days_ago_session, five_days_ago_session]:
+        review = WordReviewItem(
+            word_id=1,  # Dummy word ID
+            study_session_id=session.id,
+            correct=True,
+            created_at=session.created_at
+        )
+        db_session.add(review)
+    db_session.commit()
+    
+    # Test the quick-stats endpoint
+    response = client.get("/dashboard/quick-stats?language_code=ja")
+    assert response.status_code == 200
+    data = response.json()
+    
+    # The streak should be 1 (only yesterday)
+    # When sorted in descending order:
+    # 1. yesterday (passes first condition)
+    # 2. comparing yesterday with 4 days ago (gap > 1, breaks at line 157)
+    assert data["study_streak"] == 1
+
+def test_study_streak_old_first_date(client, db_session):
+    """Test streak calculation when the most recent study date is more than 1 day old."""
+    # Create test data
+    language = Language(code="ja", name="Japanese")
+    db_session.add(language)
+    db_session.commit()
+    
+    group = Group(name="Core Verbs", language_code="ja")
+    db_session.add(group)
+    db_session.commit()
+    
+    activity = StudyActivity(
+        name="Flashcards",
+        url="/study/flashcards",
+        description="Practice with flashcards",
+        image_url="/images/flashcards.png",
+        is_language_specific=False
+    )
+    db_session.add(activity)
+    db_session.commit()
+    
+    # Create sessions with specific dates to test first date check
+    base_date = datetime.utcnow().date()
+    
+    # Most recent session is 3 days ago
+    three_days_ago = base_date - timedelta(days=3)
+    three_days_ago_session = StudySession(
+        group_id=group.id,
+        study_activity_id=activity.id,
+        created_at=three_days_ago
+    )
+    db_session.add(three_days_ago_session)
+    
+    # Session from 4 days ago
+    four_days_ago = base_date - timedelta(days=4)
+    four_days_ago_session = StudySession(
+        group_id=group.id,
+        study_activity_id=activity.id,
+        created_at=four_days_ago
+    )
+    db_session.add(four_days_ago_session)
+    db_session.commit()
+    
+    # Add reviews for each session
+    for session in [three_days_ago_session, four_days_ago_session]:
+        review = WordReviewItem(
+            word_id=1,  # Dummy word ID
+            study_session_id=session.id,
+            correct=True,
+            created_at=session.created_at
+        )
+        db_session.add(review)
+    db_session.commit()
+    
+    # Test the quick-stats endpoint
+    response = client.get("/dashboard/quick-stats?language_code=ja")
+    assert response.status_code == 200
+    data = response.json()
+    
+    # The streak should be 0 because the most recent session is more than 1 day old
+    assert data["study_streak"] == 0 

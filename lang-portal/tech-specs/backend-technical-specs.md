@@ -953,3 +953,21 @@ def test_get_words(client, test_db):
 
 A **FastAPI + SQLite** back end provides the REST endpoints needed by the front end.  
 By following these specs (models, routes, seed/reset logic), developers or AI code generators can produce a robust server that manages multi-language words, groups, sessions, and aggregated stats for each user's study progress.
+
+# Backend Technical Specifications
+
+## Technology Stack
+
+### Core Framework
+- FastAPI 0.109.1 - Modern Python web framework
+- Uvicorn 0.27.0 - ASGI server implementation
+
+### Database
+- SQLite - Main database
+- SQLAlchemy 2.0.25 - ORM and database toolkit
+- Alembic 1.13.1 - Database migrations
+
+### Validation & Testing
+- Pydantic 2.6.1 - Data validation using Python type annotations
+- pytest 8.0.0 - Testing framework with FastAPI TestClient
+- pytest-cov 4.1.0 - Test coverage reporting

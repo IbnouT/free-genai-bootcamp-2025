@@ -2,6 +2,13 @@
 
 This is the FastAPI backend for the Language Learning Portal.
 
+## Framework & Dependencies
+
+- **Web Framework**: FastAPI 0.109.1 with Uvicorn 0.27.0
+- **Database**: SQLite with SQLAlchemy 2.0.25 and Alembic 1.13.1
+- **Data Validation**: Pydantic 2.6.1
+- **Testing**: pytest 8.0.0 with FastAPI TestClient and pytest-cov 4.1.0
+
 ## Setup
 
 1. Create a virtual environment:
@@ -174,7 +181,64 @@ alembic revision --autogenerate -m "add promo_text to language"
 ```
 
 ### Testing
+
+The project has 100% test coverage using:
+- pytest with FastAPI TestClient
+- pytest-cov for coverage reporting
+- In-memory SQLite for isolated database testing
+
+#### Running Tests
 ```bash
-pytest
+# Run tests with coverage
+pytest --cov=app
+
+# Run specific test file
+pytest tests/routers/test_dashboard.py
 ```
 
+#### Test Structure
+```
+tests/
+├── conftest.py          # Shared fixtures
+├── test_database.py     # Database configuration tests
+├── test_dependencies.py # Dependency tests
+├── test_main.py         # App configuration tests
+├── test_models.py       # SQLAlchemy models tests
+├── test_seed.py         # Database seeding tests
+└── routers/            # API endpoint tests
+    ├── test_activities.py
+    ├── test_admin.py
+    ├── test_dashboard.py
+    ├── test_groups.py
+    ├── test_languages.py
+    ├── test_sessions.py
+    └── test_words.py
+```
+
+Key features:
+- Isolated test database per session
+- Automatic cleanup after each test
+- Environment control via monkeypatch
+- Comprehensive fixtures in conftest.py
+
+---------- coverage: platform darwin, python 3.11.7-final-0 
+Name                        Stmts   Miss  Cover   Missing
+---------------------------------------------------------
+app/__init__.py                 0      0   100%
+app/core/config.py              7      0   100%
+app/database.py                18      0   100%
+app/dependencies.py             4      0   100%
+app/main.py                    47      0   100%
+app/models.py                  67      0   100%
+app/routers/activities.py      36      0   100%
+app/routers/admin.py           10      0   100%
+app/routers/dashboard.py       46      0   100%
+app/routers/groups.py          49      0   100%
+app/routers/languages.py       13      0   100%
+app/routers/sessions.py        57      0   100%
+app/routers/words.py           36      0   100%
+app/schemas.py                137      0   100%
+app/seed.py                   159      0   100%
+app/utils/db_utils.py           5      0   100%
+---------------------------------------------------------
+TOTAL                         691      0   100%

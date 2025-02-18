@@ -1,4 +1,9 @@
 from app.seed import seed_all
+import pytest
+from app.models import Language, Group, Word
+import subprocess
+import sys
+import os
 
 def test_seed_all(db_session):
     data = seed_all(db_session, include_test_data=True)
@@ -68,4 +73,92 @@ def test_seed_all(db_session):
     assert len([r for r in nomu.review_items if r.correct]) == 5  # 5 correct
     assert len([r for r in nomu.review_items if not r.correct]) == 3  # 3 wrong
     assert len([r for r in hanasu.review_items if r.correct]) == 2  # 2 correct
-    assert len([r for r in hanasu.review_items if not r.correct]) == 6  # 6 wrong 
+    assert len([r for r in hanasu.review_items if not r.correct]) == 6  # 6 wrong
+
+def test_seed_all_without_test_data(db_session):
+    """Test seeding without test data to cover the if __name__ == '__main__' block."""
+    data = seed_all(db_session, include_test_data=False)
+    assert data["sessions"] is None
+    
+def test_seed_word_groups_with_inactive_language(db_session):
+    """Test the continue statement in seed_word_groups for inactive languages."""
+    from app.seed import seed_word_groups
+    
+    # Create an inactive language
+    inactive_lang = Language(
+        code="test_lang",
+        name="Test Language",
+        active=False
+    )
+    db_session.add(inactive_lang)
+    
+    # Create a word for the inactive language
+    word = Word(
+        language_code=inactive_lang.code,
+        script="test",
+        meaning="to test",  # This would normally put it in Core Verbs
+        transliteration="test"
+    )
+    db_session.add(word)
+    db_session.commit()
+    
+    seed_word_groups(db_session, [word], [])
+    
+    # Verify the word has no groups (because it's for an inactive language)
+    db_session.refresh(word)
+    assert word.groups == []
+
+def test_command_line_seeding(monkeypatch):
+    """Test the command-line interface of the seed script."""
+    # Set up test environment
+    monkeypatch.setenv("RUNNING_TEST_ON_DEV", "true")
+    
+    # Get the path to seed.py
+    seed_script_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "app", "seed.py")
+    
+    # Test without test data
+    result = subprocess.run([sys.executable, seed_script_path], 
+                          capture_output=True, 
+                          text=True,
+                          env={**os.environ, "RUNNING_TEST_ON_DEV": "true"})
+    assert result.returncode == 0
+    assert "Database seeding completed successfully!" in result.stdout
+    assert "Test data" not in result.stdout
+
+    # Test with test data
+    result = subprocess.run([sys.executable, seed_script_path, "--include-test-data"], 
+                          capture_output=True, 
+                          text=True,
+                          env={**os.environ, "RUNNING_TEST_ON_DEV": "true"})
+    assert result.returncode == 0
+    assert "Database seeding completed successfully!" in result.stdout
+    assert "Test data (study sessions and reviews) was included." in result.stdout 
+
+def test_command_line_seeding_error():
+    """Test error handling in the command line interface."""
+    # Get the path to seed.py
+    seed_script_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "app", "seed.py")
+    
+    # Run with --test-error flag to trigger the error handling
+    result = subprocess.run([sys.executable, seed_script_path, "--test-error"], 
+                          capture_output=True, 
+                          text=True)
+    
+    assert result.returncode != 0
+    assert "Error seeding database: Test error for error handling" in result.stdout
+
+def test_seed_all_error(db_session):
+    """Test error handling in seed_all function."""
+    from app.seed import seed_all
+    from sqlalchemy.exc import IntegrityError
+    
+    # Create a duplicate language to cause an integrity error
+    lang1 = Language(code="test", name="Test")
+    lang2 = Language(code="test", name="Test")  # Same code will cause unique constraint violation
+    db_session.add(lang1)
+    db_session.add(lang2)
+    
+    with pytest.raises(Exception) as exc_info:
+        seed_all(db_session, include_test_data=False)
+    
+    assert "Error seeding database" in str(exc_info.value) 

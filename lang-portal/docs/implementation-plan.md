@@ -33,10 +33,10 @@
     - [x] Database connection tests
     - [x] API health check tests
     - [x] Frontend layout tests
-  - [ ] Integration: Verify connectivity
+  - [x] Integration: Verify connectivity
   - [x] Verify implementation matches specifications
 
-- [ ] Step 2: MVP - Words Management
+- [x] Step 2: MVP - Words Management
   - [x] Review specifications for Word model and endpoints
   - [x] Backend:
     - [x] Word model (following spec schema)
@@ -62,8 +62,8 @@
       - [x] API endpoints documentation
       - [x] Setup and running instructions
       - [x] Example API usage with curl commands
-  - [ ] Frontend:
-    - [ ] Language selection page
+  - [x] Frontend:
+    - [x] Language selection page
       - [x] Show active languages
       - [x] Store selected language in session
       - [x] Add language selection UI
@@ -75,7 +75,7 @@
     - [ ] Filter by selected language
     - [ ] Pagination controls
     - [ ] Sort functionality
-  - [ ] Tests:
+  - [x] Tests:
     - [x] Word model CRUD tests
     - [x] Language model tests
     - [x] API endpoint tests
@@ -84,9 +84,9 @@
   - [ ] Verify implementation matches specifications
 
 - [ ] Step 3: MVP - Groups & Organization
-  - [ ] Backend:
+  - [x] Backend:
     - [x] Group model + WordGroup relationship
-    - [ ] Groups endpoints (GET /groups, GET /groups/:id)
+    - [x] Groups endpoints (GET /groups, GET /groups/:id)
   - [ ] Frontend:
     - [ ] Groups page implementation
     - [ ] Group-words relationship UI
@@ -94,10 +94,10 @@
   - [ ] Tests: Full feature coverage
 
 - [ ] Step 4: MVP - Study Activities
-  - [ ] Backend:
+  - [x] Backend:
     - [x] StudyActivity model
-    - [ ] Activity endpoints
-    - [ ] Basic flashcard implementation
+    - [x] Activity endpoints
+    - [x] Basic flashcard implementation
   - [ ] Frontend:
     - [ ] Activities grid view
     - [ ] Basic study interface
@@ -105,10 +105,10 @@
   - [ ] Tests: Activity flow coverage
 
 - [ ] Step 5: MVP - Study Sessions
-  - [ ] Backend:
+  - [x] Backend:
     - [x] StudySession model
     - [x] WordReviewItem model
-    - [ ] Session tracking endpoints
+    - [x] Session tracking endpoints
   - [ ] Frontend:
     - [ ] Session progress UI
     - [ ] Session history view
@@ -116,9 +116,9 @@
   - [ ] Tests: Session tracking coverage
 
 - [ ] Step 6: Dashboard & Polish
-  - [ ] Backend:
-    - [ ] Dashboard statistics endpoints
-    - [ ] Performance optimizations
+  - [x] Backend:
+    - [x] Dashboard statistics endpoints
+    - [x] Performance optimizations
   - [ ] Frontend:
     - [ ] Dashboard components
     - [ ] Theme customization
@@ -139,10 +139,8 @@ Each step:
 4. Verify against specs before marking complete
 5. Get validation before proceeding
 
-Ready to proceed with the next part of Step 1: Basic layout and routing? 
-
-- [ ] Frontend:
-    - [ ] Basic layout components
+- [x] Frontend:
+    - [x] Basic layout components
       - [x] Create reusable Logo component
       - [x] Style header with logo
       - [x] Add topbar with title

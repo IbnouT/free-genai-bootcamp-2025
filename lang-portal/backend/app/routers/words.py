@@ -4,7 +4,7 @@ from typing import Optional
 from app.main import get_db
 from app.models import Word, WordReviewItem
 from app.schemas import PaginatedWords, WordDetail
-from sqlalchemy import func, case, text
+from sqlalchemy import func, case, text, desc
 
 router = APIRouter()
 
@@ -32,10 +32,12 @@ def get_words(
     if sort_by:
         if sort_by in ["correct_count", "wrong_count"]:
             column = text(sort_by)
+            if order == "desc":
+                column = desc(column)
         else:
             column = getattr(Word, sort_by)
-        if order == "desc":
-            column = column.desc()
+            if order == "desc":
+                column = column.desc()
         query = query.order_by(column)
 
     # Get total count

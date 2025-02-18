@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from app.main import get_db
 from app.models import Group, Word, WordGroup, WordReviewItem
-from sqlalchemy import func, and_, case, text
+from sqlalchemy import func, and_, case, text, desc
 from app.schemas import PaginatedGroups, GroupDetail
 
 router = APIRouter()
@@ -114,11 +114,15 @@ def get_group(
     if sort_by:
         if sort_by in ["correct_count", "wrong_count"]:
             column = text(sort_by)
+            if order == "desc":
+                query = query.order_by(desc(column))
+            else:
+                query = query.order_by(column)
         else:
             column = getattr(Word, sort_by)
-        if order == "desc":
-            column = column.desc()
-        query = query.order_by(column)
+            if order == "desc":
+                column = column.desc()
+            query = query.order_by(column)
 
     # Apply pagination
     results = query.offset((page - 1) * per_page).limit(per_page).all()

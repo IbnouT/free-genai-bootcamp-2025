@@ -29,12 +29,10 @@ async def lifespan(app: FastAPI):
         return
     
     engine, SessionLocal = setup_db(get_db_url())
-    print("TESTING:", os.getenv("TESTING"))
-    print("Using DB URL:", engine.url)
+    # print("Using DB URL:", engine.url)
 
     app.state.engine = engine
     app.state.SessionLocal = SessionLocal
-
     Base.metadata.create_all(bind=engine)
 
     if settings.ENVIRONMENT == "development":
@@ -47,7 +45,6 @@ async def lifespan(app: FastAPI):
     engine.dispose()
 
 def get_db():
-    print("SessionLocal in app.state:", hasattr(app.state, "SessionLocal"))
     session_factory = app.state.SessionLocal
     db = session_factory()
     try:

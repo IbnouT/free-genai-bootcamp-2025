@@ -10,6 +10,10 @@ Base = declarative_base()
 
 # Production database
 def get_db_url():
+    # Special case for running tests on dev
+    if os.getenv("RUNNING_TEST_ON_DEV") == "true":
+        return "sqlite:///:memory:"
+    # Normal case
     db_path = BASE_DIR / "app" / "app.db"
     return f"sqlite:///{db_path}"
 
@@ -22,5 +26,8 @@ def setup_db(db_url: str):
         connect_args={"check_same_thread": False},
         # echo=True
     )
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    return engine, SessionLocal
+    session_factory = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    return engine, session_factory
+
+# Initialize the database engine and SessionLocal for direct imports
+engine, SessionLocal = setup_db(get_db_url())

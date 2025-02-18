@@ -455,9 +455,18 @@ def seed_test_activity_data(db: Session, words: list, groups: list, activities: 
     
     return list(sessions.values())
 
-def seed_all(db: Session, include_test_data: bool = False):
-    """Seed all tables with initial data"""
+def seed_all(db: Session, include_test_data: bool = False, test_error: bool = False):
+    """Seed the database with initial data.
+    
+    Args:
+        db: The database session
+        include_test_data: Whether to include test study sessions and reviews
+        test_error: If True, raises an exception for testing error handling
+    """
     try:
+        if test_error:
+            raise Exception("Test error for error handling")
+            
         reset_database(db.get_bind())  # Pass the engine from session
         
         # Seed in correct order (due to foreign keys)
@@ -494,6 +503,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Seed the database with initial data')
     parser.add_argument('--include-test-data', action='store_true',
                        help='Include test study sessions and review data')
+    parser.add_argument('--test-error', action='store_true',
+                       help='Trigger an error for testing error handling')
     
     args = parser.parse_args()
     
@@ -502,7 +513,7 @@ if __name__ == "__main__":
     
     try:
         print("Starting database seeding...")
-        seed_all(db, include_test_data=args.include_test_data)
+        seed_all(db, include_test_data=args.include_test_data, test_error=args.test_error)
         print("Database seeding completed successfully!")
         if args.include_test_data:
             print("Test data (study sessions and reviews) was included.")

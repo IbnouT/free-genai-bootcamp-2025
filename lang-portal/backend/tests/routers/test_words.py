@@ -1,4 +1,4 @@
-from app.models import Word, WordReviewItem, StudySession, StudyActivity, Group, WordGroup
+from app.models import Word, WordReviewItem, StudySession, StudyActivity, Group, WordGroup, Language
 
 def test_get_words_empty(client, db_session):
     response = client.get("/words?language_code=ja")
@@ -249,3 +249,86 @@ def test_get_word_no_reviews(client, db_session):
     assert data["stats"]["correct_count"] == 0
     assert data["stats"]["wrong_count"] == 0
     assert data["groups"] == []  # No groups
+
+def test_get_words_with_review_count_sorting(client, db_session):
+    """Test sorting words by correct_count and wrong_count."""
+    # Create test data
+    language = Language(code="ja", name="Japanese")
+    db_session.add(language)
+    db_session.commit()
+    
+    # Create words
+    words = [
+        Word(script="食べる", meaning="to eat", language_code="ja"),
+        Word(script="飲む", meaning="to drink", language_code="ja"),
+        Word(script="話す", meaning="to speak", language_code="ja")
+    ]
+    db_session.add_all(words)
+    db_session.commit()
+    
+    # Create a group and session for reviews
+    group = Group(name="Core Verbs", language_code="ja")
+    db_session.add(group)
+    db_session.commit()
+    
+    activity = StudyActivity(
+        name="Flashcards",
+        url="/study/flashcards",
+        description="Practice with flashcards",
+        image_url="/images/flashcards.png",
+        is_language_specific=False
+    )
+    db_session.add(activity)
+    db_session.commit()
+    
+    session = StudySession(group_id=group.id, study_activity_id=activity.id)
+    db_session.add(session)
+    db_session.commit()
+    
+    # Add reviews with different correct/wrong counts
+    # Word 1: 3 correct, 1 wrong
+    # Word 2: 2 correct, 2 wrong
+    # Word 3: 1 correct, 3 wrong
+    for i, word in enumerate(words):
+        correct_reviews = 3 - i
+        wrong_reviews = i + 1
+        
+        # Add correct reviews
+        for _ in range(correct_reviews):
+            review = WordReviewItem(
+                word_id=word.id,
+                study_session_id=session.id,
+                correct=True
+            )
+            db_session.add(review)
+            
+        # Add wrong reviews
+        for _ in range(wrong_reviews):
+            review = WordReviewItem(
+                word_id=word.id,
+                study_session_id=session.id,
+                correct=False
+            )
+            db_session.add(review)
+    
+    db_session.commit()
+    
+    # Test sorting by correct_count desc
+    response = client.get("/words?language_code=ja&sort_by=correct_count&order=desc")
+    assert response.status_code == 200
+    data = response.json()
+    items = data["items"]
+    
+    assert items[0]["id"] == words[0].id  # Most correct (3)
+    assert items[1]["id"] == words[1].id  # Medium correct (2)
+    assert items[2]["id"] == words[2].id  # Least correct (1)
+    
+    # Test sorting by wrong_count desc
+    response = client.get("/words?language_code=ja&sort_by=wrong_count&order=desc")
+    assert response.status_code == 200
+    data = response.json()
+    items = data["items"]
+    
+    assert items[0]["id"] == words[2].id  # Most wrong (3)
+    assert items[1]["id"] == words[1].id  # Medium wrong (2)
+    assert items[2]["id"] == words[0].id  # Least wrong (1)

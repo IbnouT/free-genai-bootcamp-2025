@@ -251,4 +251,94 @@ def test_create_review_for_word_not_in_group(client, db_session):
         "correct": True
     })
     assert response.status_code == 404
-    assert "not found or does not belong to the session's group" in response.json()["detail"] 
+    assert "not found or does not belong to the session's group" in response.json()["detail"]
+
+def test_create_study_session_group_not_found(client, db_session):
+    """Test creating a session with a non-existent group."""
+    # Create an activity
+    activity = StudyActivity(
+        name="Flashcards",
+        url="/study/flashcards",
+        description="Practice with flashcards",
+        image_url="/images/flashcards.png",
+        is_language_specific=False
+    )
+    db_session.add(activity)
+    db_session.commit()
+    
+    # Try to create a session with a non-existent group
+    session_data = {
+        "group_id": 999,  # Non-existent group ID
+        "study_activity_id": activity.id
+    }
+    response = client.post("/study-sessions", json=session_data)
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Group with id 999 not found"
+
+def test_get_study_sessions_sorting(client, db_session):
+    """Test different sorting options for study sessions."""
+    # Create test data
+    language = Language(code="ja", name="Japanese")
+    db_session.add(language)
+    db_session.commit()
+    
+    group = Group(name="Core Verbs", language_code="ja")
+    db_session.add(group)
+    db_session.commit()
+    
+    activity = StudyActivity(
+        name="Flashcards",
+        url="/study/flashcards",
+        description="Practice with flashcards",
+        image_url="/images/flashcards.png",
+        is_language_specific=False
+    )
+    db_session.add(activity)
+    db_session.commit()
+    
+    # Create sessions with reviews at different times
+    sessions = []
+    base_time = datetime.now()
+    
+    for i in range(3):
+        session = StudySession(
+            group_id=group.id,
+            study_activity_id=activity.id,
+            created_at=base_time - timedelta(days=i)  # Different creation times
+        )
+        db_session.add(session)
+        db_session.commit()
+        sessions.append(session)
+        
+        # Add reviews with different last review times
+        review_time = base_time - timedelta(hours=i*2)  # Different review times
+        review = WordReviewItem(
+            word_id=1,  # Dummy word ID
+            study_session_id=session.id,
+            correct=True,
+            created_at=review_time
+        )
+        db_session.add(review)
+        db_session.commit()
+    
+    # Test sorting by last_review_at in descending order
+    response = client.get("/study-sessions?language_code=ja&sort_by=last_review_at&order=desc")
+    assert response.status_code == 200
+    data = response.json()
+    items = data["items"]
+    
+    # Most recent review should be first
+    assert items[0]["id"] == sessions[0].id
+    assert items[1]["id"] == sessions[1].id
+    assert items[2]["id"] == sessions[2].id
+    
+    # Test sorting by last_review_at in ascending order
+    response = client.get("/study-sessions?language_code=ja&sort_by=last_review_at&order=asc")
+    assert response.status_code == 200
+    data = response.json()
+    items = data["items"]
+    
+    # Oldest review should be first
+    assert items[0]["id"] == sessions[2].id
+    assert items[1]["id"] == sessions[1].id
+    assert items[2]["id"] == sessions[0].id 
