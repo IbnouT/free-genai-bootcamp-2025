@@ -18,11 +18,22 @@
 ## Project Status
 
 ### Current Phase
-- Completed Phase 2.2 (File Management)
-- Ready to begin Phase 2.3 (LLM Integration)
+- Working on Phase 2.3 (LLM Integration)
+- Completed prompt template system
+- Ready to implement LLM client
 
 ### Latest Commits
 1. ```
+[Vocab Importer][Phase 2.3] Add prompt templates and examples
+
+- Created base template with parametrized fields
+- Added language-specific templates for ja, fr, ar, es
+- Created example prompt file for testing
+- Implemented simple diversity requirement
+- Maintained compatibility with original tested prompts
+```
+
+2. ```
 [Vocab Importer][Phase 2.2] Implement File Management System
 
 - Created file_manager.py with single-file-per-category approach
@@ -32,7 +43,7 @@
 - Follows technical specs for file naming and data management
 ```
 
-2. ```
+3. ```
 [Vocab Importer][Phase 2.1] Implement JSON Structure Validation
 
 - Created validators.py with JSON schema definitions and validation functions
@@ -46,7 +57,7 @@
   - Strict schema enforcement for all supported languages
 ```
 
-3. ```
+4. ```
 [Vocab Importer][UI] Refactor and improve UI layout
 
 - Modularized UI components into separate files
@@ -59,7 +70,7 @@
 - Organized code structure with clear component separation
 ```
 
-4. ```
+5. ```
 [Vocab Importer][Docs] Add AI assistant session context
 
 - Created session context document for maintaining development continuity
@@ -69,7 +80,7 @@
 - Recorded interaction preferences and development state
 ```
 
-5. ```
+6. ```
 [Vocab Importer][Phase 3.1] Enhance UI with modern design
 
 - Added gradient header with improved typography
@@ -81,57 +92,62 @@
 ```
 
 ### Active Development State
-- Phase 2.2 (File Management) completed with single-file-per-category system
-- File operations include automatic merging and backups
-- Comprehensive test coverage for file operations
-- Ready to begin LLM integration
+- Prompt templates created and ready for testing
+- File management system complete with single-file-per-category approach
+- Ready to implement LLM client integration
 
 ### Pending Actions
 1. **Immediate**:
-   - Review existing prompts in prompt_generation_by_chatgtp-03-mini
-   - Design prompt template system
-   - Set up LLM API client
-   - Implement retry logic for API calls
+   - Test example prompts with different LLM providers
+   - Implement LLM client with provider support
+   - Add response validation and error handling
+   - Create test mocks for LLM interactions
 
 2. **Short-term**:
-   - Create test mocks for LLM interactions
    - Implement vocabulary generation interface
    - Add error handling for API failures
+   - Create comprehensive test suite for LLM integration
 
 3. **To Discuss**:
    - Preferred LLM provider for initial development
    - Retry strategy for API failures
-   - Prompt template structure
+   - Error handling approach for malformed LLM responses
 
 ### Technical Decisions & Rationale
-1. **File Management System**:
+1. **Prompt Template System**:
+   - Base template with language-specific extensions
+   - Simple diversity requirement to avoid duplicate words
+   - Maintained compatibility with tested prompts
+   - Parametrized fields for flexibility
+
+2. **File Management System**:
    - Single file per language+category for simplicity
    - Automatic merging to prevent duplicates
    - Backup system for safe operations
    - UTF-8 encoding for proper character support
 
-2. **JSON Validation System**:
+3. **JSON Validation System**:
    - Using jsonschema for robust schema validation
    - Strict typing and required field enforcement
    - Comprehensive error handling
    - Support for file merging with duplicate prevention
 
-3. **Testing Strategy**:
+4. **Testing Strategy**:
    - Comprehensive unit tests for all components
    - File operation tests with temporary directories
    - Edge case coverage
    - Mock data for all supported languages
 
-4. **Streamlit-only UI**:
+5. **Streamlit-only UI**:
    - Reason: Rapid prototyping requirement
    - Impact: Shapes component structure and state management
 
-5. **Multiple LLM Support**:
+6. **Multiple LLM Support**:
    - Providers: Groq, OpenAI, Gemini
    - Reason: Compare output quality and costs
    - Impact: Modular LLM integration needed
 
-6. **JSON File Storage**:
+7. **JSON File Storage**:
    - Reason: Single-user prototype requirement
    - Structure: One file per word category
    - Format: Strictly following tech specs schema

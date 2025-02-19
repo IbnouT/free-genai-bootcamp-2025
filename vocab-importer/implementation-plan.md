@@ -33,7 +33,7 @@ This implementation plan outlines the steps to build the Vocab Importer tool, a 
   - [x] Create file storage utilities
   - [x] Write tests for file operations
 - [ ] 2.3. LLM Integration
-  - [ ] Review and convert existing prompts to templates
+  - [x] Review and convert existing prompts to templates
   - [ ] Set up LLM API client
   - [ ] Create prompt template management
   - [ ] Write tests for LLM integration
