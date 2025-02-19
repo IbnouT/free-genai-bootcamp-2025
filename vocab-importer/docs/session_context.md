@@ -18,11 +18,21 @@
 ## Project Status
 
 ### Current Phase
-- Completed Phase 2.1 (JSON Structure Validation)
-- Ready to begin Phase 2.2 (File Management)
+- Completed Phase 2.2 (File Management)
+- Ready to begin Phase 2.3 (LLM Integration)
 
 ### Latest Commits
 1. ```
+[Vocab Importer][Phase 2.2] Implement File Management System
+
+- Created file_manager.py with single-file-per-category approach
+- Implemented automatic merging for existing categories
+- Added backup functionality for safe operations
+- Created comprehensive test suite for file operations
+- Follows technical specs for file naming and data management
+```
+
+2. ```
 [Vocab Importer][Phase 2.1] Implement JSON Structure Validation
 
 - Created validators.py with JSON schema definitions and validation functions
@@ -36,7 +46,7 @@
   - Strict schema enforcement for all supported languages
 ```
 
-2. ```
+3. ```
 [Vocab Importer][UI] Refactor and improve UI layout
 
 - Modularized UI components into separate files
@@ -49,7 +59,7 @@
 - Organized code structure with clear component separation
 ```
 
-3. ```
+4. ```
 [Vocab Importer][Docs] Add AI assistant session context
 
 - Created session context document for maintaining development continuity
@@ -59,7 +69,7 @@
 - Recorded interaction preferences and development state
 ```
 
-4. ```
+5. ```
 [Vocab Importer][Phase 3.1] Enhance UI with modern design
 
 - Added gradient header with improved typography
@@ -71,44 +81,45 @@
 ```
 
 ### Active Development State
-- Phase 2.1 (JSON Structure Validation) completed with comprehensive validation system
-- All UI components separated into individual files
-- Dark theme and responsive layout implemented
-- Ready to begin implementing file management system
+- Phase 2.2 (File Management) completed with single-file-per-category system
+- File operations include automatic merging and backups
+- Comprehensive test coverage for file operations
+- Ready to begin LLM integration
 
 ### Pending Actions
 1. **Immediate**:
-   - Implement file naming convention
-   - Create file storage utilities
-   - Add file operation tests
+   - Review existing prompts in prompt_generation_by_chatgtp-03-mini
+   - Design prompt template system
+   - Set up LLM API client
+   - Implement retry logic for API calls
 
 2. **Short-term**:
-   - Set up LLM integration
-   - Create test data
+   - Create test mocks for LLM interactions
    - Implement vocabulary generation interface
+   - Add error handling for API failures
 
 3. **To Discuss**:
-   - File storage structure preferences
-   - Backup strategy for vocabulary files
-   - Error handling approach for file operations
+   - Preferred LLM provider for initial development
+   - Retry strategy for API failures
+   - Prompt template structure
 
 ### Technical Decisions & Rationale
-1. **JSON Validation System**:
+1. **File Management System**:
+   - Single file per language+category for simplicity
+   - Automatic merging to prevent duplicates
+   - Backup system for safe operations
+   - UTF-8 encoding for proper character support
+
+2. **JSON Validation System**:
    - Using jsonschema for robust schema validation
    - Strict typing and required field enforcement
-   - Comprehensive error handling with custom exceptions
+   - Comprehensive error handling
    - Support for file merging with duplicate prevention
 
-2. **File Operations**:
-   - UTF-8 encoding for proper character support
-   - JSON pretty printing for readability
-   - Atomic file operations for safety
-   - Validation before any file operation
-
 3. **Testing Strategy**:
-   - Comprehensive unit tests for all validators
-   - File operation tests with temporary files
-   - Edge case coverage for validation
+   - Comprehensive unit tests for all components
+   - File operation tests with temporary directories
+   - Edge case coverage
    - Mock data for all supported languages
 
 4. **Streamlit-only UI**:

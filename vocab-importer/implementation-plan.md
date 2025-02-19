@@ -28,10 +28,10 @@ This implementation plan outlines the steps to build the Vocab Importer tool, a 
   - [x] Create simple JSON structure validators
   - [x] Implement validation helpers for import/export
   - [x] Write tests for validation functions
-- [ ] 2.2. File Management
-  - [ ] Implement file naming convention
-  - [ ] Create file storage utilities
-  - [ ] Write tests for file operations
+- [x] 2.2. File Management
+  - [x] Implement file naming convention
+  - [x] Create file storage utilities
+  - [x] Write tests for file operations
 - [ ] 2.3. LLM Integration
   - [ ] Review and convert existing prompts to templates
   - [ ] Set up LLM API client
