@@ -17,16 +17,17 @@ This implementation plan outlines the steps to build the Vocab Importer tool, a 
   - [x] Create requirements.txt with initial dependencies (streamlit, pytest, pytest-cov)
   - [x] Create README.md with setup instructions
   - [x] Set up basic project directories (src, tests, data)
-- [ ] 1.2. Set up testing framework
-  - [ ] Configure pytest
-  - [ ] Set up test coverage reporting
-  - [ ] Create initial test structure
+- [x] 1.2. Set up testing framework
+  - [x] Configure pytest with coverage reporting in pytest.ini
+  - [x] Set up test structure with fixtures and helpers
+  - [x] Create initial UI component tests
+  - [x] Configure coverage thresholds and exclusions
 
 ## Phase 2: Core Functionality
-- [ ] 2.1. JSON Structure Validation
-  - [ ] Create simple JSON structure validators
-  - [ ] Implement validation helpers for import/export
-  - [ ] Write tests for validation functions
+- [x] 2.1. JSON Structure Validation
+  - [x] Create simple JSON structure validators
+  - [x] Implement validation helpers for import/export
+  - [x] Write tests for validation functions
 - [ ] 2.2. File Management
   - [ ] Implement file naming convention
   - [ ] Create file storage utilities
@@ -42,6 +43,9 @@ This implementation plan outlines the steps to build the Vocab Importer tool, a 
   - [x] Create main page structure
   - [x] Implement language selection
   - [x] Implement category input/selection
+  - [x] Create modular component structure
+  - [x] Implement dark theme styling
+  - [ ] Add responsive layout with proper spacing
 - [ ] 3.2. Vocabulary Generation UI
   - [ ] Create generation interface
   - [ ] Implement progress indicators

@@ -1,0 +1,1098 @@
+{
+  "vocab_examples": [
+    {
+      "language": "ja",
+      "group": "Adjectives",
+      "generated_at": "2025-02-18T12:00:00Z",
+      "vocab": [
+        {
+          "script": "忙しい",
+          "transliteration": "isogashii",
+          "pronunciation_aid": [
+            {
+              "unit": "忙",
+              "readings": ["i", "so", "ga"]
+            },
+            {
+              "unit": "し",
+              "readings": ["shi"]
+            },
+            {
+              "unit": "い",
+              "readings": ["i"]
+            }
+          ],
+          "meaning": "busy",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "彼はいつも忙しい。",
+              "meaning": "He is always busy."
+            },
+            {
+              "script": "今日は忙しい日だ。",
+              "meaning": "Today is a busy day."
+            }
+          ],
+          "notes": "Common adjective used to describe a busy state."
+        },
+        {
+          "script": "新しい",
+          "transliteration": "atarashii",
+          "pronunciation_aid": [
+            {
+              "unit": "新",
+              "readings": ["a", "ta", "ra"]
+            },
+            {
+              "unit": "し",
+              "readings": ["shi"]
+            },
+            {
+              "unit": "い",
+              "readings": ["i"]
+            }
+          ],
+          "meaning": "new",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "新しい本を買った。",
+              "meaning": "I bought a new book."
+            },
+            {
+              "script": "彼女は新しい仕事を始めた。",
+              "meaning": "She started a new job."
+            }
+          ],
+          "notes": "Describes something that is new or recent."
+        },
+        {
+          "script": "美しい",
+          "transliteration": "utsukushii",
+          "pronunciation_aid": [
+            {
+              "unit": "美",
+              "readings": ["u", "tsu", "ku"]
+            },
+            {
+              "unit": "しい",
+              "readings": ["shi", "i"]
+            }
+          ],
+          "meaning": "beautiful",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "この景色は美しい。",
+              "meaning": "This view is beautiful."
+            },
+            {
+              "script": "彼女はとても美しい。",
+              "meaning": "She is very beautiful."
+            }
+          ],
+          "notes": "Describes aesthetic beauty."
+        },
+        {
+          "script": "速い",
+          "transliteration": "hayai",
+          "pronunciation_aid": [
+            {
+              "unit": "速",
+              "readings": ["ha", "ya"]
+            },
+            {
+              "unit": "い",
+              "readings": ["i"]
+            }
+          ],
+          "meaning": "fast",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "彼は走るのが速い。",
+              "meaning": "He runs fast."
+            },
+            {
+              "script": "この車は速い。",
+              "meaning": "This car is fast."
+            }
+          ],
+          "notes": "Used to describe speed."
+        },
+        {
+          "script": "難しい",
+          "transliteration": "muzukashii",
+          "pronunciation_aid": [
+            {
+              "unit": "難",
+              "readings": ["mu", "zu", "ka", "shi"]
+            },
+            {
+              "unit": "い",
+              "readings": ["i"]
+            }
+          ],
+          "meaning": "difficult",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "この問題は難しい。",
+              "meaning": "This problem is difficult."
+            },
+            {
+              "script": "試験は難しかった。",
+              "meaning": "The exam was difficult."
+            }
+          ],
+          "notes": "Used to describe challenging tasks."
+        },
+        {
+          "script": "古い",
+          "transliteration": "furui",
+          "pronunciation_aid": [
+            {
+              "unit": "古",
+              "readings": ["fu", "ru"]
+            },
+            {
+              "unit": "い",
+              "readings": ["i"]
+            }
+          ],
+          "meaning": "old",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "この家は古い。",
+              "meaning": "This house is old."
+            },
+            {
+              "script": "彼の時計は古い。",
+              "meaning": "His watch is old."
+            }
+          ],
+          "notes": "Describes something that is aged."
+        },
+        {
+          "script": "大きい",
+          "transliteration": "ookii",
+          "pronunciation_aid": [
+            {
+              "unit": "大",
+              "readings": ["oo"]
+            },
+            {
+              "unit": "きい",
+              "readings": ["kii"]
+            }
+          ],
+          "meaning": "big",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "この建物は大きい。",
+              "meaning": "This building is big."
+            },
+            {
+              "script": "彼は大きい犬を飼っている。",
+              "meaning": "He has a big dog."
+            }
+          ],
+          "notes": "Used to describe size."
+        },
+        {
+          "script": "小さい",
+          "transliteration": "chiisai",
+          "pronunciation_aid": [
+            {
+              "unit": "小",
+              "readings": ["chi"]
+            },
+            {
+              "unit": "さい",
+              "readings": ["sai"]
+            }
+          ],
+          "meaning": "small",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "この部屋は小さい。",
+              "meaning": "This room is small."
+            },
+            {
+              "script": "小さい子供が遊んでいる。",
+              "meaning": "Small children are playing."
+            }
+          ],
+          "notes": "Used to describe size."
+        },
+        {
+          "script": "面白い",
+          "transliteration": "omoshiroi",
+          "pronunciation_aid": [
+            {
+              "unit": "面",
+              "readings": ["o", "mo"]
+            },
+            {
+              "unit": "白",
+              "readings": ["shi", "roi"]
+            }
+          ],
+          "meaning": "interesting",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "その映画は面白い。",
+              "meaning": "That movie is interesting."
+            },
+            {
+              "script": "彼の話は面白い。",
+              "meaning": "His story is interesting."
+            }
+          ],
+          "notes": "Describes something engaging or amusing."
+        },
+        {
+          "script": "高い",
+          "transliteration": "takai",
+          "pronunciation_aid": [
+            {
+              "unit": "高",
+              "readings": ["ta", "ka"]
+            },
+            {
+              "unit": "い",
+              "readings": ["i"]
+            }
+          ],
+          "meaning": "expensive",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "この時計は高い。",
+              "meaning": "This watch is expensive."
+            },
+            {
+              "script": "その車は高い。",
+              "meaning": "That car is expensive."
+            }
+          ],
+          "notes": "Can also mean 'tall' depending on context."
+        }
+      ]
+    },
+    {
+      "language": "ar",
+      "group": "Adjectives",
+      "generated_at": "2025-02-18T12:00:00Z",
+      "vocab": [
+        {
+          "script": "جديد",
+          "transliteration": "jadeed",
+          "pronunciation_aid": [
+            {
+              "unit": "ج",
+              "readings": ["ja"]
+            },
+            {
+              "unit": "ديد",
+              "readings": ["deed"]
+            }
+          ],
+          "meaning": "new",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "اشتريت سيارة جديدة.",
+              "meaning": "I bought a new car."
+            },
+            {
+              "script": "هذا الكتاب جديد.",
+              "meaning": "This book is new."
+            }
+          ],
+          "notes": "Describes something that is new or recent."
+        },
+        {
+          "script": "قديم",
+          "transliteration": "qadeem",
+          "pronunciation_aid": [
+            {
+              "unit": "قد",
+              "readings": ["qa"]
+            },
+            {
+              "unit": "يم",
+              "readings": ["deem"]
+            }
+          ],
+          "meaning": "old",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "هذا المنزل قديم.",
+              "meaning": "This house is old."
+            },
+            {
+              "script": "لدي سيارة قديمة.",
+              "meaning": "I have an old car."
+            }
+          ],
+          "notes": "Used to describe something aged."
+        },
+        {
+          "script": "جميل",
+          "transliteration": "jameel",
+          "pronunciation_aid": [
+            {
+              "unit": "جم",
+              "readings": ["ja", "me"]
+            },
+            {
+              "unit": "يل",
+              "readings": ["eel"]
+            }
+          ],
+          "meaning": "beautiful",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "المنظر جميل.",
+              "meaning": "The view is beautiful."
+            },
+            {
+              "script": "لديك وجه جميل.",
+              "meaning": "You have a beautiful face."
+            }
+          ],
+          "notes": "Describes aesthetic beauty."
+        },
+        {
+          "script": "كبير",
+          "transliteration": "kabeer",
+          "pronunciation_aid": [
+            {
+              "unit": "ك",
+              "readings": ["ka"]
+            },
+            {
+              "unit": "بير",
+              "readings": ["beer"]
+            }
+          ],
+          "meaning": "big",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "هذا المنزل كبير.",
+              "meaning": "This house is big."
+            },
+            {
+              "script": "لدي سيارة كبيرة.",
+              "meaning": "I have a big car."
+            }
+          ],
+          "notes": "Used to describe size."
+        },
+        {
+          "script": "صغير",
+          "transliteration": "sagheer",
+          "pronunciation_aid": [
+            {
+              "unit": "ص",
+              "readings": ["sa"]
+            },
+            {
+              "unit": "غير",
+              "readings": ["gheer"]
+            }
+          ],
+          "meaning": "small",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "هذا الكتاب صغير.",
+              "meaning": "This book is small."
+            },
+            {
+              "script": "الغرفة صغيرة.",
+              "meaning": "The room is small."
+            }
+          ],
+          "notes": "Used to describe size."
+        },
+        {
+          "script": "صعب",
+          "transliteration": "sa'ab",
+          "pronunciation_aid": [
+            {
+              "unit": "ص",
+              "readings": ["sa"]
+            },
+            {
+              "unit": "عب",
+              "readings": ["ab"]
+            }
+          ],
+          "meaning": "difficult",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "الدرس صعب.",
+              "meaning": "The lesson is difficult."
+            },
+            {
+              "script": "هذه المسألة صعبة.",
+              "meaning": "This problem is difficult."
+            }
+          ],
+          "notes": "Used to describe challenging tasks."
+        },
+        {
+          "script": "سريع",
+          "transliteration": "saree'",
+          "pronunciation_aid": [
+            {
+              "unit": "سر",
+              "readings": ["sa"]
+            },
+            {
+              "unit": "يع",
+              "readings": ["ree"]
+            }
+          ],
+          "meaning": "fast",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "هو سريع جداً.",
+              "meaning": "He is very fast."
+            },
+            {
+              "script": "القطار سريع.",
+              "meaning": "The train is fast."
+            }
+          ],
+          "notes": "Describes high speed."
+        },
+        {
+          "script": "ممتع",
+          "transliteration": "mumti'",
+          "pronunciation_aid": [
+            {
+              "unit": "مم",
+              "readings": ["mum"]
+            },
+            {
+              "unit": "تع",
+              "readings": ["ti", "a"]
+            }
+          ],
+          "meaning": "interesting",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "الكتاب ممتع.",
+              "meaning": "The book is interesting."
+            },
+            {
+              "script": "الفيلم ممتع.",
+              "meaning": "The movie is interesting."
+            }
+          ],
+          "notes": "Describes something engaging."
+        },
+        {
+          "script": "غالي",
+          "transliteration": "ghaali",
+          "pronunciation_aid": [
+            {
+              "unit": "غا",
+              "readings": ["gha"]
+            },
+            {
+              "unit": "لي",
+              "readings": ["lee"]
+            }
+          ],
+          "meaning": "expensive",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "هذا الهاتف غالي.",
+              "meaning": "This phone is expensive."
+            },
+            {
+              "script": "المنزل غالي.",
+              "meaning": "The house is expensive."
+            }
+          ],
+          "notes": "Used to describe high cost."
+        },
+        {
+          "script": "جيد",
+          "transliteration": "jayyid",
+          "pronunciation_aid": [
+            {
+              "unit": "ج",
+              "readings": ["ja"]
+            },
+            {
+              "unit": "يد",
+              "readings": ["yid"]
+            }
+          ],
+          "meaning": "good",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "هذا الطعام جيد.",
+              "meaning": "This food is good."
+            },
+            {
+              "script": "الطقس جيد.",
+              "meaning": "The weather is good."
+            }
+          ],
+          "notes": "Describes a positive quality."
+        }
+      ]
+    },
+    {
+      "language": "fr",
+      "group": "Adjectives",
+      "generated_at": "2025-02-18T12:00:00Z",
+      "vocab": [
+        {
+          "script": "nouveau",
+          "transliteration": "nouveau",
+          "pronunciation_aid": [
+            {
+              "unit": "nou",
+              "readings": ["nu"]
+            },
+            {
+              "unit": "veau",
+              "readings": ["vo"]
+            }
+          ],
+          "meaning": "new",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "C'est un nouveau livre.",
+              "meaning": "It's a new book."
+            },
+            {
+              "script": "J'ai acheté un nouveau téléphone.",
+              "meaning": "I bought a new phone."
+            }
+          ],
+          "notes": "Used to describe something that is new."
+        },
+        {
+          "script": "vieux",
+          "transliteration": "vieux",
+          "pronunciation_aid": [
+            {
+              "unit": "vieux",
+              "readings": ["vjø"]
+            }
+          ],
+          "meaning": "old",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "Il vit dans une vieille maison.",
+              "meaning": "He lives in an old house."
+            },
+            {
+              "script": "C'est un vieux film.",
+              "meaning": "It's an old movie."
+            }
+          ],
+          "notes": "Used to describe something aged."
+        },
+        {
+          "script": "beau",
+          "transliteration": "beau",
+          "pronunciation_aid": [
+            {
+              "unit": "beau",
+              "readings": ["bo"]
+            }
+          ],
+          "meaning": "beautiful",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "Il a un beau jardin.",
+              "meaning": "He has a beautiful garden."
+            },
+            {
+              "script": "Elle est très belle.",
+              "meaning": "She is very beautiful."
+            }
+          ],
+          "notes": "Describes aesthetic beauty."
+        },
+        {
+          "script": "grand",
+          "transliteration": "grand",
+          "pronunciation_aid": [
+            {
+              "unit": "gran",
+              "readings": ["gʁɑ̃"]
+            },
+            {
+              "unit": "d",
+              "readings": ["d"]
+            }
+          ],
+          "meaning": "big",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "C'est un grand arbre.",
+              "meaning": "It is a big tree."
+            },
+            {
+              "script": "Il habite dans une grande maison.",
+              "meaning": "He lives in a big house."
+            }
+          ],
+          "notes": "Used to describe size."
+        },
+        {
+          "script": "petit",
+          "transliteration": "petit",
+          "pronunciation_aid": [
+            {
+              "unit": "pe",
+              "readings": ["pə"]
+            },
+            {
+              "unit": "tit",
+              "readings": ["tit"]
+            }
+          ],
+          "meaning": "small",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "C'est un petit chien.",
+              "meaning": "It is a small dog."
+            },
+            {
+              "script": "La chambre est petite.",
+              "meaning": "The room is small."
+            }
+          ],
+          "notes": "Used to describe something of small size."
+        },
+        {
+          "script": "difficile",
+          "transliteration": "difficile",
+          "pronunciation_aid": [
+            {
+              "unit": "dif",
+              "readings": ["di"]
+            },
+            {
+              "unit": "fi",
+              "readings": ["fi"]
+            },
+            {
+              "unit": "ci",
+              "readings": ["si"]
+            },
+            {
+              "unit": "le",
+              "readings": ["l"]
+            }
+          ],
+          "meaning": "difficult",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "Cet examen est difficile.",
+              "meaning": "This exam is difficult."
+            },
+            {
+              "script": "La question est difficile à comprendre.",
+              "meaning": "The question is hard to understand."
+            }
+          ],
+          "notes": "Describes something challenging."
+        },
+        {
+          "script": "rapide",
+          "transliteration": "rapide",
+          "pronunciation_aid": [
+            {
+              "unit": "ra",
+              "readings": ["ra"]
+            },
+            {
+              "unit": "pide",
+              "readings": ["pid"]
+            }
+          ],
+          "meaning": "fast",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "Il court très rapidement.",
+              "meaning": "He runs very fast."
+            },
+            {
+              "script": "La voiture est rapide.",
+              "meaning": "The car is fast."
+            }
+          ],
+          "notes": "Used to describe speed."
+        },
+        {
+          "script": "intéressant",
+          "transliteration": "interessant",
+          "pronunciation_aid": [
+            {
+              "unit": "in",
+              "readings": ["ɛ̃"]
+            },
+            {
+              "unit": "té",
+              "readings": ["te"]
+            },
+            {
+              "unit": "res",
+              "readings": ["ʁɛs"]
+            },
+            {
+              "unit": "sant",
+              "readings": ["sɑ̃"]
+            }
+          ],
+          "meaning": "interesting",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "Ce film est intéressant.",
+              "meaning": "This movie is interesting."
+            },
+            {
+              "script": "Son histoire est très intéressante.",
+              "meaning": "His story is very interesting."
+            }
+          ],
+          "notes": "Describes something engaging."
+        },
+        {
+          "script": "bon",
+          "transliteration": "bon",
+          "pronunciation_aid": [
+            {
+              "unit": "bon",
+              "readings": ["bɔ̃"]
+            }
+          ],
+          "meaning": "good",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "Ce repas est bon.",
+              "meaning": "This meal is good."
+            },
+            {
+              "script": "Il fait un bon travail.",
+              "meaning": "He does a good job."
+            }
+          ],
+          "notes": "Describes a positive quality."
+        }
+      ]
+    },
+    {
+      "language": "es",
+      "group": "Adjectives",
+      "generated_at": "2025-02-18T12:00:00Z",
+      "vocab": [
+        {
+          "script": "nuevo",
+          "transliteration": "nuevo",
+          "pronunciation_aid": [
+            {
+              "unit": "nue",
+              "readings": ["nwe"]
+            },
+            {
+              "unit": "vo",
+              "readings": ["vo"]
+            }
+          ],
+          "meaning": "new",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "Este es un libro nuevo.",
+              "meaning": "This is a new book."
+            },
+            {
+              "script": "Compré un coche nuevo.",
+              "meaning": "I bought a new car."
+            }
+          ],
+          "notes": "Describes something that is new."
+        },
+        {
+          "script": "viejo",
+          "transliteration": "viejo",
+          "pronunciation_aid": [
+            {
+              "unit": "vie",
+              "readings": ["biɛ"]
+            },
+            {
+              "unit": "jo",
+              "readings": ["xo"]
+            }
+          ],
+          "meaning": "old",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "Esa casa es vieja.",
+              "meaning": "That house is old."
+            },
+            {
+              "script": "Tengo un coche viejo.",
+              "meaning": "I have an old car."
+            }
+          ],
+          "notes": "Describes something aged."
+        },
+        {
+          "script": "bonito",
+          "transliteration": "bonito",
+          "pronunciation_aid": [
+            {
+              "unit": "bo",
+              "readings": ["bo"]
+            },
+            {
+              "unit": "ni",
+              "readings": ["ni"]
+            },
+            {
+              "unit": "to",
+              "readings": ["to"]
+            }
+          ],
+          "meaning": "beautiful",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "El jardín es bonito.",
+              "meaning": "The garden is beautiful."
+            },
+            {
+              "script": "Ella tiene un vestido bonito.",
+              "meaning": "She has a beautiful dress."
+            }
+          ],
+          "notes": "Describes aesthetic appeal."
+        },
+        {
+          "script": "grande",
+          "transliteration": "grande",
+          "pronunciation_aid": [
+            {
+              "unit": "gran",
+              "readings": ["ɡɾan"]
+            },
+            {
+              "unit": "de",
+              "readings": ["de"]
+            }
+          ],
+          "meaning": "big",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "Esta es una casa grande.",
+              "meaning": "This is a big house."
+            },
+            {
+              "script": "El elefante es grande.",
+              "meaning": "The elephant is big."
+            }
+          ],
+          "notes": "Describes size."
+        },
+        {
+          "script": "pequeño",
+          "transliteration": "pequeño",
+          "pronunciation_aid": [
+            {
+              "unit": "pe",
+              "readings": ["pe"]
+            },
+            {
+              "unit": "que",
+              "readings": ["ke"]
+            },
+            {
+              "unit": "ño",
+              "readings": ["ɲo"]
+            }
+          ],
+          "meaning": "small",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "El perro es pequeño.",
+              "meaning": "The dog is small."
+            },
+            {
+              "script": "La habitación es pequeña.",
+              "meaning": "The room is small."
+            }
+          ],
+          "notes": "Used to describe something of small size."
+        },
+        {
+          "script": "difícil",
+          "transliteration": "difícil",
+          "pronunciation_aid": [
+            {
+              "unit": "di",
+              "readings": ["di"]
+            },
+            {
+              "unit": "fi",
+              "readings": ["fi"]
+            },
+            {
+              "unit": "cil",
+              "readings": ["θil"]
+            }
+          ],
+          "meaning": "difficult",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "El examen fue difícil.",
+              "meaning": "The exam was difficult."
+            },
+            {
+              "script": "Esta tarea es difícil.",
+              "meaning": "This task is difficult."
+            }
+          ],
+          "notes": "Used to describe challenging tasks."
+        },
+        {
+          "script": "rápido",
+          "transliteration": "rápido",
+          "pronunciation_aid": [
+            {
+              "unit": "rá",
+              "readings": ["ra"]
+            },
+            {
+              "unit": "pi",
+              "readings": ["pi"]
+            },
+            {
+              "unit": "do",
+              "readings": ["do"]
+            }
+          ],
+          "meaning": "fast",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "El coche es rápido.",
+              "meaning": "The car is fast."
+            },
+            {
+              "script": "Ella corre rápido.",
+              "meaning": "She runs fast."
+            }
+          ],
+          "notes": "Describes high speed."
+        },
+        {
+          "script": "interesante",
+          "transliteration": "interesante",
+          "pronunciation_aid": [
+            {
+              "unit": "in",
+              "readings": ["in"]
+            },
+            {
+              "unit": "te",
+              "readings": ["te"]
+            },
+            {
+              "unit": "re",
+              "readings": ["re"]
+            },
+            {
+              "unit": "san",
+              "readings": ["san"]
+            },
+            {
+              "unit": "te",
+              "readings": ["te"]
+            }
+          ],
+          "meaning": "interesting",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "La película es interesante.",
+              "meaning": "The movie is interesting."
+            },
+            {
+              "script": "Su historia es interesante.",
+              "meaning": "His/her story is interesting."
+            }
+          ],
+          "notes": "Used to describe something engaging."
+        },
+        {
+          "script": "bueno",
+          "transliteration": "bueno",
+          "pronunciation_aid": [
+            {
+              "unit": "bue",
+              "readings": ["bwe"]
+            },
+            {
+              "unit": "no",
+              "readings": ["no"]
+            }
+          ],
+          "meaning": "good",
+          "part_of_speech": "adjective",
+          "usage_examples": [
+            {
+              "script": "La comida está buena.",
+              "meaning": "The food is good."
+            },
+            {
+              "script": "Es un buen día.",
+              "meaning": "It's a good day."
+            }
+          ],
+          "notes": "Describes a positive quality."
+        }
+      ]
+    }
+  ]
+}
