@@ -160,4 +160,46 @@ def test_parse_llm_response_adds_timestamp():
     result = client._parse_llm_response(json.dumps(response))
     assert "generated_at" in result["vocab_examples"][0]
     # Verify timestamp format
-    datetime.fromisoformat(result["vocab_examples"][0]["generated_at"].rstrip("Z")) 
+    datetime.fromisoformat(result["vocab_examples"][0]["generated_at"].rstrip("Z"))
+
+@patch("groq.Client")
+def test_groq_client_generate_error(mock_groq):
+    """Test Groq client error handling."""
+    # Set up mock to raise an exception
+    mock_instance = MagicMock()
+    mock_instance.chat.completions.create.side_effect = Exception("API error")
+    mock_groq.return_value = mock_instance
+    
+    client = GroqClient()
+    with pytest.raises(LLMError, match="Groq generation failed"):
+        client.generate_vocabulary("test prompt")
+
+@patch("openai.Client")
+def test_openai_client_generate_error(mock_openai):
+    """Test OpenAI client error handling."""
+    # Set up mock to raise an exception
+    mock_instance = MagicMock()
+    mock_instance.chat.completions.create.side_effect = Exception("API error")
+    mock_openai.return_value = mock_instance
+    
+    client = OpenAIClient()
+    with pytest.raises(LLMError, match="OpenAI generation failed"):
+        client.generate_vocabulary("test prompt")
+
+@patch("google.generativeai.GenerativeModel")
+def test_gemini_client_generate_error(mock_gemini):
+    """Test Gemini client error handling."""
+    # Set up mock to raise an exception
+    mock_instance = MagicMock()
+    mock_instance.generate_content.side_effect = Exception("API error")
+    mock_gemini.return_value = mock_instance
+    
+    client = GeminiClient()
+    with pytest.raises(LLMError, match="Gemini generation failed"):
+        client.generate_vocabulary("test prompt")
+
+def test_parse_llm_response_empty_content():
+    """Test parsing empty LLM response."""
+    client = GroqClient()
+    with pytest.raises(LLMError, match="Failed to parse LLM response"):
+        client._parse_llm_response("") 

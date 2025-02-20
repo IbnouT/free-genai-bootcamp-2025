@@ -22,8 +22,15 @@ def prompt_manager(tmp_path):
     (templates_dir / "base_template.md").write_text(base_template)
     
     # Create language templates
-    for lang in ["ja", "fr", "ar", "es"]:
-        (templates_dir / f"{lang}_template.md").write_text(
+    language_templates = {
+        "ja": "japanese_template.md",
+        "fr": "french_template.md",
+        "ar": "arabic_template.md",
+        "es": "spanish_template.md"
+    }
+    
+    for lang, filename in language_templates.items():
+        (templates_dir / filename).write_text(
             f"Instructions for {lang}"
         )
     

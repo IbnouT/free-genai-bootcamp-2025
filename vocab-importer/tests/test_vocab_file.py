@@ -92,6 +92,13 @@ def test_save_vocab_file(tmp_path):
         saved_data = json.load(f)
     assert saved_data == vocab_data
 
+def test_save_vocab_file_validation_error(tmp_path):
+    """Test saving invalid vocabulary data."""
+    file_path = tmp_path / "invalid.json"
+    invalid_data = {"invalid": "data"}
+    with pytest.raises(VocabFileError, match="Error saving vocabulary file"):
+        save_vocab_file(invalid_data, str(file_path))
+
 def test_create_vocab_group():
     """Test creating a vocabulary group."""
     group = create_vocab_group(
@@ -112,6 +119,15 @@ def test_create_vocab_group_invalid():
             language="invalid",  # Invalid language code
             group="Adjectives",
             vocab=[SAMPLE_VOCAB_ENTRY]
+        )
+
+def test_create_vocab_group_missing_fields():
+    """Test creating vocab group with missing fields."""
+    with pytest.raises(VocabFileError, match="Error creating vocabulary group"):
+        create_vocab_group(
+            language="ja",
+            group="Adjectives",
+            vocab=[]  # Empty vocab list should fail
         )
 
 def test_merge_vocab_files():
@@ -164,4 +180,11 @@ def test_merge_vocab_files():
     
     merged = merge_vocab_files(file1_data, file2_data)
     assert len(merged["vocab_examples"]) == 1
-    assert len(merged["vocab_examples"][0]["vocab"]) == 2 
+    assert len(merged["vocab_examples"][0]["vocab"]) == 2
+
+def test_merge_vocab_files_validation_error():
+    """Test merging invalid vocabulary files."""
+    file1_data = {"invalid": "data1"}
+    file2_data = {"invalid": "data2"}
+    with pytest.raises(VocabFileError, match="Error merging vocabulary files"):
+        merge_vocab_files(file1_data, file2_data) 

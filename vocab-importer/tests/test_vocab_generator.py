@@ -16,7 +16,8 @@ from components.vocab_generator import (
     handle_generate_more,
     handle_export,
     display_results,
-    render_generator
+    render_generator,
+    show_generation_progress
 )
 
 # Sample test data
@@ -239,18 +240,30 @@ def test_get_generation_stats_error(generator, mock_file_manager):
 @pytest.fixture
 def mock_session_state(monkeypatch):
     """Mock Streamlit's session state."""
-    mock_state = {
-        'generation_inputs': {
-            'category': 'Adjectives',
-            'num_words': 10,
-            'difficulty': 'Intermediate',
-            'include_examples': True,
-            'include_notes': True
-        },
-        'generated_vocab': None,
-        'show_generator': False,
-        'generation_error': None
-    }
+    class SessionState(dict):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.generation_error = None
+            self.validation_error = None
+            self.generated_vocab = None
+            self.show_generator = False
+            self.generation_inputs = {
+                'category': 'Adjectives',
+                'num_words': 10,
+                'difficulty': 'Intermediate',
+                'include_examples': True,
+                'include_notes': True
+            }
+        
+        def __getattr__(self, name):
+            if name in self:
+                return self[name]
+            return None
+        
+        def __setattr__(self, name, value):
+            self[name] = value
+
+    mock_state = SessionState()
     monkeypatch.setattr(st, 'session_state', mock_state)
     return mock_state
 
@@ -439,4 +452,32 @@ def test_integration_flow(mock_session_state, mock_streamlit):
     # Verify results are displayed
     mock_streamlit['markdown'].assert_called()
     mock_streamlit['expander'].assert_called()
-    assert not mock_session_state['generation_error'] 
+    assert not mock_session_state['generation_error']
+
+def test_render_generation_form_with_error(mock_session_state, mock_streamlit):
+    """Test rendering generation form when an error occurs."""
+    mock_session_state.generation_error = "Test error"
+    mock_session_state.show_generator = True
+    render_generator("Japanese 🇯🇵")
+    mock_streamlit['error'].assert_called_with("Test error")
+
+def test_show_generation_progress_with_error(mock_session_state, mock_streamlit):
+    """Test showing generation progress with error."""
+    mock_session_state.generation_error = "Progress error"
+    mock_streamlit['empty'].return_value = mock_streamlit['empty']
+    progress, status = show_generation_progress()
+    mock_streamlit['error'].assert_called_with("Progress error")
+    assert progress == mock_streamlit['empty']
+    assert status == mock_streamlit['empty']
+
+def test_handle_save_changes_with_invalid_data(mock_session_state):
+    """Test handling save changes with invalid data."""
+    word = {"script": "", "meaning": ""}  # Invalid data
+    handle_save_changes(0, word)
+    assert "Invalid vocabulary data" in str(mock_session_state.validation_error)
+
+def test_display_results_with_validation_error(mock_session_state, mock_streamlit):
+    """Test displaying results with validation error."""
+    mock_session_state.validation_error = "Validation error"
+    display_results()  # Call without vocab_list to trigger validation error check
+    mock_streamlit['error'].assert_called_with("Validation error") 

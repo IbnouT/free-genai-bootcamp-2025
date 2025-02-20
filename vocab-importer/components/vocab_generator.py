@@ -6,7 +6,7 @@ import json
 def initialize_session_state():
     """Initialize session state variables if they don't exist."""
     if 'generation_inputs' not in st.session_state:
-        st.session_state['generation_inputs'] = {
+        st.session_state.generation_inputs = {
             'category': 'Adjectives',
             'num_words': 10,
             'difficulty': 'Intermediate',
@@ -14,11 +14,13 @@ def initialize_session_state():
             'include_notes': True
         }
     if 'generated_vocab' not in st.session_state:
-        st.session_state['generated_vocab'] = None
+        st.session_state.generated_vocab = None
     if 'show_generator' not in st.session_state:
-        st.session_state['show_generator'] = False
+        st.session_state.show_generator = False
     if 'generation_error' not in st.session_state:
-        st.session_state['generation_error'] = None
+        st.session_state.generation_error = None
+    if 'validation_error' not in st.session_state:
+        st.session_state.validation_error = None
 
 def get_categories_for_language(language: str) -> List[str]:
     """Get available categories for a language."""
@@ -43,8 +45,8 @@ def render_generation_form(selected_language: str) -> Dict[str, str]:
     categories = get_categories_for_language(selected_language)
     
     # If current category isn't valid for this language, reset it
-    if st.session_state['generation_inputs']['category'] not in categories and categories:
-        st.session_state['generation_inputs']['category'] = categories[0]
+    if st.session_state.generation_inputs['category'] not in categories and categories:
+        st.session_state.generation_inputs['category'] = categories[0]
     
     st.selectbox(
         "Word Category",
@@ -70,60 +72,108 @@ def render_generation_form(selected_language: str) -> Dict[str, str]:
         st.select_slider(
             "Difficulty Level",
             options=["Beginner", "Intermediate", "Advanced"],
-            value=st.session_state['generation_inputs']['difficulty'],
+            value=st.session_state.generation_inputs['difficulty'],
             key="generation_inputs.difficulty",
             help="Select the difficulty level of generated words"
         )
         
         st.checkbox(
             "Include Usage Examples",
-            value=st.session_state['generation_inputs']['include_examples'],
+            value=st.session_state.generation_inputs['include_examples'],
             key="generation_inputs.include_examples",
             help="Generate example sentences for each word"
         )
         
         st.checkbox(
             "Include Grammar Notes",
-            value=st.session_state['generation_inputs']['include_notes'],
+            value=st.session_state.generation_inputs['include_notes'],
             key="generation_inputs.include_notes",
             help="Add grammatical information and usage notes"
         )
     
     return {
         "language": selected_language,
-        **st.session_state['generation_inputs']
+        **st.session_state.generation_inputs
     }
 
 def show_generation_progress():
-    """Display a progress bar and status messages during generation."""
+    """Show progress during vocabulary generation."""
     progress_placeholder = st.empty()
     status_placeholder = st.empty()
+    
+    if st.session_state.generation_error:
+        st.error(st.session_state.generation_error)
+        return progress_placeholder, status_placeholder
+    
+    with st.spinner("Generating vocabulary..."):
+        progress_placeholder.progress(0)
+        status_placeholder.text("Starting generation...")
     
     return progress_placeholder, status_placeholder
 
 def handle_save_changes(i: int, word: Dict):
-    """Handle saving changes to a vocabulary entry."""
-    # Update the word in session state
-    st.session_state['generated_vocab'][i-1].update({
-        'word': st.session_state[f"word_{i}"],
-        'meaning': st.session_state[f"meaning_{i}"],
-        'pronunciation': st.session_state.get(f"pron_{i}", ""),
-        'part_of_speech': st.session_state.get(f"pos_{i}", ""),
-        'notes': st.session_state.get(f"notes_{i}", ""),
-        'examples': st.session_state.get(f"examples_{i}", "").split('\n')
-    })
-    st.success("Changes saved!")
+    """
+    Handle saving changes to a vocabulary entry.
+    
+    Args:
+        i: Index of the word being edited (1-based)
+        word: The word data to update
+    """
+    try:
+        # Clear any previous errors
+        st.session_state['validation_error'] = None
+        
+        # Validate required fields
+        if not word or not isinstance(word, dict):
+            st.session_state['validation_error'] = "Invalid vocabulary data"
+            return
+            
+        # Initialize generated_vocab if needed
+        if 'generated_vocab' not in st.session_state:
+            st.session_state['generated_vocab'] = []
+            
+        # Convert to 0-based index for list operations
+        list_index = i - 1
+            
+        # Ensure the list has enough space
+        while len(st.session_state['generated_vocab']) <= list_index:
+            st.session_state['generated_vocab'].append({})
+            
+        # Get form values using 1-based index for form fields
+        new_data = {
+            'word': st.session_state.get(f'word_{i}', ''),
+            'meaning': st.session_state.get(f'meaning_{i}', ''),
+            'pronunciation': st.session_state.get(f'pron_{i}', ''),
+            'part_of_speech': st.session_state.get(f'pos_{i}', ''),
+            'notes': st.session_state.get(f'notes_{i}', ''),
+            'examples': [ex for ex in st.session_state.get(f'examples_{i}', '').split('\n') if ex]
+        }
+        
+        # Validate required fields
+        if not new_data['word'] or not new_data['meaning']:
+            st.session_state['validation_error'] = "Invalid vocabulary data"
+            return
+            
+        # Update the word dictionary directly
+        word.clear()  # Clear the original dictionary
+        word.update(new_data)  # Update with new data
+        
+        # Also update the session state to ensure consistency
+        st.session_state['generated_vocab'][list_index] = word
+            
+    except Exception as e:
+        st.session_state['validation_error'] = "Invalid vocabulary data"
 
 def handle_generate_more():
     """Handle generating more vocabulary."""
-    st.session_state['show_generator'] = True
-    st.session_state['generated_vocab'] = None
+    st.session_state.show_generator = True
+    st.session_state.generated_vocab = None
 
 def handle_export():
     """Handle exporting vocabulary list."""
-    if st.session_state['generated_vocab']:
+    if st.session_state.generated_vocab:
         # Convert to JSON for download
-        json_str = json.dumps(st.session_state['generated_vocab'], indent=2, ensure_ascii=False)
+        json_str = json.dumps(st.session_state.generated_vocab, indent=2, ensure_ascii=False)
         st.download_button(
             label="Download JSON",
             data=json_str,
@@ -132,74 +182,62 @@ def handle_export():
         )
 
 def display_results(vocab_list: Optional[List[Dict]] = None, error: Optional[str] = None):
-    """Display generation results or error message."""
+    """Display generated vocabulary results or error message."""
     if error:
-        st.error(f"Generation failed: {error}")
-        if st.button("Try Again"):
-            st.session_state['generation_error'] = None
-            st.session_state['show_generator'] = True
+        st.error(error)
         return
     
-    if not vocab_list and not st.session_state['generated_vocab']:
+    if not vocab_list and not st.session_state.generated_vocab:
+        if st.session_state.validation_error:
+            st.error(st.session_state.validation_error)
+        elif st.session_state.generation_error:
+            st.error(st.session_state.generation_error)
         return
     
-    vocab_list = vocab_list or st.session_state['generated_vocab']
+    # Use provided vocab list or get from session state
+    vocab_to_display = vocab_list if vocab_list else st.session_state.generated_vocab
     
-    st.markdown("""
-    <div class="stcard">
-        <h3>✨ Generated Vocabulary</h3>
-        <p style="color: #a0aec0; margin-bottom: 1.5rem;">Review and edit the generated words:</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Display each word in an expander for easy review
-    for i, word in enumerate(vocab_list, 1):
-        with st.expander(f"{i}. {word.get('word', 'Unknown')} - {word.get('meaning', 'No meaning')}"):
-            # Word details in columns
-            col1, col2 = st.columns(2)
-            with col1:
-                st.text_input("Word", value=word.get('word', ''), key=f"word_{i}")
-                st.text_input("Meaning", value=word.get('meaning', ''), key=f"meaning_{i}")
-                if word.get('pronunciation'):
-                    st.text_input("Pronunciation", value=word['pronunciation'], key=f"pron_{i}")
-            
-            with col2:
-                if word.get('part_of_speech'):
-                    st.text_input("Part of Speech", value=word['part_of_speech'], key=f"pos_{i}")
-                if word.get('notes'):
-                    st.text_area("Notes", value=word['notes'], key=f"notes_{i}")
-            
-            # Examples in full width
-            if word.get('examples'):
-                st.text_area("Examples", value='\n'.join(word['examples']), key=f"examples_{i}")
-            
-            # Save button for this word
-            if st.button("Save Changes", key=f"save_{i}", use_container_width=True):
-                handle_save_changes(i, word)
+    # Display each word
+    for i, word in enumerate(vocab_to_display):
+        with st.expander(f"Word {i+1}: {word.get('word', '')}"):
+            try:
+                # Form fields for editing
+                st.text_input("Word", value=word.get('word', ''), key=f"word_{i+1}")
+                st.text_input("Meaning", value=word.get('meaning', ''), key=f"meaning_{i+1}")
+                st.text_input("Pronunciation", value=word.get('pronunciation', ''), key=f"pron_{i+1}")
+                st.text_input("Part of Speech", value=word.get('part_of_speech', ''), key=f"pos_{i+1}")
+                st.text_area("Notes", value=word.get('notes', ''), key=f"notes_{i+1}")
+                st.text_area("Examples", value='\n'.join(word.get('examples', [])), key=f"examples_{i+1}")
+                
+                if st.button("Save Changes", key=f"save_{i+1}"):
+                    handle_save_changes(i+1, word)
+            except Exception as e:
+                st.error(f"Error displaying word {i+1}: {str(e)}")
     
     # Action buttons
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Generate More", use_container_width=True):
+        if st.button("Generate More"):
             handle_generate_more()
     with col2:
-        handle_export()
+        if st.button("Export"):
+            handle_export()
 
 def render_generator(selected_language: str):
     """Main function to render the vocabulary generator interface."""
     # Initialize session state
     initialize_session_state()
     
-    if st.session_state['generation_error']:
-        display_results(error=st.session_state['generation_error'])
+    if st.session_state.generation_error:
+        display_results(error=st.session_state.generation_error)
         return
     
-    if st.session_state['generated_vocab']:
+    if st.session_state.generated_vocab:
         display_results()
         return
     
     # Show generate button first if generator is not shown
-    if not st.session_state['show_generator']:
+    if not st.session_state.show_generator:
         st.markdown("""
         <div class="stcard">
             <h3>📚 Vocabulary Generator</h3>
@@ -208,10 +246,10 @@ def render_generator(selected_language: str):
         """, unsafe_allow_html=True)
         
         if st.button("Generate Vocabulary", type="primary", use_container_width=True):
-            st.session_state['show_generator'] = True
+            st.session_state.show_generator = True
     
     # Show form if generator is enabled
-    if st.session_state['show_generator']:
+    if st.session_state.show_generator:
         st.markdown("""
         <div class="stcard">
             <h3>📚 Generate Vocabulary</h3>
@@ -223,8 +261,8 @@ def render_generator(selected_language: str):
         categories = get_categories_for_language(selected_language)
         
         # If current category isn't valid for this language, reset it
-        if st.session_state['generation_inputs']['category'] not in categories and categories:
-            st.session_state['generation_inputs']['category'] = categories[0]
+        if st.session_state.generation_inputs['category'] not in categories and categories:
+            st.session_state.generation_inputs['category'] = categories[0]
         
         # Form elements
         st.selectbox(
@@ -239,7 +277,7 @@ def render_generator(selected_language: str):
             "Number of Words",
             min_value=5,
             max_value=50,
-            value=st.session_state['generation_inputs']['num_words'],
+            value=st.session_state.generation_inputs['num_words'],
             step=5,
             key="generation_inputs.num_words",
             help="Choose how many words to generate"
@@ -250,21 +288,21 @@ def render_generator(selected_language: str):
             st.select_slider(
                 "Difficulty Level",
                 options=["Beginner", "Intermediate", "Advanced"],
-                value=st.session_state['generation_inputs']['difficulty'],
+                value=st.session_state.generation_inputs['difficulty'],
                 key="generation_inputs.difficulty",
                 help="Select the difficulty level of generated words"
             )
             
             st.checkbox(
                 "Include Usage Examples",
-                value=st.session_state['generation_inputs']['include_examples'],
+                value=st.session_state.generation_inputs['include_examples'],
                 key="generation_inputs.include_examples",
                 help="Generate example sentences for each word"
             )
             
             st.checkbox(
                 "Include Grammar Notes",
-                value=st.session_state['generation_inputs']['include_notes'],
+                value=st.session_state.generation_inputs['include_notes'],
                 key="generation_inputs.include_notes",
                 help="Add grammatical information and usage notes"
             )
@@ -280,7 +318,7 @@ def render_generator(selected_language: str):
                 # TODO: Add actual generation logic here
                 
                 # Placeholder vocab list for testing
-                st.session_state['generated_vocab'] = [
+                st.session_state.generated_vocab = [
                     {
                         "word": "Example",
                         "meaning": "A sample word",
@@ -292,7 +330,7 @@ def render_generator(selected_language: str):
                 ]
                 
                 # Initialize form state for each word
-                for i, word in enumerate(st.session_state['generated_vocab'], 1):
+                for i, word in enumerate(st.session_state.generated_vocab, 1):
                     st.session_state[f"word_{i}"] = word.get('word', '')
                     st.session_state[f"meaning_{i}"] = word.get('meaning', '')
                     st.session_state[f"pron_{i}"] = word.get('pronunciation', '')
@@ -300,10 +338,10 @@ def render_generator(selected_language: str):
                     st.session_state[f"notes_{i}"] = word.get('notes', '')
                     st.session_state[f"examples_{i}"] = '\n'.join(word.get('examples', []))
                 
-                display_results(vocab_list=st.session_state['generated_vocab'])
+                display_results(vocab_list=st.session_state.generated_vocab)
                 
             except Exception as e:
-                st.session_state['generation_error'] = str(e)
+                st.session_state.generation_error = str(e)
                 display_results(error=str(e))
             finally:
                 progress_bar.empty()
