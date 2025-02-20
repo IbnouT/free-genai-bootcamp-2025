@@ -480,4 +480,124 @@ def test_display_results_with_validation_error(mock_session_state, mock_streamli
     """Test displaying results with validation error."""
     mock_session_state.validation_error = "Validation error"
     display_results()  # Call without vocab_list to trigger validation error check
-    mock_streamlit['error'].assert_called_with("Validation error") 
+    mock_streamlit['error'].assert_called_with("Validation error")
+
+@pytest.fixture
+def mock_vocab_generator():
+    """Create a mock VocabGenerator."""
+    mock = MagicMock(spec=VocabGenerator)
+    mock.generate_vocabulary.return_value = SAMPLE_VOCAB_DATA
+    mock.get_available_categories.return_value = ["Adjectives", "Nouns", "Verbs"]
+    return mock
+
+def test_initialize_session_state(mock_session_state):
+    """Test initialization of session state."""
+    with patch('components.vocab_generator.VocabGenerator') as mock_gen:
+        mock_gen.return_value = MagicMock(spec=VocabGenerator)
+        initialize_session_state()
+        
+        assert mock_session_state.generation_inputs == {
+            'category': 'Adjectives',
+            'num_words': 10,
+            'difficulty': 'Intermediate',
+            'include_examples': True,
+            'include_notes': True
+        }
+        assert mock_session_state.generated_vocab is None
+        assert mock_session_state.show_generator is False
+        assert mock_session_state.generation_error is None
+        assert mock_session_state.validation_error is None
+        assert isinstance(mock_session_state.vocab_generator, MagicMock)
+
+def test_initialize_session_state_error(mock_session_state):
+    """Test initialization error handling."""
+    with patch('components.vocab_generator.VocabGenerator') as mock_gen:
+        mock_gen.side_effect = Exception("Test error")
+        initialize_session_state()
+        assert mock_session_state.vocab_generator is None
+
+def test_get_categories_for_language(mock_session_state, mock_vocab_generator):
+    """Test getting categories for a language."""
+    mock_session_state.vocab_generator = mock_vocab_generator
+    categories = get_categories_for_language("Japanese 🇯🇵")
+    assert categories == ["Adjectives", "Nouns", "Verbs"]
+    mock_vocab_generator.get_available_categories.assert_called_once()
+
+def test_get_categories_for_language_no_generator(mock_session_state):
+    """Test getting categories with no generator."""
+    mock_session_state.vocab_generator = None
+    categories = get_categories_for_language("Japanese 🇯🇵")
+    assert categories == ["Adjectives", "Nouns", "Verbs"]
+
+def test_get_categories_for_language_error(mock_session_state, mock_vocab_generator):
+    """Test getting categories with error."""
+    mock_session_state.vocab_generator = mock_vocab_generator
+    mock_vocab_generator.get_available_categories.side_effect = Exception("Test error")
+    categories = get_categories_for_language("Japanese 🇯🇵")
+    assert categories == ["Adjectives", "Nouns", "Verbs"]
+
+def test_render_generator_successful_generation(mock_session_state, mock_vocab_generator):
+    """Test successful vocabulary generation."""
+    mock_session_state.vocab_generator = mock_vocab_generator
+    mock_session_state.show_generator = True
+    
+    with patch('streamlit.button') as mock_button:
+        mock_button.return_value = True
+        render_generator("Japanese 🇯🇵")
+        
+        # Verify generator was called with correct parameters
+        mock_vocab_generator.generate_vocabulary.assert_called_once_with(
+            language="japanese",
+            category="Adjectives",
+            num_words=10,
+            save_to_file=True
+        )
+        
+        # Verify generated vocab was processed correctly
+        assert len(mock_session_state.generated_vocab) == 1
+        word = mock_session_state.generated_vocab[0]
+        assert word["word"] == "新しい"
+        assert word["meaning"] == "new"
+        assert word["pronunciation"] == "atarashii"
+        assert word["part_of_speech"] == "adjective"
+        assert word["notes"] == "Common adjective."
+        assert "新しい本を買った。" in word["examples"]
+
+def test_render_generator_generation_error(mock_session_state, mock_vocab_generator):
+    """Test error handling during generation."""
+    mock_session_state.vocab_generator = mock_vocab_generator
+    mock_session_state.show_generator = True
+    mock_vocab_generator.generate_vocabulary.side_effect = VocabGeneratorError("Test error")
+    
+    with patch('streamlit.button') as mock_button:
+        mock_button.return_value = True
+        render_generator("Japanese 🇯🇵")
+        assert mock_session_state.generation_error == "Test error"
+
+def test_render_generator_no_generator(mock_session_state):
+    """Test handling when generator is not initialized."""
+    mock_session_state.show_generator = True
+    mock_session_state.vocab_generator = None
+    
+    with patch('streamlit.button') as mock_button:
+        mock_button.return_value = True
+        render_generator("Japanese 🇯🇵")
+        assert "Vocabulary generator not initialized" in mock_session_state.generation_error
+
+def test_display_results_error(mock_session_state):
+    """Test displaying error in results."""
+    display_results(error="Test Error")
+    assert mock_session_state.generation_error == "Test Error"
+
+def test_display_results_success(mock_session_state):
+    """Test displaying successful results."""
+    test_vocab = [{
+        'word': 'Test Word',
+        'meaning': 'Test Meaning',
+        'pronunciation': 'test-pron',
+        'part_of_speech': 'noun',
+        'notes': 'Test notes',
+        'examples': ['Test example']
+    }]
+    display_results(vocab_list=test_vocab)
+    assert mock_session_state.generated_vocab == test_vocab 

@@ -52,7 +52,7 @@ This implementation plan outlines the steps to build the Vocab Importer tool, a 
   - [x] Implement category input/selection
   - [x] Create modular component structure
   - [x] Implement dark theme styling
-  - [ ] Add responsive layout with proper spacing
+  - [~] Add responsive layout with proper spacing
 - [x] 3.2. Vocabulary Generation UI
   - [x] Create generation interface
   - [x] Implement progress indicators
@@ -61,6 +61,8 @@ This implementation plan outlines the steps to build the Vocab Importer tool, a 
   - [x] Implement mock fixtures for UI testing
   - [x] Add session state management tests
   - [x] Achieve high test coverage
+  - [~] Improve generation workflow and state management
+  - [ ] Fix remaining UI issues
 - [ ] 3.3. Review & Edit Interface
   - [ ] Create vocabulary entry editor
   - [ ] Implement batch operations
@@ -119,4 +121,6 @@ Each commit will have a descriptive message following the format:
 - JSON files will be used for data storage
 - Templates have been improved with detailed pronunciation guides
 - Testing will aim for 100% coverage
-- All functionality will be tested manually before marking as complete 
+- All functionality will be tested manually before marking as complete
+- UI flow has been simplified with better state management
+- Added proper handling of unsaved changes and language switches 

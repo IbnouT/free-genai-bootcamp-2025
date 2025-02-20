@@ -10,4 +10,5 @@ google-generativeai>=0.3.2  # Gemini API
 # Utilities
 python-dotenv>=1.0.0  # For environment variables
 requests>=2.31.0    # For API calls
-jsonschema>=4.21.1  # For JSON validation 
+jsonschema>=4.21.1  # For JSON validation
+gTTS>=2.5.1        # For text-to-speech functionality 
