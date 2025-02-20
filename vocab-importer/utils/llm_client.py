@@ -88,13 +88,14 @@ class GroqClient(BaseLLMClient):
         if not api_key:
             raise LLMError("GROQ_API_KEY not found in environment")
         self.client = groq.Client(api_key=api_key)
+        self.model = os.getenv("GROQ_MODEL", "mixtral-8x7b-32768")
     
     def generate_vocabulary(self, prompt: str) -> Dict:
         """Generate vocabulary using Groq."""
         try:
             response = self.client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt}],
-                model="mixtral-8x7b-32768",
+                model=self.model,
                 temperature=0.7,
                 max_tokens=4000
             )

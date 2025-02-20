@@ -81,4 +81,4 @@ ${language_specific_instructions}
 - Include both formal and informal usage where relevant
 
 **Final Output Requirement:**
-Generate a complete JSON object containing ${num_words} vocabulary entries for ${language_name} ${category} that strictly follow the structure and rules above. Ensure that the "notes" field is populated with meaningful commentary for each entry, and that no fields are left empty.
+Generate a complete JSON object containing ${num_words} vocabulary entries for ${language_name} ${category} that strictly follow the structure and rules above. Ensure that the "notes" field is populated with meaningful commentary for each entry, and that no fields are left empty. 

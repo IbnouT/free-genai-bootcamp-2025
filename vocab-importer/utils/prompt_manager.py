@@ -14,6 +14,13 @@ class PromptManager:
         "es": "Spanish"
     }
     
+    TEMPLATE_FILES = {
+        "ja": "japanese_template.md",
+        "fr": "french_template.md",
+        "ar": "arabic_template.md",
+        "es": "spanish_template.md"
+    }
+    
     def __init__(self, templates_dir: str = "prompt_templates"):
         """
         Initialize the prompt manager.
@@ -28,7 +35,7 @@ class PromptManager:
         """Load all template files."""
         self.base_template = self._read_template("base_template.md")
         self.language_templates = {
-            lang: self._read_template(f"{lang}_template.md")
+            lang: self._read_template(self.TEMPLATE_FILES[lang])
             for lang in self.LANGUAGE_NAMES.keys()
         }
     

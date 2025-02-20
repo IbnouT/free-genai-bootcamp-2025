@@ -1,64 +1,101 @@
-**Language-Specific Requirements for Arabic:**
-- Include both masculine and feminine forms where applicable
-- Consider root patterns and derivations
-- Include diacritical marks (tashkeel) in the script where necessary for clarity
-- Account for dialectal variations in the notes if relevant
+**Language-Specific Requirements for Arabic (v2.0):**
+- **For all words:**
+  - Include full diacritical marks (tashkeel)
+  - Show root pattern and derivation
+  - Note any dialectal variations
+- **For verbs:**
+  - Specify verb form (Form I-X)
+  - Show past and present tense conjugations
+  - Include verbal noun (masdar)
+  - Note transitivity and object markers
+- **For nouns:**
+  - Show broken plural if applicable
+  - Include gender and definiteness
+  - Note any irregular forms
+- **For adjectives:**
+  - Include both masculine and feminine forms
+  - Show agreement patterns
+  - Note comparative/superlative forms
 
 **Example of a Good Vocabulary Entry:**  
-For the word `"جديد"` (jadeed):
+For the word `"كَتَبَ"` (kataba):
 ```json
 {
-  "script": "جديد",
-  "transliteration": "jadeed",
+  "script": "كَتَبَ",
+  "transliteration": "kataba",
   "pronunciation_aid": [
     {
-      "unit": "ج",
-      "readings": ["ja"]
+      "unit": "كَ",
+      "readings": ["ka"]
     },
     {
-      "unit": "ديد",
-      "readings": ["deed"]
+      "unit": "تَ",
+      "readings": ["ta"]
+    },
+    {
+      "unit": "بَ",
+      "readings": ["ba"]
     }
   ],
-  "meaning": "new",
-  "part_of_speech": "adjective",
+  "meaning": "wrote",
+  "part_of_speech": "verb",
   "usage_examples": [
     {
-      "script": "اشتريت سيارة جديدة.",
-      "meaning": "I bought a new car."
+      "script": "الطالِبُ كَتَبَ رِسالَةً.",
+      "meaning": "The student wrote a letter."
     },
     {
-      "script": "هذا الكتاب جديد.",
-      "meaning": "This book is new."
+      "script": "يَكْتُبُ الطالِبُ الدَّرْسَ.",
+      "meaning": "The student writes the lesson."
+    },
+    {
+      "script": "كُتِبَ الكِتابُ بِاللُّغَةِ العَرَبِيَّةِ.",
+      "meaning": "The book was written in Arabic."
     }
   ],
-  "notes": "Common adjective used to describe something new. Feminine form is جديدة (jadeeda). From root ج-د-د (j-d-d)."
+  "notes": "Form I verb (فَعَلَ). Root: ك-ت-ب (k-t-b). Present tense: يَكْتُبُ (yaktubu). Verbal noun: كِتابَة (kitaaba). Active participle: كاتِب (kaatib). Passive participle: مَكْتوب (maktuub). Common in both MSA and dialects. Related words: كِتاب (book), مَكْتَب (desk/office), مَكْتَبة (library). Passive voice commonly used."
 }
 ```
 
-**Bad Example (Incorrect Readings):**
+**Bad Example (Multiple Issues):**
 ```json
 {
-  "script": "جديد",
-  "transliteration": "jadeed",
-  "pronunciation_aid": "ja-deed",
-  "meaning": "new",
-  "part_of_speech": "adjective",
-  "usage_examples": [
+  "script": "كتب",
+  "transliteration": "kataba",
+  "pronunciation_aid": [
     {
-      "script": "اشتريت سيارة جديدة.",
-      "meaning": "I bought a new car."
+      "unit": "ك",
+      "readings": ["ka"]
     }
   ],
-  "notes": "This entry is wrong because the pronunciation aid must be an array of objects, not a single string."
+  "meaning": "wrote",
+  "part_of_speech": "verb",
+  "usage_examples": [
+    {
+      "script": "الطالب كتب رسالة",
+      "meaning": "The student wrote a letter."
+    }
+  ],
+  "notes": "A verb meaning to write."
 }
 ```
 
-Explanation: This is incorrect because the `pronunciation_aid` field must be an array of objects with each object containing a non-empty `unit` and its corresponding `readings`.
+Explanation: The bad example has several issues:
+1. Missing diacritical marks (tashkeel)
+2. Incomplete pronunciation aid
+3. No verb form specification
+4. No tense variations
+5. No related forms or derivatives
+6. Missing case endings in example
+7. Too brief notes
+8. No passive voice example
 
 **Additional Arabic-Specific Notes:**
-- Break down words according to their root pattern structure
-- Include common idiomatic usage if applicable
-- Note any irregular plural forms for adjectives
-- Consider formal (MSA) vs colloquial usage where relevant
-- Include both definite and indefinite forms in usage examples 
+- Include all necessary diacritical marks for precise pronunciation
+- Show both formal (MSA) and common dialectal variations
+- Note any irregular conjugation patterns
+- Include common idiomatic expressions
+- Show proper case endings in examples
+- Note any changes in meaning with different prepositions
+- Include passive voice where commonly used
+- Show proper definiteness marking (with/without ال) 

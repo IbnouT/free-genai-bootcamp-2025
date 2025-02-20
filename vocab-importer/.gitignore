@@ -34,4 +34,9 @@ Thumbs.db
 
 # Project specific
 data/*.json
-!data/test_data/*.json  # Keep test data in version control 
+!data/test_data/*.json  # Keep test data in version control
+
+# Environment variables
+.env
+.env.*
+!.env.example 

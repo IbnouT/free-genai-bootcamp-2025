@@ -1,53 +1,31 @@
-**Language-Specific Requirements for Japanese:**
-- For adjectives, include both い-adjectives and な-adjectives
-- Ensure proper kanji usage with appropriate readings
-- Include common variations or alternate forms if applicable
+**Language-Specific Requirements for Japanese (v2.0):**
+- **For all words:**
+  - Use appropriate kanji where common
+  - Include pitch accent patterns in romaji
+  - List common collocations and compounds
+- **For nouns:**
+  - Include appropriate counter(s)
+  - Show both の-modification and compound forms
+  - Note any irregular readings in compounds
+- **For adjectives:**
+  - Specify type (い-adjective or な-adjective)
+  - Include な where appropriate in examples
+  - Show both attributive and predicative uses
+- **For verbs:**
+  - Show base form and polite form
+  - Include common conjugations
+  - Note transitivity and any irregular forms
 
 **Example of a Good Vocabulary Entry:**  
-For the word `"忙しい"` (isogashii):
-```json
-{
-  "script": "忙しい",
-  "transliteration": "isogashii",
-  "pronunciation_aid": [
-    {
-      "unit": "忙",
-      "readings": ["i", "so", "ga"]
-    },
-    {
-      "unit": "し",
-      "readings": ["shi"]
-    },
-    {
-      "unit": "い",
-      "readings": ["i"]
-    }
-  ],
-  "meaning": "busy",
-  "part_of_speech": "adjective",
-  "usage_examples": [
-    {
-      "script": "彼はいつも忙しい。",
-      "meaning": "He is always busy."
-    },
-    {
-      "script": "今日は忙しい日だ。",
-      "meaning": "Today is a busy day."
-    }
-  ],
-  "notes": "Common adjective used to describe a busy state; frequently used in both casual and formal contexts."
-}
-```
-
-**Bad Example (Incorrect Readings):**
+For the word `"新しい"` (new):
 ```json
 {
   "script": "新しい",
   "transliteration": "atarashii",
   "pronunciation_aid": [
     {
-      "unit": "",
-      "readings": ["shi", "ara"]
+      "unit": "新",
+      "readings": ["a", "ta", "ra"]
     },
     {
       "unit": "し",
@@ -62,18 +40,59 @@ For the word `"忙しい"` (isogashii):
   "part_of_speech": "adjective",
   "usage_examples": [
     {
-      "script": "彼は新しい車を買った。",
-      "meaning": "He bought a new car."
+      "script": "新しい本を買った。",
+      "meaning": "I bought a new book."
+    },
+    {
+      "script": "これは新しいですか？",
+      "meaning": "Is this new?"
+    },
+    {
+      "script": "彼は新しい車を持っています。",
+      "meaning": "He has a new car."
     }
   ],
-  "notes": "This entry is wrong because it leaves the 'unit' field empty and assigns incorrect readings."
+  "notes": "い-adjective. Pitch accent: [atara↓shii]. Common compounds: 新品 (shinpin, brand new item), 新築 (shinchiku, newly built). Casual form ends in い, polite form adds です. Used before nouns directly: 新しい家 (atarashii ie, new house). Related words: 新規 (shinki, new/newly), 新人 (shinjin, newcomer)."
 }
 ```
 
-Explanation: This breakdown is incorrect because the `unit` fields must not be empty, and the readings must correctly reflect the actual pronunciation. For `新しい`, the unit `新` should be assigned readings that correctly match its sound in this word, not arbitrary ones.
+**Bad Example (Multiple Issues):**
+```json
+{
+  "script": "学生",
+  "transliteration": "gakusei",
+  "pronunciation_aid": [
+    {
+      "unit": "学生",
+      "readings": ["gakusei"]  // Not properly segmented
+    }
+  ],
+  "meaning": "student",
+  "part_of_speech": "noun",
+  "usage_examples": [
+    {
+      "script": "彼は学生です。",
+      "meaning": "He is a student."
+    }
+  ],
+  "notes": "A student."  // Too brief, missing important information
+}
+```
+
+Explanation: The bad example has several issues:
+1. Pronunciation aid not properly segmented (should be: 学 [ga, ku] and 生 [se, i])
+2. Missing pitch accent information
+3. No counter information
+4. No compound words
+5. Too brief notes
+6. Only one usage example
+7. No の-modification examples
 
 **Additional Japanese-Specific Notes:**
-- For kanji compounds, break down each character with its correct reading in context
-- Include pitch accent information in the readings if relevant
-- For な-adjectives, include the な in usage examples where appropriate
-- Consider common collocations and set phrases in usage examples 
+- Break down kanji compounds into their component readings in romaji
+- Include pitch accent patterns using ↓ for downstep
+- Show both polite and casual forms in examples
+- Include common collocations and set phrases
+- Note any irregular readings or pitch patterns
+- Show proper particle usage in examples
+- Include both written and spoken forms where different 
