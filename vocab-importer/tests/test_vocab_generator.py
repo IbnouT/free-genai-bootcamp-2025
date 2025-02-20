@@ -4,8 +4,20 @@ from unittest.mock import patch, MagicMock
 import pytest
 from datetime import datetime
 from pathlib import Path
+from streamlit.testing.v1 import AppTest
+import streamlit as st
 
 from utils.vocab_generator import VocabGenerator, VocabGeneratorError
+from components.vocab_generator import (
+    initialize_session_state,
+    get_categories_for_language,
+    render_generation_form,
+    handle_save_changes,
+    handle_generate_more,
+    handle_export,
+    display_results,
+    render_generator
+)
 
 # Sample test data
 SAMPLE_VOCAB_DATA = {
@@ -90,6 +102,31 @@ def generator(mock_prompt_manager, mock_llm_client, mock_file_manager):
         templates_dir="mock_templates_dir",
         data_dir="mock_data_dir"
     )
+
+@pytest.fixture
+def mock_streamlit(monkeypatch):
+    """Mock Streamlit functions."""
+    mock_st = {
+        'button': MagicMock(return_value=False),
+        'markdown': MagicMock(),
+        'selectbox': MagicMock(),
+        'slider': MagicMock(),
+        'expander': MagicMock(),
+        'error': MagicMock(),
+        'success': MagicMock(),
+        'info': MagicMock(),
+        'empty': MagicMock(),
+        'progress': MagicMock()
+    }
+    
+    def mock_function(name):
+        return mock_st[name]
+    
+    # Patch all Streamlit functions
+    for name in mock_st:
+        monkeypatch.setattr(st, name, mock_st[name])
+    
+    return mock_st
 
 def test_generate_vocabulary(generator, mock_llm_client, mock_prompt_manager):
     """Test vocabulary generation."""
@@ -197,4 +234,209 @@ def test_get_generation_stats_error(generator, mock_file_manager):
     mock_file_manager.get_category_file.return_value = Path("mock_file.json")
     
     with pytest.raises(VocabGeneratorError, match="Failed to get generation stats"):
-        generator.get_generation_stats("ja", "Adjectives") 
+        generator.get_generation_stats("ja", "Adjectives")
+
+@pytest.fixture
+def mock_session_state(monkeypatch):
+    """Mock Streamlit's session state."""
+    mock_state = {
+        'generation_inputs': {
+            'category': 'Adjectives',
+            'num_words': 10,
+            'difficulty': 'Intermediate',
+            'include_examples': True,
+            'include_notes': True
+        },
+        'generated_vocab': None,
+        'show_generator': False,
+        'generation_error': None
+    }
+    monkeypatch.setattr(st, 'session_state', mock_state)
+    return mock_state
+
+def test_initialize_session_state(mock_session_state):
+    """Test session state initialization."""
+    # Clear session state
+    mock_session_state.clear()
+    
+    # Initialize session state
+    initialize_session_state()
+    
+    # Verify all required keys are present with default values
+    assert 'generation_inputs' in st.session_state
+    assert st.session_state['generation_inputs']['category'] == 'Adjectives'
+    assert st.session_state['generation_inputs']['num_words'] == 10
+    assert 'generated_vocab' in st.session_state
+    assert st.session_state['generated_vocab'] is None
+    assert 'show_generator' in st.session_state
+    assert st.session_state['show_generator'] is False
+    assert 'generation_error' in st.session_state
+    assert st.session_state['generation_error'] is None
+
+def test_get_categories_for_language():
+    """Test getting categories for different languages."""
+    # Test Japanese categories
+    ja_categories = get_categories_for_language("Japanese 🇯🇵")
+    assert "Verbs" in ja_categories
+    assert "Adjectives" in ja_categories
+    assert len(ja_categories) == 4
+    
+    # Test French categories
+    fr_categories = get_categories_for_language("French 🇫🇷")
+    assert "Adjectives" in fr_categories
+    assert "Verbs" in fr_categories
+    assert len(fr_categories) == 4
+    
+    # Test invalid language
+    invalid_categories = get_categories_for_language("Invalid Language")
+    assert invalid_categories == []
+
+def test_handle_save_changes(mock_session_state):
+    """Test saving changes to vocabulary entries."""
+    # Setup test data
+    mock_session_state['generated_vocab'] = [{
+        'word': 'Old Word',
+        'meaning': 'Old Meaning',
+        'pronunciation': 'old-pron',
+        'part_of_speech': 'noun',
+        'notes': 'Old notes',
+        'examples': ['Old example']
+    }]
+    
+    # Setup form input values in session state
+    mock_session_state.update({
+        'word_1': 'New Word',
+        'meaning_1': 'New Meaning',
+        'pron_1': 'new-pron',
+        'pos_1': 'verb',
+        'notes_1': 'New notes',
+        'examples_1': 'New example 1\nNew example 2'
+    })
+    
+    # Call handle_save_changes
+    handle_save_changes(1, mock_session_state['generated_vocab'][0])
+    
+    # Verify changes
+    updated_word = mock_session_state['generated_vocab'][0]
+    assert updated_word['word'] == 'New Word'
+    assert updated_word['meaning'] == 'New Meaning'
+    assert updated_word['pronunciation'] == 'new-pron'
+    assert updated_word['part_of_speech'] == 'verb'
+    assert updated_word['notes'] == 'New notes'
+    assert len(updated_word['examples']) == 2
+    assert 'New example 1' in updated_word['examples']
+
+def test_handle_generate_more(mock_session_state):
+    """Test handling generate more action."""
+    # Setup initial state
+    mock_session_state['generated_vocab'] = [{'word': 'Test'}]
+    mock_session_state['show_generator'] = False
+    
+    # Call handle_generate_more
+    handle_generate_more()
+    
+    # Verify state is reset
+    assert mock_session_state['show_generator'] is True
+    assert mock_session_state['generated_vocab'] is None
+
+def test_handle_export(mock_session_state):
+    """Test handling export action."""
+    # Setup test data
+    mock_session_state['generated_vocab'] = [{
+        'word': 'Test Word',
+        'meaning': 'Test Meaning'
+    }]
+    
+    # Call handle_export
+    # Note: We can't fully test the download functionality in unit tests
+    # but we can verify it doesn't raise errors
+    handle_export()
+
+def test_display_results_error(mock_session_state):
+    """Test displaying error in results."""
+    # Test error display
+    display_results(error="Test Error")
+    
+    # Test successful display
+    test_vocab = [{
+        'word': 'Test Word',
+        'meaning': 'Test Meaning'
+    }]
+    display_results(vocab_list=test_vocab)
+
+def test_render_generator_flow(mock_session_state, mock_streamlit):
+    """Test the complete generator flow."""
+    # Mock generate button click
+    mock_streamlit['button'].return_value = True
+    
+    # Initial render
+    render_generator("Japanese 🇯🇵")
+    
+    # Verify generator is shown
+    assert mock_session_state['show_generator'] is True
+    mock_streamlit['markdown'].assert_called()
+    mock_streamlit['selectbox'].assert_called()
+    mock_streamlit['slider'].assert_called()
+    
+    # Mock form submission
+    mock_session_state['generation_inputs'] = {
+        'category': 'Adjectives',
+        'num_words': 5,
+        'difficulty': 'Intermediate',
+        'include_examples': True,
+        'include_notes': True
+    }
+    
+    # Re-render with form data
+    render_generator("Japanese 🇯🇵")
+    
+    # Verify form elements are called
+    mock_streamlit['selectbox'].assert_called()
+    mock_streamlit['slider'].assert_called()
+    mock_streamlit['button'].assert_called()
+
+def test_integration_flow(mock_session_state, mock_streamlit):
+    """Test the complete integration flow."""
+    # Setup initial state
+    mock_session_state['show_generator'] = False
+    mock_session_state['generated_vocab'] = None
+    mock_session_state['generation_error'] = None
+    
+    # Mock generate button click
+    mock_streamlit['button'].return_value = True
+    
+    # Initial render
+    render_generator("Japanese 🇯🇵")
+    
+    # Verify generator is shown
+    assert mock_session_state['show_generator'] is True
+    mock_streamlit['markdown'].assert_called()
+    
+    # Mock form submission
+    mock_session_state['generation_inputs'] = {
+        'category': 'Adjectives',
+        'num_words': 5,
+        'difficulty': 'Intermediate',
+        'include_examples': True,
+        'include_notes': True
+    }
+    
+    # Mock successful generation
+    mock_session_state['generated_vocab'] = SAMPLE_VOCAB_DATA['vocab_examples'][0]['vocab']
+    
+    # Initialize form state for each word
+    for i, word in enumerate(mock_session_state['generated_vocab'], 1):
+        mock_session_state[f"word_{i}"] = word.get('word', '')
+        mock_session_state[f"meaning_{i}"] = word.get('meaning', '')
+        mock_session_state[f"pron_{i}"] = word.get('pronunciation', '')
+        mock_session_state[f"pos_{i}"] = word.get('part_of_speech', '')
+        mock_session_state[f"notes_{i}"] = word.get('notes', '')
+        mock_session_state[f"examples_{i}"] = '\n'.join(word.get('examples', []))
+    
+    # Re-render with generated vocab
+    render_generator("Japanese 🇯🇵")
+    
+    # Verify results are displayed
+    mock_streamlit['markdown'].assert_called()
+    mock_streamlit['expander'].assert_called()
+    assert not mock_session_state['generation_error'] 
