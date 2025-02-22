@@ -47,4 +47,31 @@
 #### Insights
 - Direct approach to transcript fetching is more reliable
 - Specific language code request works better than complex fallbacks
-- Debug logging helps track issues in transcript fetching 
+- Debug logging helps track issues in transcript fetching
+
+### Step 3: Frontend Enhancement
+
+#### Challenges
+- Making transcript text easily readable
+- Organizing UI elements effectively
+- Providing clear user guidance
+- Maintaining consistent styling
+
+#### Solutions
+- Implemented custom CSS for better styling
+- Created dedicated containers for different content sections
+- Added helpful learning tips
+- Enhanced visual feedback with emojis and colors
+- Improved layout with column-based design
+
+#### Code Quality Assessment
+- Clean and organized UI code
+- Consistent styling throughout the app
+- Good use of Streamlit containers and layouts
+- Enhanced user experience with visual feedback
+
+#### Insights
+- Custom CSS significantly improves the look and feel
+- Organized layout helps users focus on content
+- Learning tips provide additional value
+- Visual feedback helps users understand system status 
