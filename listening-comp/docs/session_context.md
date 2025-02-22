@@ -12,11 +12,18 @@
 - Created initial Streamlit app with transcript fetching functionality
 - Added .gitignore for Python project
 
-**Next Step:** Phase 1, Step 2 - Implement transcript_extractor.py with full functionality
+#### Step 2: Transcript Extractor Implementation (Completed)
+- Simplified transcript extraction logic to directly fetch French transcripts
+- Added debug logging for video ID tracking
+- Improved error handling and user feedback
+- Fixed issues with French transcript detection and fetching
+
+**Next Step:** Phase 1, Step 3 - Enhance frontend with better transcript display
 
 ## Key Decisions
 - Using Streamlit for rapid frontend development
 - Implementing modular backend structure
 - Using youtube-transcript-api for reliable transcript extraction
 - Including type hints for better code maintainability
-- Setting up environment variables for API keys 
+- Setting up environment variables for API keys
+- Simplified transcript fetching to directly request French language 
