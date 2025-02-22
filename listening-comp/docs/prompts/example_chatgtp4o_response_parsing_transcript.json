@@ -1,0 +1,111 @@
+[
+    {
+      "dialogue": [
+        ["Locuteur 1", "Salut Marie, ça va ? Tu n'as pas l'air en forme."],
+        ["Marie", "Non, je suis fatiguée ce matin. J'ai passé une très mauvaise nuit."],
+        ["Marie", "Les voisins du dessous ont fait la fête jusqu'à trois heures du matin."],
+        ["Locuteur 1", "Tu n'es pas descendue les voir ?"],
+        ["Marie", "Non, j'ai hésité, mais je crois que la prochaine fois, je leur demanderai de baisser le volume."]
+      ],
+      "question": "Pourquoi Marie est-elle fatiguée ?",
+      "answers": [
+        "Elle a travaillé tard dans la nuit.",
+        "Elle a mal dormi à cause du bruit des voisins.",
+        "Elle s'est couchée tard en regardant un film.",
+        "Elle a eu une insomnie due au stress."
+      ],
+      "correct_answer_index": 1,
+      "speakers_info": ["Locuteur 1", "Marie"]
+    },
+    {
+      "dialogue": [
+        ["Locuteur 1", "Au fait, as-tu eu des nouvelles de ta candidature envoyée la semaine dernière ?"],
+        ["Locuteur 2", "Non, toujours rien. Je surveille ma boîte mail tous les matins."],
+        ["Locuteur 1", "Tu ne crois pas que tu devrais les relancer ?"],
+        ["Locuteur 2", "Peut-être. La personne que j'ai eue m'a dit qu'il y avait beaucoup de candidats pour ce poste."],
+        ["Locuteur 1", "C'est peut-être pour ça que la réponse tarde."],
+        ["Locuteur 2", "Sans doute. J'attends la fin de la semaine avant de les appeler."]
+      ],
+      "question": "Quel est le sujet de la conversation ?",
+      "answers": [
+        "Un problème technique avec une boîte mail.",
+        "L'attente d'une réponse pour une candidature.",
+        "Une discussion sur les opportunités d'emploi dans l'entreprise.",
+        "Une conversation sur le stress lié aux entretiens d'embauche."
+      ],
+      "correct_answer_index": 1,
+      "speakers_info": ["Locuteur 1", "Locuteur 2"]
+    },
+    {
+      "dialogue": [
+        ["Pierre", "Allô, Pierre, je t'appelle pour te dire que je risque d'être en retard au travail ce matin."],
+        ["Locuteur 2", "Qu'est-ce qui se passe ?"],
+        ["Pierre", "J'ai une fuite d'eau dans la cuisine et je n'arrive pas à joindre le plombier."],
+        ["Locuteur 2", "Ok, je comprends. Ne t'en fais pas, nous commencerons la réunion sans toi."],
+        ["Pierre", "Merci, je fais le plus vite possible."]
+      ],
+      "question": "Pourquoi Pierre va-t-il être en retard ?",
+      "answers": [
+        "Il a un rendez-vous médical.",
+        "Il a un problème avec sa voiture.",
+        "Il doit gérer une fuite d'eau chez lui.",
+        "Il a raté son réveil."
+      ],
+      "correct_answer_index": 2,
+      "speakers_info": ["Pierre", "Locuteur 2"]
+    },
+    {
+      "dialogue": [
+        ["Locuteur 1", "Où partez-vous en vacances cet été ?"],
+        ["Locuteur 2", "À vrai dire, je ne sais pas si nous pourrons partir."],
+        ["Locuteur 1", "Ah bon ? Pourquoi ?"],
+        ["Locuteur 2", "Je viens de commencer un nouveau travail, je ne suis pas sûr d'avoir des congés cette année."],
+        ["Locuteur 1", "Tu as demandé à ton employeur ?"],
+        ["Locuteur 2", "Je pourrais, mais je préfère attendre un peu avant d'en parler."]
+      ],
+      "question": "Pourquoi la personne hésite-t-elle à partir en vacances ?",
+      "answers": [
+        "Elle n'a pas encore choisi sa destination.",
+        "Elle vient d'être embauchée et craint de demander des congés.",
+        "Elle n'a pas assez d'argent pour voyager.",
+        "Elle préfère rester chez elle cette année."
+      ],
+      "correct_answer_index": 1,
+      "speakers_info": ["Locuteur 1", "Locuteur 2"]
+    },
+    {
+      "dialogue": [
+        ["Narrateur", "La nouvelle bibliothèque située dans l'espace culturel du centre-ville a été inaugurée le 8 octobre dernier."],
+        ["Narrateur", "Six bénévoles se relaient trois fois par semaine pour accueillir les visiteurs et les guider dans leur choix de lecture."],
+        ["Narrateur", "Cette ouverture était très attendue, tant par la population que par les élus, après de longs mois de travaux et quelques retards de chantier."],
+        ["Narrateur", "Les habitants vont enfin pouvoir profiter de l'immense collection d'ouvrages acquis par la ville."],
+        ["Narrateur", "Les livres pourront être empruntés gratuitement par tous les moins de 18 ans."]
+      ],
+      "question": "De quoi parle cet article ?",
+      "answers": [
+        "De la rénovation d'un musée.",
+        "De l'ouverture d'une nouvelle bibliothèque.",
+        "De l'organisation d'un festival de lecture.",
+        "De la modernisation des écoles du centre-ville."
+      ],
+      "correct_answer_index": 1,
+      "speakers_info": ["Narrateur"]
+    },
+    {
+      "dialogue": [
+        ["Narrateur", "On sait que les Français ne sont pas très doués en anglais."],
+        ["Narrateur", "Ce qu'on sait moins, c'est que les femmes sont plus à l'aise avec l'anglais que les hommes et que c'est à Paris que le niveau d'anglais est le meilleur."],
+        ["Narrateur", "Malgré tout, la France reste l'une des plus mauvaises élèves au niveau européen, bien loin des pays du Nord tels que la Norvège et le Danemark."]
+      ],
+      "question": "Que nous apprend cet article ?",
+      "answers": [
+        "Les Français sont les meilleurs en anglais en Europe.",
+        "Les hommes français sont meilleurs en anglais que les femmes.",
+        "Le niveau d'anglais est plus élevé à Paris qu'ailleurs en France.",
+        "La Norvège et le Danemark ont un niveau d'anglais plus faible que la France."
+      ],
+      "correct_answer_index": 2,
+      "speakers_info": ["Narrateur"]
+    }
+  ]
+  

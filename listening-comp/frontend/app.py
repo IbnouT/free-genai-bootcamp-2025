@@ -16,7 +16,8 @@ from transcript_extractor import get_transcript
 st.set_page_config(
     page_title="Language Listening App",
     page_icon="🎧",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 # Add custom CSS
@@ -30,8 +31,12 @@ st.markdown("""
         height: 45px;
         margin-top: 25px;
     }
+    /* Dark theme adjustments */
+    [data-testid="stAppViewContainer"] {
+        color: var(--text-color);
+    }
     .transcript-container {
-        background-color: #f0f2f6;
+        background-color: rgba(255, 255, 255, 0.1);
         border-radius: 10px;
         padding: 20px;
         margin: 10px 0;
@@ -40,6 +45,7 @@ st.markdown("""
         font-size: 16px;
         line-height: 1.6;
         white-space: pre-wrap;
+        color: var(--text-color);
     }
     .header-container {
         display: flex;
@@ -48,13 +54,37 @@ st.markdown("""
         margin-bottom: 1rem;
     }
     .video-info {
-        background-color: #e1e5eb;
+        background-color: rgba(255, 255, 255, 0.1);
         padding: 10px;
         border-radius: 5px;
         margin-bottom: 1rem;
+        color: var(--text-color);
     }
     div[data-testid="stHorizontalBlock"] {
         align-items: flex-end;
+    }
+    /* Input field dark theme fix */
+    .stTextInput input {
+        color: var(--text-color);
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    .stTextInput input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    /* Success message dark theme fix */
+    .stSuccess {
+        background-color: rgba(40, 167, 69, 0.2);
+        border-color: rgb(40, 167, 69);
+    }
+    /* Warning message dark theme fix */
+    .stWarning {
+        background-color: rgba(255, 193, 7, 0.2);
+        border-color: rgb(255, 193, 7);
+    }
+    /* Error message dark theme fix */
+    .stError {
+        background-color: rgba(220, 53, 69, 0.2);
+        border-color: rgb(220, 53, 69);
     }
     </style>
     """, unsafe_allow_html=True)
