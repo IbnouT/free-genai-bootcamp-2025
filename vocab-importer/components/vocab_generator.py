@@ -90,7 +90,7 @@ def handle_language_change(selected_language: str) -> bool:
         if st.session_state.has_unsaved_changes:
             save_col1, save_col2 = st.columns(2)
             with save_col1:
-                if st.button("Save Current Words", type="primary"):
+                if st.button("Save Current Words", key="language_change_save_btn", type="primary"):
                     try:
                         handle_export()
                         st.success("Words saved successfully!")
@@ -100,7 +100,7 @@ def handle_language_change(selected_language: str) -> bool:
                         st.error(f"Failed to save words: {str(e)}")
                         return False
             with save_col2:
-                if st.button("Discard Changes"):
+                if st.button("Discard Changes", key="language_change_discard_btn"):
                     st.session_state.has_unsaved_changes = False
                     return True
             st.info("Please choose to save or discard your current words before changing language.")
@@ -194,10 +194,11 @@ def render_generator(selected_language: str):
             help="Add grammatical information and usage notes"
         )
     
-    # Generate button
+    # Generate button and save option
+    st.write("")  # Add some spacing
     generate_col1, generate_col2 = st.columns([3, 1])
     with generate_col1:
-        if st.button("Generate Words", type="primary", use_container_width=True):
+        if st.button("Generate Words", type="primary", key="main_generate_btn", use_container_width=True):
             if st.session_state.has_unsaved_changes:
                 st.warning("You have unsaved changes. Please save or discard them first.")
             else:
@@ -206,10 +207,9 @@ def render_generator(selected_language: str):
     
     if st.session_state.has_unsaved_changes:
         with generate_col2:
-            if st.button("Save Words", use_container_width=True):
-                handle_export()
-                st.success("Words saved successfully!")
-                st.session_state.has_unsaved_changes = False
+            if st.button("Save Words", key="main_save_btn", use_container_width=True):
+                if handle_export():
+                    st.rerun()  # Rerun to update UI state
     
     # Display results if available
     if st.session_state.generation_error:
@@ -364,31 +364,36 @@ def handle_generate_more():
 def handle_export():
     """Handle exporting vocabulary list."""
     if st.session_state.generated_vocab:
-        col1, col2 = st.columns(2)
-        with col1:
-            # Save to JSON file button
-            if st.button("Save to File"):
-                try:
-                    result = st.session_state.vocab_generator.generate_vocabulary(
-                        language=st.session_state.language_code,  # We need to store this in session state
-                        category=st.session_state.generation_inputs['category'],
-                        num_words=len(st.session_state.generated_vocab),
-                        save_to_file=True,
-                        vocab_data={"vocab_examples": [{"vocab": st.session_state.generated_vocab}]}
-                    )
-                    st.success("Saved vocabulary to file successfully!")
-                except Exception as e:
-                    st.error(f"Failed to save vocabulary: {str(e)}")
-        
-        with col2:
-            # Download JSON button
+        try:
+            # Save to file
+            result = st.session_state.vocab_generator.generate_vocabulary(
+                language=st.session_state.language_code,
+                category=st.session_state.generation_inputs['category'],
+                num_words=len(st.session_state.generated_vocab),
+                save_to_file=True
+            )
+            
+            # Show success message
+            st.success("Saved vocabulary to file successfully!")
+            
+            # Provide download option
             json_str = json.dumps(st.session_state.generated_vocab, indent=2, ensure_ascii=False)
             st.download_button(
                 label="Download JSON",
                 data=json_str,
                 file_name="vocabulary.json",
-                mime="application/json"
+                mime="application/json",
+                key="download_json_btn"
             )
+            
+            # Clear unsaved changes flag
+            st.session_state.has_unsaved_changes = False
+            
+        except Exception as e:
+            st.error(f"Failed to save vocabulary: {str(e)}")
+            return False
+        return True
+    return False
 
 def generate_audio(text: str, lang: str) -> str:
     """Generate audio file for the given text and return the path."""
@@ -497,8 +502,12 @@ def display_results(vocab_list: Optional[List[Dict]] = None, error: Optional[str
                                 st.markdown("**Audio:**")
                                 play_audio(word['script'], st.session_state.language_code, key=f"{word_id}_audio")
                         
-                        # Edit/Save Button
-                        if st.button("Edit" if not is_editing else "Save", key=f"{word_id}_edit", use_container_width=True):
+                        # Edit/Save Button with unique key
+                        if st.button(
+                            "Edit" if not is_editing else "Save",
+                            key=f"{word_id}_edit_btn",
+                            use_container_width=True
+                        ):
                             try:
                                 if is_editing:
                                     # Save changes
@@ -570,14 +579,17 @@ def display_results(vocab_list: Optional[List[Dict]] = None, error: Optional[str
                     except Exception as e:
                         st.error(f"Error displaying word content: {str(e)}")
         
-        # Action buttons
-        action_cols = st.columns(2)
+        # Action buttons with unique keys
+        st.write("") # Add some spacing
+        st.write("Actions:")
+        action_cols = st.columns([1, 1])  # Equal width columns
         with action_cols[0]:
-            if st.button("Generate More", use_container_width=True):
+            if st.button("Generate More", key="results_generate_more_btn", use_container_width=True):
                 handle_generate_more()
         with action_cols[1]:
-            if st.button("Export", use_container_width=True):
-                handle_export()
+            if st.button("Save Words", key="results_save_btn", use_container_width=True):
+                if handle_export():
+                    st.rerun()  # Rerun to update UI state
     
     except Exception as e:
         st.error(f"Error displaying vocabulary list: {str(e)}") 
