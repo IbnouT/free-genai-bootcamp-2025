@@ -11,6 +11,7 @@ sys.path.append(backend_path)
 
 import streamlit as st
 from transcript_extractor import get_transcript
+from llm_data_generator import generate_learning_content
 
 # Set page config
 st.set_page_config(
@@ -86,8 +87,69 @@ st.markdown("""
         background-color: rgba(220, 53, 69, 0.2);
         border-color: rgb(220, 53, 69);
     }
+    /* Debug info styling */
+    .debug-info {
+        font-family: monospace;
+        font-size: 14px;
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+    }
     </style>
     """, unsafe_allow_html=True)
+
+def display_debug_info(debug_info: dict):
+    """Display debug information in a collapsible section."""
+    with st.expander("🔍 Debug Information"):
+        st.markdown("### API Request Details")
+        st.markdown("**Model Used:** " + debug_info['model_used'])
+        if debug_info.get('token_usage'):
+            st.markdown("**Token Usage:** " + str(debug_info['token_usage']))
+        
+        st.markdown("### Prompt Used")
+        st.code(debug_info['prompt_used'], language='markdown')
+        
+        st.markdown("### Raw LLM Response")
+        if debug_info.get('raw_response'):
+            st.code(debug_info['raw_response'], language='json')
+        
+        if debug_info.get('error_details'):
+            st.markdown("### Error Details")
+            st.error(debug_info['error_details'])
+
+def display_learning_content(content: list):
+    """Display the parsed learning content."""
+    for i, section in enumerate(content, 1):
+        st.markdown(f"### Dialog Section {i}")
+        
+        # Display dialog
+        with st.container():
+            st.markdown("#### Conversation")
+            for speaker, text in section['dialogue']:
+                st.markdown(f"**{speaker}:** {text}")
+        
+        # Display question and answers
+        st.markdown("#### Question")
+        st.markdown(section['question'])
+        
+        # Display answers as radio buttons
+        st.markdown("#### Options")
+        answer_options = section['answers']
+        selected_answer = st.radio(
+            "Select your answer:",
+            options=range(len(answer_options)),
+            format_func=lambda x: f"{chr(65+x)}. {answer_options[x]}",
+            key=f"question_{i}"
+        )
+        
+        # Show if answer is correct
+        if st.button("Check Answer", key=f"check_{i}"):
+            if selected_answer == section['correct_answer_index']:
+                st.success("✅ Correct!")
+            else:
+                st.error(f"❌ Incorrect. The correct answer is: {answer_options[section['correct_answer_index']]}")
+        
+        st.markdown("---")
 
 def main():
     # Header with app title and description
@@ -115,43 +177,55 @@ def main():
     if fetch_button:
         if youtube_url:
             with st.spinner("Fetching transcript..."):
-                result = get_transcript(youtube_url)
+                # Get transcript
+                transcript_result = get_transcript(youtube_url)
                 
-                if result['success']:
+                if transcript_result['success']:
                     st.success("✨ Transcript fetched successfully!")
                     
-                    # Video info section
-                    st.markdown("### 📺 Video Information")
-                    with st.container():
-                        st.markdown(f"""
-                        <div class="video-info">
-                            <strong>Source:</strong> {youtube_url}<br>
-                            <strong>Language:</strong> French
-                        </div>
-                        """, unsafe_allow_html=True)
-                    
-                    # Transcript display
-                    st.markdown("### 📜 Transcript")
-                    with st.container():
-                        st.markdown("""
-                        <div class="transcript-container">
-                            <div class="transcript-text">
-                            {}
-                            </div>
-                        </div>
-                        """.format(result['transcript'].replace('\n', '<br>')), 
-                        unsafe_allow_html=True)
-                    
-                    # Learning tips
-                    with st.expander("💡 Learning Tips"):
-                        st.markdown("""
-                        - Listen to the video while reading the transcript
-                        - Try to understand the context before looking at the transcript
-                        - Practice speaking by repeating after the audio
-                        - Note down new vocabulary and expressions
-                        """)
+                    # Generate learning content
+                    with st.spinner("Generating learning content..."):
+                        result = generate_learning_content(transcript_result['transcript'])
+                        
+                        if result['success']:
+                            # Video info section
+                            st.markdown("### 📺 Video Information")
+                            with st.container():
+                                st.markdown(f"""
+                                <div class="video-info">
+                                    <strong>Source:</strong> {youtube_url}<br>
+                                    <strong>Language:</strong> French
+                                </div>
+                                """, unsafe_allow_html=True)
+                            
+                            # Toggle between original and parsed content
+                            view_mode = st.radio(
+                                "Select View Mode:",
+                                ["Parsed Content", "Original Transcript"],
+                                horizontal=True
+                            )
+                            
+                            if view_mode == "Parsed Content":
+                                display_learning_content(result['content'])
+                            else:
+                                st.markdown("### 📜 Original Transcript")
+                                with st.container():
+                                    st.markdown("""
+                                    <div class="transcript-container">
+                                        <div class="transcript-text">
+                                        {}
+                                        </div>
+                                    </div>
+                                    """.format(result['debug_info']['original_transcript'].replace('\n', '<br>')), 
+                                    unsafe_allow_html=True)
+                            
+                            # Debug information
+                            display_debug_info(result['debug_info'])
+                            
+                        else:
+                            st.error(f"❌ Error generating learning content: {result['error']}")
                 else:
-                    st.error(f"❌ Error fetching transcript: {result['error']}")
+                    st.error(f"❌ Error fetching transcript: {transcript_result['error']}")
         else:
             st.warning("⚠️ Please enter a YouTube URL")
 
