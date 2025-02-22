@@ -26,7 +26,16 @@
 - Included learning tips section
 - Improved error messages and user guidance
 
-**Next Step:** Phase 2: LLM Prompt Engineering and Data Generation
+### Phase 2: LLM Prompt Engineering and Data Generation
+
+#### Step 1: LLM Integration Setup (In Progress)
+- Created llm_data_generator.py module
+- Implemented OpenAI API integration
+- Designed initial prompt for learning content generation
+- Added content validation
+- Structured JSON output format
+
+**Next Step:** Test and refine LLM prompt with sample transcripts
 
 ## Key Decisions
 - Using Streamlit for rapid frontend development
@@ -35,4 +44,6 @@
 - Including type hints for better code maintainability
 - Setting up environment variables for API keys
 - Simplified transcript fetching to directly request French language
-- Enhanced UI with custom CSS and better component organization 
+- Enhanced UI with custom CSS and better component organization
+- Using GPT-3.5-turbo for learning content generation
+- Structured JSON format for Q&A content 
