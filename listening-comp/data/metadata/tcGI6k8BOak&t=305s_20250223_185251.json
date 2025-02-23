@@ -1,0 +1,11 @@
+{
+  "youtube_url": "https://www.youtube.com/watch?v=tcGI6k8BOak&t=305s",
+  "video_id": "tcGI6k8BOak&t=305s",
+  "processing_date": "20250223_185251",
+  "audio_files": {
+    "tcGI6k8BOak&t=305s_sequence_1.mp3": "data/audio/tcGI6k8BOak&t=305s_20250223_185251/tcGI6k8BOak&t=305s_sequence_1.mp3",
+    "tcGI6k8BOak&t=305s_sequence_3.mp3": "data/audio/tcGI6k8BOak&t=305s_20250223_185251/tcGI6k8BOak&t=305s_sequence_3.mp3",
+    "tcGI6k8BOak&t=305s_sequence_2.mp3": "data/audio/tcGI6k8BOak&t=305s_20250223_185251/tcGI6k8BOak&t=305s_sequence_2.mp3",
+    "tcGI6k8BOak&t=305s_sequence_4.mp3": "data/audio/tcGI6k8BOak&t=305s_20250223_185251/tcGI6k8BOak&t=305s_sequence_4.mp3"
+  }
+}

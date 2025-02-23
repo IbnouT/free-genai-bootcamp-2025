@@ -5,6 +5,7 @@ import sys
 import os
 from pathlib import Path
 import json
+import time
 
 # Add backend directory to Python path
 backend_path = str(Path(__file__).parent.parent / 'backend')
@@ -80,6 +81,12 @@ st.markdown("""
         background-color: #f8f9fa;
         margin: 10px 0;
     }
+    /* Step header styling */
+    .step-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -94,12 +101,29 @@ def format_transcript(transcript):
         formatted.append(f"[{timestamp}] {segment['text']}")
     return "\n".join(formatted)
 
+def sort_sequence_files(files):
+    """Sort files by sequence number."""
+    def get_sequence_num(filename):
+        try:
+            # Extract sequence number from filename (e.g., 'video_id_sequence_1.mp3' -> 1)
+            return int(filename.split('sequence_')[-1].split('.')[0])
+        except:
+            return float('inf')  # Put files without sequence number at the end
+    return sorted(files, key=get_sequence_num)
+
 def process_video(youtube_url: str):
     """Process a YouTube video through the pipeline."""
-    with st.spinner("Processing video..."):
-        # Step 1: Get transcript
-        st.markdown("### Step 1: Transcript Extraction")
-        with st.expander("Show Details", expanded=True):
+    
+    # Step 1: Get transcript
+    st.markdown(
+        '<div class="step-header">'
+        '<h3>Step 1: Transcript Extraction</h3>'
+        '<div class="step-spinner"></div>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+    with st.spinner("Extracting transcript..."):
+        with st.expander("Show Details", expanded=False):
             transcript_result = get_transcript(youtube_url)
             if not transcript_result['success']:
                 st.error(f"❌ Error fetching transcript: {transcript_result['error']}")
@@ -111,10 +135,17 @@ def process_video(youtube_url: str):
             st.markdown('<div class="transcript-display">', unsafe_allow_html=True)
             st.text(format_transcript(transcript_result['transcript']))
             st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Step 2: Extract timestamps
-        st.markdown("### Step 2: Timestamp Extraction")
-        with st.expander("Show Details", expanded=True):
+    
+    # Step 2: Extract timestamps
+    st.markdown(
+        '<div class="step-header">'
+        '<h3>Step 2: Timestamp Extraction</h3>'
+        '<div class="step-spinner"></div>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+    with st.spinner("Extracting timestamps..."):
+        with st.expander("Show Details", expanded=False):
             try:
                 timestamps = extract_sequence_timestamps(transcript_result['transcript'])
                 if timestamps:
@@ -126,10 +157,17 @@ def process_video(youtube_url: str):
             except Exception as e:
                 st.error(f"❌ Error extracting timestamps: {str(e)}")
                 return
-        
-        # Step 3: Segment audio
-        st.markdown("### Step 3: Audio Segmentation")
-        with st.expander("Show Details", expanded=True):
+    
+    # Step 3: Segment audio
+    st.markdown(
+        '<div class="step-header">'
+        '<h3>Step 3: Audio Segmentation</h3>'
+        '<div class="step-spinner"></div>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+    with st.spinner("Segmenting audio..."):
+        with st.expander("Show Details", expanded=False):
             if not timestamps:
                 st.error("❌ Cannot proceed with audio segmentation: No timestamps available")
                 return
@@ -148,10 +186,17 @@ def process_video(youtube_url: str):
                 if file.endswith('.mp3'):
                     with open(os.path.join(output_folder, file), 'rb') as f:
                         st.audio(f.read(), format='audio/mp3')
-        
-        # Step 4: Transcribe audio segments
-        st.markdown("### Step 4: Audio Transcription")
-        with st.expander("Show Details", expanded=True):
+    
+    # Step 4: Transcribe audio segments
+    st.markdown(
+        '<div class="step-header">'
+        '<h3>Step 4: Audio Transcription</h3>'
+        '<div class="step-spinner"></div>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+    with st.spinner("Transcribing audio segments..."):
+        with st.expander("Show Details", expanded=False):
             transcriptions = transcribe_audio_segments(output_folder)
             
             if "error" in transcriptions:
@@ -159,12 +204,23 @@ def process_video(youtube_url: str):
                 return
             
             st.success("✅ Transcription completed")
-            for filename, transcript in transcriptions.items():
-                st.markdown(f"**{filename}:**")
+            
+            # Sort filenames by sequence number
+            sorted_filenames = sort_sequence_files(transcriptions.keys())
+            
+            # Display transcripts in sequence order
+            for filename in sorted_filenames:
+                transcript = transcriptions[filename]
+                # Extract sequence number for display
+                seq_num = filename.split('sequence_')[-1].split('.')[0]
+                st.markdown(f"**Sequence {seq_num}:**")
                 if transcript.startswith("ERROR:"):
                     st.error(transcript)
                 else:
                     st.text(transcript)
+                    
+                # Add a separator between sequences
+                st.markdown("---")
 
 def main():
     st.title("🎧 Language Listening App - Pipeline Testing")
