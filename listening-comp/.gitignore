@@ -36,4 +36,14 @@ env/
 
 # OS
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Project specific
+segmented_audio/
+*.mp3
+*.wav
+*.opus
+*.m4a
+*.vtt
+*.srt
+transcripts/ 

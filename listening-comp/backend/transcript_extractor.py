@@ -2,8 +2,7 @@
 Module for extracting transcripts from YouTube videos.
 """
 from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound, TranscriptsDisabled
-from youtube_transcript_api.formatters import TextFormatter
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import re
 
 def extract_video_id(url: str) -> Optional[str]:
@@ -27,7 +26,7 @@ def extract_video_id(url: str) -> Optional[str]:
             return match.group(1)
     return None
 
-def get_transcript(url: str) -> Optional[Dict[str, Any]]:
+def get_transcript(url: str) -> Dict[str, Any]:
     """
     Fetch French transcript from YouTube video URL.
 
@@ -35,7 +34,14 @@ def get_transcript(url: str) -> Optional[Dict[str, Any]]:
         url (str): YouTube video URL
 
     Returns:
-        Optional[Dict[str, Any]]: Dictionary containing transcript text and status
+        Dict[str, Any]: Dictionary containing:
+            - success (bool): Whether the operation was successful
+            - error (Optional[str]): Error message if any
+            - transcript (Optional[List[Dict]]): List of transcript segments with timestamps if successful
+                Each segment is a dict with:
+                - text (str): The transcript text
+                - start (float): Start time in seconds
+                - duration (float): Duration in seconds
     """
     try:
         video_id = extract_video_id(url)
@@ -45,18 +51,15 @@ def get_transcript(url: str) -> Optional[Dict[str, Any]]:
                 'error': 'Invalid YouTube URL',
                 'transcript': None
             }
-        print(f"Video ID: {video_id}")
 
-        # First list all available transcripts
         try:
+            # Get raw transcript with timestamps
             transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['fr'])
-            formatter = TextFormatter()
-            transcript_text = formatter.format_transcript(transcript)
-
+            
             return {
                 'success': True,
                 'error': None,
-                'transcript': transcript_text
+                'transcript': transcript  # Return raw transcript with timestamps
             }
 
         except TranscriptsDisabled:

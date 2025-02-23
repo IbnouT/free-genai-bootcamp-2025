@@ -17,26 +17,26 @@ Vous recevrez un transcript YouTube en français sous forme de texte brut. Ce tr
 2.  **Extraction et Formulation de Questions Style TCF :**
     *   Au sein de chaque segment de dialogue fluide et logique, identifiez la ou les phrases qui constituent une question dans le style des épreuves de compréhension orale du TCF. La question se situe typiquement après un court échange dialogué.  Extrayez ou formulez une question directement pertinente par rapport au dialogue.
     *   **Formulez les questions dans un style approprié au TCF. Privilégiez les questions qui testent l'inférence, la compréhension de l'intention du locuteur et le sens implicite, et non seulement la simple mémorisation de faits explicites.** Utilisez des amorces de questions typiques du TCF, telles que :
-        *   "Qu'est-ce qu'on apprend sur...?" (What do we learn about...?)
-        *   "De quoi s'agit-il dans... ?" (What is it about in...?)
-        *   "Quel est le sujet de... ?" (What is the subject of...?)
-        *   "Que fait/dit... ?" (What does... do/say...?)
-        *   "Pourquoi... ?" (Why...?) (use sparingly, and ensure excellent distractors).
-        *   "À quoi s'intéresse...?" (What is... interested in?)
+        *   "Qu'est-ce qu'on apprend sur...?"
+        *   "De quoi s'agit-il dans... ?"
+        *   "Quel est le sujet de... ?"
+        *   "Que fait/dit... ?"
+        *   "Pourquoi... ?" (à utiliser avec parcimonie, et assurez-vous de distracteurs excellents).
+        *   "À quoi s'intéresse...?"
 
 3.  **Génération d'Options de Réponses de Haute Qualité Style TCF (4 Options avec Distracteurs Nuancés) :**
     *   Pour chaque dialogue et question, générez **quatre (4)** options de réponses plausibles **en français grammaticalement parfait et naturel**, ressemblant étroitement aux options à choix multiples du TCF.
-    *   **Une option DOIT être clairement, définitivement, et sans ambiguïté la *réponse correcte***, basée *uniquement* sur les informations explicitement ou implicitement fournies dans le segment de dialogue.
-    *   **Les trois (3) autres options DOIVENT être des distracteurs nuancés de haute qualité, essentiels au style TCF.** Distracteurs must:
+    *   **Une option DOIT être clairement, définitivement et sans ambiguïté la *réponse correcte***, basée *uniquement* sur les informations explicitement ou implicitement fournies dans le segment de dialogue.
+    *   **Les trois (3) autres options DOIVENT être des distracteurs nuancés de haute qualité, essentiels au style TCF.** Les distracteurs doivent :
         *   Être **plausibles** et pertinents par rapport au *thème* et au *contexte* du dialogue.
         *   Tester des **points subtils de compréhension**, des nuances de vocabulaire et des compétences d'inférence.
         *   Être **directement liés aux détails spécifiques du dialogue**, et pas seulement des possibilités générales.
         *   **Éviter d'être manifestement faux, absurdes ou trop facilement éliminés.**
         *   **Exemple de BONS distracteurs :** Options partiellement vraies mais manquant une nuance clé du dialogue, options liées au thème mais pas à la situation spécifique du dialogue, options représentant des erreurs de compréhension ou des inférences erronées communes pour un apprenant de langue.
-        *   **Exemple de MAUVAIS distracteurs (À ÉVITER) :** Options complètement hors sujet, options grammaticalement incorrectes, options factuellement fausses dans la culture générale, simplement absurdes ou ridicules.
+        *   **Exemple de MAUVAIS distracteurs (À ÉVITER) :** Options complètement hors sujet, options grammaticalement incorrectes, options factuellement fausses dans la culture générale, options simplement absurdes ou ridicules.
 
 4.  **Identification Précise de l'Index de la Réponse Correcte - CRITIQUE !**
-    *   Pour chaque ensemble de quatre options de réponses, **identifiez avec soin et précision l'index (0, 1, 2, ou 3) de l' *unique réponse définitivement correcte***.
+    *   Pour chaque ensemble de quatre options de réponses, **identifiez avec soin et précision l'index (0, 1, 2 ou 3) de l' *unique réponse définitivement correcte***.
     *   **Vérifiez et revérifiez que l' `index_réponse_correcte` pointe *toujours* et sans exception vers l'option de réponse réellement correcte dans le tableau `answers`, en utilisant un indexage basé sur 0.**  Un `index_réponse_correcte` incorrect sera considéré comme un échec majeur.
 
 5.  **Sortie JSON Structurée :** Formattez votre sortie sous forme de **liste JSON**. Chaque élément de la liste doit être un objet JSON représentant un ensemble dialogue-question-réponses. L'objet JSON doit avoir les clés **en anglais** et la structure exacte suivantes, avec les *valeurs* en **français fluide et grammaticalement parfait** :
@@ -44,26 +44,26 @@ Vous recevrez un transcript YouTube en français sous forme de texte brut. Ce tr
     ```json
     [
       {
-        "dialogue": [          // **Dialogue est une LISTE DE LISTES (ou de tuples) DE TOURS DE PAROLE**
-          ["Speaker 1", "Bonjour, comment vas-tu ?"],  // **Chaque tour de parole est une LISTE (ou un tuple) : [Identifiant Locuteur, Texte]**
+        "dialogue": [          // **Dialogue est une liste de tours de parole**
+          ["Speaker 1", "Bonjour, comment vas-tu ?"],  // Chaque tour de parole est une liste [Identifiant Locuteur, Texte]
           ["Speaker 2", "Très bien, merci. Et toi ?"]
         ],
-        "question": "...",     // TCF-style question (French)
-        "answers": [          // Array of 4 answer options (French)
+        "question": "...",     // Question style TCF (français)
+        "answers": [          // Tableau de 4 options de réponses (français)
           "option 1",
           "option 2",
           "option 3",
           "option 4"
         ],
         "correct_answer_index": 0, // Index (basé sur 0) de la réponse correcte (entier : 0, 1, 2 ou 3)
-        "speakers_info": ["Speaker 1", "Speaker 2"] // (Optionnel, Identifiants des locuteurs - LISTE DES IDENTIFIANTS UNIQUES)
+        "speakers_info": ["Speaker 1", "Speaker 2"] // (Optionnel, Identifiants des locuteurs)
       },
       // ... d'autres objets JSON pour chaque ensemble dialogue-question-réponses extrait
     ]
     ```
-    **Note Importante :** Le champ `"dialogue"` doit impérativement être formaté comme une **liste de listes (ou de tuples)**, où chaque élément interne représente un tour de parole et contient **deux éléments : l'identifiant du locuteur (chaîne de caractères) et le texte de son intervention (chaîne de caractères)**.  Assurez-vous que tout le texte français (dans `"dialogue"`, `"question"`, et `"answers"`) est fluide et d'une grammaire impeccable. Le champ `"speakers_info"` est une liste *optionnelle* qui doit contenir les identifiants uniques de tous les locuteurs identifiés dans le dialogue, dans l'ordre d'apparition.
+    **Note :** Le champ `"dialogue"` est désormais une **liste de listes/tuples**. Assurez-vous que tout le texte français est fluide et d'une grammaire impeccable.
 
-**Exemple de Sortie Attendue (JSON - avec clés en anglais, valeurs en français, dialogue structuré COMME UNE LISTE DE LISTES, et style TCF) :**
+**Exemple de Sortie Attendue (JSON - avec clés en anglais, valeurs en français, dialogue structuré, et style TCF) :**
 
 ```json
 [
@@ -105,17 +105,16 @@ Vous recevrez un transcript YouTube en français sous forme de texte brut. Ce tr
 ]
 ```
 
-Important Considerations:
+Considérations Importantes :
 
-- French Fluency and Grammar: Your output MUST be in fluent, grammatically perfect, and natural French, suitable for language learners.
-- TCF Style and Difficulty Level: Aim for a level of difficulty and style of questions/answers appropriate to TCF oral comprehension (A2-B1 level).
-- Accuracy is Paramount: Especially for correct_answer_index. Double-check absolutely everything. An error in the index of the correct answer is unacceptable.
-- Dialogue Structure as List of Lists: Imperatively respect the structure of the dialogue as a list of lists, as specified and illustrated in the examples. This is a precise JSON format that is expected.
-- Priority to Logical Sense: Ensure that the created dialogues make logical sense and mimic a natural French conversation.
-Process:
+- Fluidité et Grammaire Française : Votre production DOIT être en français fluide, grammaticalement parfait et naturel, adapté à des apprenants de langue.
+- Style TCF et Niveau de Difficulté : Visez un niveau de difficulté et un style de questions/réponses appropriés à la compréhension orale du TCF (niveau A2-B1).
+- La Précision est Primordiale : Surtout pour correct_answer_index. Vérifiez absolument tout.
+- Priorité au Sens Logique : Assurez-vous que les dialogues créés ont un sens logique et imitent une conversation naturelle en français.
+Processus :
 
-You will receive the French transcript. Process it by following all the detailed tasks and requirements above. Return your output as a single JSON string, formatted as a list of JSON objects, exactly matching the structure presented in the "Expected Output Example" section. Ensure that all produced text (dialogues, questions, answers) is in fluent and grammatically impeccable French, and that the JSON structure is perfectly compliant, especially for the "dialogue" field which must be a list of lists.
+Vous allez recevoir le transcript français. Traitez-le en suivant toutes les tâches et exigences détaillées ci-dessus. Retournez votre sortie sous forme d'une seule chaîne JSON, formatée comme une liste d'objets JSON, correspondant exactement à la structure présentée dans la section "Exemple de sortie attendue". Assurez-vous que tout le texte produit (dialogues, questions, réponses) est en français fluide et grammaticalement impeccable.
 
-Transcript to Process:
+Transcript à Traiter :
 
 {here_the_transcript}

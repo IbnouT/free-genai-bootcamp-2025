@@ -19,24 +19,8 @@ load_dotenv()
 # Initialize OpenAI client
 client = OpenAI()  # The API key will be automatically loaded from OPENAI_API_KEY environment variable
 
-# Define available models
-AVAILABLE_MODELS = {
-    "gpt-4-turbo-preview": "Latest GPT-4 model with better performance",
-    "gpt-4": "Standard GPT-4 model",
-    "gpt-3.5-turbo": "Faster but less capable model"
-}
-
 # Select the model to use
-SELECTED_MODEL = "gpt-4-turbo-preview"
-
-def validate_model() -> None:
-    """
-    Validate that we're using a supported model.
-    Raises ValueError if model is not supported.
-    """
-    if SELECTED_MODEL not in AVAILABLE_MODELS:
-        raise ValueError(f"Model {SELECTED_MODEL} is not supported. Available models: {list(AVAILABLE_MODELS.keys())}")
-    logger.info(f"Using model: {SELECTED_MODEL} - {AVAILABLE_MODELS[SELECTED_MODEL]}")
+SELECTED_MODEL = "gpt-4o"
 
 def log_llm_interaction(request_data: Dict[str, Any], response_data: Any, error: Optional[Exception] = None) -> None:
     """
@@ -95,9 +79,6 @@ def generate_learning_content(transcript: str) -> Dict[str, Any]:
             - debug_info: Dictionary containing debug information
     """
     try:
-        # Validate model first
-        validate_model()
-        
         # Create the prompt
         prompt = create_prompt(transcript)
         
