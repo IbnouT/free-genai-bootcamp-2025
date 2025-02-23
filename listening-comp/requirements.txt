@@ -1,8 +1,8 @@
 streamlit==1.31.1
 youtube-transcript-api==0.6.2
-openai==1.12.0
+openai==1.64.0
 gTTS==2.5.0
 chromadb==0.4.22
 python-dotenv==1.0.1
 pydub==0.25.1
-yt-dlp==2024.3.10 
+yt-dlp==2025.2.19

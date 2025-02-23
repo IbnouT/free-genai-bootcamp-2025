@@ -76,13 +76,15 @@
 - Learning tips provide additional value
 - Visual feedback helps users understand system status
 
-### Step 4: Timestamp Extraction and Audio Segmentation
+### Step 4: Audio Pipeline Implementation
 
 #### Challenges
 - Initial issues with youtube-dl for audio downloading
 - Double extension problem with yt-dlp (.mp3.mp3)
 - Need to filter out sequences with too few entries
 - File path handling and cleanup
+- Integration with OpenAI's Whisper API for transcription
+- Handling audio file validation and error cases
 
 #### Solutions
 - Switched to yt-dlp for more reliable audio downloading
@@ -90,18 +92,24 @@
 - Added minimum entries requirement for sequence extraction
 - Improved error handling and debug output
 - Updated .gitignore to exclude generated files
+- Created robust audio transcription module with comprehensive error handling
+- Implemented audio file validation to prevent API errors
 
 #### Code Quality Assessment
 - Well-structured modular code with clear responsibilities
 - Strong type hints and documentation
 - Robust error handling with informative messages
 - Clean file management with proper cleanup
+- Comprehensive logging for debugging
+- Clear separation of concerns between audio processing steps
 
 #### Insights
 - yt-dlp is more reliable than youtube-dl for audio downloads
 - Minimum entries requirement helps ensure meaningful content
 - Debug output is crucial for troubleshooting audio processing issues
 - Proper .gitignore setup is important for media-heavy applications
+- Comprehensive error handling is essential for API integrations
+- Logging helps track progress and diagnose issues in multi-step processes
 
 ## Phase 2: LLM Prompt Engineering and Data Generation
 
