@@ -1,15 +1,21 @@
 """
-Simple test script for timestamp extraction, audio segmentation, and transcription.
+Simple test script for the complete audio processing and data management pipeline.
 """
 from transcript_extractor import get_transcript
 from timestamp_extractor import extract_sequence_timestamps
 from audio_segmenter import segment_audio
 from audio_transcriber import transcribe_audio_segments
+from data_manager import DataManager
 import os
 import json
 
 def test_pipeline(youtube_url: str):
     print(f"Testing pipeline with URL: {youtube_url}")
+    
+    # Initialize DataManager
+    print("\nInitializing DataManager...")
+    data_manager = DataManager()
+    print("✓ DataManager initialized")
     
     # Step 1: Get transcript
     print("\n1. Getting transcript...")
@@ -65,6 +71,45 @@ def test_pipeline(youtube_url: str):
     with open(results_file, 'w', encoding='utf-8') as f:
         json.dump(transcriptions, f, ensure_ascii=False, indent=2)
     print(f"\nDetailed results saved to: {results_file}")
+    
+    # Step 5: Save data to Vector DB and permanent storage
+    print("\n5. Saving data to Vector DB and permanent storage...")
+    # TODO: Create JSON sequences from transcriptions
+    # For now, we'll use a simple structure for testing
+    sequences_json_list = []
+    for i, (filename, transcript) in enumerate(transcriptions.items()):
+        if not transcript.startswith("ERROR:"):
+            sequence_json = {
+                "dialogue": [["Speaker", transcript]],
+                "question": "Sample question for testing",
+                "answers": ["Option 1", "Option 2", "Option 3", "Option 4"],
+                "correct_answer_index": 0
+            }
+            sequences_json_list.append(sequence_json)
+    
+    save_result = data_manager.save_video_data(
+        youtube_url=youtube_url,
+        sequences_json_list=sequences_json_list,
+        audio_segments_folder_path=output_folder
+    )
+    
+    if save_result['success']:
+        print(f"✓ Data saved successfully")
+        print(f"  Video ID: {save_result['video_id']}")
+        print(f"  Timestamp: {save_result['timestamp']}")
+        print(f"  Number of sequences: {save_result['num_sequences']}")
+        
+        # Test topic-based retrieval
+        print("\n6. Testing topic-based retrieval...")
+        test_topic = "conversation"  # Generic topic for testing
+        exercises = data_manager.get_exercises_by_topic(test_topic, num_exercises=2)
+        print(f"Retrieved {len(exercises)} exercises for topic '{test_topic}'")
+        for i, exercise in enumerate(exercises, 1):
+            print(f"\nExercise {i}:")
+            print(f"  Question: {exercise['question']}")
+            print(f"  Audio file: {exercise['audio_file']}")
+    else:
+        print(f"✗ Failed to save data: {save_result['error']}")
 
 if __name__ == "__main__":
     # Replace with your test YouTube URL

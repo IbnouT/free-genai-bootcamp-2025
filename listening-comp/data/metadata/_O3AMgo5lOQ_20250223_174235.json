@@ -1,0 +1,14 @@
+{
+  "youtube_url": "https://www.youtube.com/watch?v=_O3AMgo5lOQ",
+  "video_id": "_O3AMgo5lOQ",
+  "processing_date": "20250223_174235",
+  "audio_files": {
+    "_O3AMgo5lOQ_sequence_5.mp3": "data/audio/_O3AMgo5lOQ_20250223_174235/_O3AMgo5lOQ_sequence_5.mp3",
+    "_O3AMgo5lOQ_sequence_4.mp3": "data/audio/_O3AMgo5lOQ_20250223_174235/_O3AMgo5lOQ_sequence_4.mp3",
+    "_O3AMgo5lOQ_sequence_6.mp3": "data/audio/_O3AMgo5lOQ_20250223_174235/_O3AMgo5lOQ_sequence_6.mp3",
+    "_O3AMgo5lOQ_sequence_7.mp3": "data/audio/_O3AMgo5lOQ_20250223_174235/_O3AMgo5lOQ_sequence_7.mp3",
+    "_O3AMgo5lOQ_sequence_3.mp3": "data/audio/_O3AMgo5lOQ_20250223_174235/_O3AMgo5lOQ_sequence_3.mp3",
+    "_O3AMgo5lOQ_sequence_2.mp3": "data/audio/_O3AMgo5lOQ_20250223_174235/_O3AMgo5lOQ_sequence_2.mp3",
+    "_O3AMgo5lOQ_sequence_1.mp3": "data/audio/_O3AMgo5lOQ_20250223_174235/_O3AMgo5lOQ_sequence_1.mp3"
+  }
+}

@@ -85,6 +85,8 @@
 - File path handling and cleanup
 - Integration with OpenAI's Whisper API for transcription
 - Handling audio file validation and error cases
+- Managing data persistence and Vector DB integration
+- Organizing audio files and metadata storage
 
 #### Solutions
 - Switched to yt-dlp for more reliable audio downloading
@@ -94,6 +96,9 @@
 - Updated .gitignore to exclude generated files
 - Created robust audio transcription module with comprehensive error handling
 - Implemented audio file validation to prevent API errors
+- Implemented DataManager class with ChromaDB integration
+- Created organized storage structure for audio files and metadata
+- Added semantic search capabilities using OpenAI embeddings
 
 #### Code Quality Assessment
 - Well-structured modular code with clear responsibilities
@@ -102,6 +107,8 @@
 - Clean file management with proper cleanup
 - Comprehensive logging for debugging
 - Clear separation of concerns between audio processing steps
+- Efficient data organization and retrieval system
+- Scalable Vector DB integration
 
 #### Insights
 - yt-dlp is more reliable than youtube-dl for audio downloads
@@ -110,6 +117,8 @@
 - Proper .gitignore setup is important for media-heavy applications
 - Comprehensive error handling is essential for API integrations
 - Logging helps track progress and diagnose issues in multi-step processes
+- Vector DB enables efficient semantic search for exercises
+- Organized data storage structure simplifies management and retrieval
 
 ## Phase 2: LLM Prompt Engineering and Data Generation
 

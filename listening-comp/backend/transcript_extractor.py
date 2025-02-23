@@ -4,6 +4,11 @@ Module for extracting transcripts from YouTube videos.
 from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound, TranscriptsDisabled
 from typing import Optional, Dict, Any, List
 import re
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 def extract_video_id(url: str) -> Optional[str]:
     """
@@ -54,7 +59,13 @@ def get_transcript(url: str) -> Dict[str, Any]:
 
         try:
             # Get raw transcript with timestamps
+            logger.debug(f"Fetching transcript for video ID: {video_id}")
             transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['fr'])
+            
+            # Log transcript structure
+            if transcript:
+                logger.debug(f"Transcript structure (first entry): {transcript[0]}")
+                logger.debug(f"Number of transcript entries: {len(transcript)}")
             
             return {
                 'success': True,
@@ -63,12 +74,14 @@ def get_transcript(url: str) -> Dict[str, Any]:
             }
 
         except TranscriptsDisabled:
+            logger.error("Transcripts are disabled for this video")
             return {
                 'success': False,
                 'error': 'Transcripts are disabled for this video',
                 'transcript': None
             }
         except Exception as e:
+            logger.error(f"Error fetching transcripts: {str(e)}")
             return {
                 'success': False,
                 'error': f'Error fetching transcripts: {str(e)}',
@@ -76,6 +89,7 @@ def get_transcript(url: str) -> Dict[str, Any]:
             }
 
     except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
         return {
             'success': False,
             'error': str(e),

@@ -26,11 +26,20 @@
 - Included learning tips section
 - Improved error messages and user guidance
 
-#### Step 4: Audio Pipeline Implementation (In Progress)
+#### Step 4: Audio Pipeline Implementation (Completed)
 - Created timestamp_extractor.py for identifying sequence boundaries
 - Implemented audio_segmenter.py for downloading and segmenting audio
 - Created audio_transcriber.py for Whisper API integration
-- Next: Implement data_manager.py for handling audio and transcript data
+- Implemented data_manager.py for handling audio and transcript data
+- Added ChromaDB integration for semantic search
+- Updated test module to verify complete pipeline
+
+#### Step 5: Basic Frontend for Pipeline Testing (In Progress)
+- Updated app.py to focus on pipeline testing
+- Added visualization for each pipeline stage
+- Implemented audio playback for segments
+- Added detailed output display for each stage
+- Next: Test and refine the complete pipeline
 
 ### Phase 2: LLM Prompt Engineering and Data Generation
 
@@ -64,4 +73,9 @@
 - Using yt-dlp instead of youtube-dl for more reliable audio downloads
 - Implementing minimum entries requirement for sequence extraction to ensure meaningful content
 - Using OpenAI's Whisper API for accurate French audio transcription
-- Implementing comprehensive error handling and logging in audio pipeline 
+- Implementing comprehensive error handling and logging in audio pipeline
+- Using ChromaDB for semantic search and data persistence
+- Using OpenAI's text-embedding-3-small model for vector embeddings
+- Focusing on pipeline testing before moving to advanced features
+- Using expandable sections for detailed stage output
+- Including audio playback for immediate verification 
