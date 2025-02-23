@@ -35,6 +35,14 @@
 - Added content validation
 - Structured JSON output format
 
+#### Step 2: Timestamp Extraction and Audio Segmentation (Completed)
+- Created timestamp_extractor.py module for identifying sequence boundaries
+- Implemented gap-based timestamp extraction with minimum entries requirement
+- Created audio_segmenter.py for downloading and segmenting audio
+- Integrated yt-dlp for reliable audio downloading
+- Added audio segmentation based on extracted timestamps
+- Updated .gitignore to exclude generated audio and transcript files
+
 **Next Step:** Test and refine LLM prompt with sample transcripts
 
 ## Key Decisions
@@ -46,4 +54,6 @@
 - Simplified transcript fetching to directly request French language
 - Enhanced UI with custom CSS and better component organization
 - Using GPT-3.5-turbo for learning content generation
-- Structured JSON format for Q&A content 
+- Structured JSON format for Q&A content
+- Using yt-dlp instead of youtube-dl for more reliable audio downloads
+- Implementing minimum entries requirement for sequence extraction to ensure meaningful content 

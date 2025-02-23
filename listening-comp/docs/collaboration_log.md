@@ -76,6 +76,33 @@
 - Learning tips provide additional value
 - Visual feedback helps users understand system status
 
+### Step 4: Timestamp Extraction and Audio Segmentation
+
+#### Challenges
+- Initial issues with youtube-dl for audio downloading
+- Double extension problem with yt-dlp (.mp3.mp3)
+- Need to filter out sequences with too few entries
+- File path handling and cleanup
+
+#### Solutions
+- Switched to yt-dlp for more reliable audio downloading
+- Implemented flexible file path handling to accommodate double extensions
+- Added minimum entries requirement for sequence extraction
+- Improved error handling and debug output
+- Updated .gitignore to exclude generated files
+
+#### Code Quality Assessment
+- Well-structured modular code with clear responsibilities
+- Strong type hints and documentation
+- Robust error handling with informative messages
+- Clean file management with proper cleanup
+
+#### Insights
+- yt-dlp is more reliable than youtube-dl for audio downloads
+- Minimum entries requirement helps ensure meaningful content
+- Debug output is crucial for troubleshooting audio processing issues
+- Proper .gitignore setup is important for media-heavy applications
+
 ## Phase 2: LLM Prompt Engineering and Data Generation
 
 ### Step 1: LLM Integration Setup
