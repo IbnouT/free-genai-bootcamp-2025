@@ -133,6 +133,11 @@ def test_pipeline(youtube_url: str, debug: bool = False):
             successful_exercises += 1
             exercises_data.append(exercise)
             print("\n✅ Exercise Generated Successfully")
+            
+            print("\n🏷️ Topics & Level:")
+            print(f"Topics: {', '.join(exercise['topics'])}")
+            print(f"Difficulty Level: {exercise['difficulty_level']}")
+            
             print("\nDialogue:")
             for speaker, text in exercise['dialogue']:
                 print(f"{speaker}: {text}")

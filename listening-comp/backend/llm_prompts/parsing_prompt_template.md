@@ -42,19 +42,23 @@ Vous recevrez un transcript YouTube en français sous forme de texte brut. Ce tr
 5.  **Sortie JSON Structurée :** Formattez votre sortie comme un **objet JSON unique** représentant un ensemble dialogue-question-réponses. L'objet JSON doit avoir les clés **en anglais** et la structure exacte suivante, avec les *valeurs* en **français fluide et grammaticalement parfait** :
 
 {
-  "dialogue": [          // **Dialogue est une LISTE DE LISTES (ou de tuples) DE TOURS DE PAROLE**
-    ["Speaker 1", "Bonjour, comment vas-tu ?"],  // **Chaque tour de parole est une LISTE (ou un tuple) : [Identifiant Locuteur, Texte]**
-    ["Speaker 2", "Très bien, merci. Et toi ?"]
+  "dialogue": [
+    ["Speaker 1", "Première réplique du locuteur 1"],
+    ["Speaker 2", "Réponse du locuteur 2"],
+    ["Speaker 1", "Réplique suivante du locuteur 1"]
+    // ... etc. pour toutes les interventions du dialogue
   ],
-  "question": "...",     // TCF-style question (French)
-  "answers": [          // Array of 4 answer options (French)
-    "option 1",
-    "option 2",
-    "option 3",
-    "option 4"
+  "question": "Question de compréhension orale en français, typique du TCF, portant sur le dialogue.",
+  "answers": [
+    "Option de réponse 1 (français, plausible mais incorrecte)",
+    "Option de réponse 2 (français, réponse correcte)",
+    "Option de réponse 3 (français, plausible mais incorrecte)",
+    "Option de réponse 4 (français, plausible mais incorrecte)"
   ],
-  "correct_answer_index": 0, // Index (basé sur 0) de la réponse correcte (entier : 0, 1, 2 ou 3)
-  "speakers_info": ["Speaker 1", "Speaker 2"] // (Optionnel, Identifiants des locuteurs - LISTE DES IDENTIFIANTS UNIQUES)
+  "correct_answer_index": index de la réponse correcte dans la liste "answers" (0, 1, 2 ou 3),
+  "speakers_info": ["Nom du Locuteur 1", "Nom du Locuteur 2", ...],
+  "topics": ["Thème principal", "Thème secondaire"], // 2-3 thèmes identifiés dans le dialogue
+  "difficulty_level": "A2"  // Niveau TCF estimé (A1, A2, B1, ou B2)
 }
 
 **Note Importante :** Le champ `"dialogue"` doit impérativement être formaté comme une **liste de listes (ou de tuples)**, où chaque élément interne représente un tour de parole et contient **deux éléments : l'identifiant du locuteur (chaîne de caractères) et le texte de son intervention (chaîne de caractères)**.  Assurez-vous que tout le texte français (dans `"dialogue"`, `"question"`, et `"answers"`) est fluide et d'une grammaire impeccable. Le champ `"speakers_info"` est une liste *optionnelle* qui doit contenir les identifiants uniques de tous les locuteurs identifiés dans le dialogue, dans l'ordre d'apparition.
@@ -77,7 +81,9 @@ Vous recevrez un transcript YouTube en français sous forme de texte brut. Ce tr
     "Un léger problème de santé passager."
   ],
   "correct_answer_index": 2,
-  "speakers_info": ["Locuteur 1", "Marie"]
+  "speakers_info": ["Locuteur 1", "Marie"],
+  "topics": ["Fatigue", "Insomnie", "Bruit"],
+  "difficulty_level": "A2"
 }
 
 Important Considerations:

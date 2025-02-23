@@ -82,7 +82,7 @@ def validate_learning_content(content):
         logger.debug(json.dumps(content, indent=2, ensure_ascii=False))
         
         # Check if all required keys are present
-        required_keys = ['dialogue', 'question', 'answers', 'correct_answer_index']
+        required_keys = ['dialogue', 'question', 'answers', 'correct_answer_index', 'topics', 'difficulty_level']
         if not all(key in content for key in required_keys):
             missing_keys = [key for key in required_keys if key not in content]
             logger.error(f"Missing required keys: {missing_keys}")
@@ -138,6 +138,30 @@ def validate_learning_content(content):
                 if not isinstance(speaker, str):
                     logger.error(f"Speaker {i} in speakers_info must be a string, got: {type(speaker)}")
                     return False
+
+        # Validate topics
+        if not isinstance(content['topics'], list):
+            logger.error(f"topics must be a list, got: {type(content['topics'])}")
+            return False
+        
+        if len(content['topics']) < 2 or len(content['topics']) > 4:
+            logger.error(f"topics must contain 2-4 items, got: {len(content['topics'])}")
+            return False
+        
+        for i, topic in enumerate(content['topics']):
+            if not isinstance(topic, str):
+                logger.error(f"Topic {i} must be a string, got: {type(topic)}")
+                return False
+
+        # Validate difficulty_level
+        if not isinstance(content['difficulty_level'], str):
+            logger.error(f"difficulty_level must be a string, got: {type(content['difficulty_level'])}")
+            return False
+        
+        valid_levels = ['A1', 'A2', 'B1', 'B2']
+        if content['difficulty_level'] not in valid_levels:
+            logger.error(f"difficulty_level must be one of {valid_levels}, got: {content['difficulty_level']}")
+            return False
                     
         logger.debug("Content validation successful")
         return True

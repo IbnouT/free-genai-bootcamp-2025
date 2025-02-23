@@ -267,6 +267,12 @@ def process_video(youtube_url: str, debug: bool = False):
                 # Create a visually distinct section for each exercise
                 st.markdown(f"## 📚 Exercise {seq_num}")
                 
+                # Display topics and difficulty level
+                st.markdown("### 🏷️ Topics & Level")
+                topics_str = ", ".join(exercise['topics'])
+                st.markdown(f"**Topics:** {topics_str}")
+                st.markdown(f"**Difficulty Level:** {exercise['difficulty_level']}")
+                
                 # Display dialogue in a conversation-like format
                 st.markdown("### 🗣️ Dialogue")
                 for speaker, text in exercise['dialogue']:

@@ -43,7 +43,15 @@
 
 ### Phase 2: LLM Prompt Engineering and Data Generation
 
-#### Step 3: UI Improvements and Debug Control (Latest)
+#### Step 4: Topics and Difficulty Level Integration (Latest)
+- Added topics and difficulty level fields to JSON output
+- Updated validation to check new fields
+- Enhanced UI to display topics and difficulty level
+- Updated test modules to show new fields
+- Improved exercise organization with topic categorization
+- Added TCF difficulty level tracking
+
+#### Step 3: UI Improvements and Debug Control (Previous)
 - Added debug mode toggle in UI sidebar
 - Improved exercise display format with better visual organization
 - Fixed nested expander issues in Streamlit UI
@@ -87,6 +95,10 @@
 4. Enhance error recovery mechanisms
 
 ## Key Decisions
+- Added topics and difficulty level to exercise data structure
+- Implemented validation for new fields (2-4 topics, valid TCF levels)
+- Enhanced UI to display exercise metadata
+- Updated test modules for better debugging
 - Added debug mode toggle for better debugging control
 - Improved UI layout with two-column design for exercises
 - Removed nested expanders to fix Streamlit limitations

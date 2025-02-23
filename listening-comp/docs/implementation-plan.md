@@ -37,12 +37,17 @@
 **Phase 2: LLM Prompt Engineering and Segmented Data Generation (`llm_json_generator.py`)**
 
 6.  **Implement `llm_json_generator.py` and TCF Prompt Design for Segments:**
-    *   Design detailed LLM prompt specifically for processing *segmented transcripts* to generate TCF-style exercises (as previously refined).  Ensure prompt clearly instructs the LLM to operate on *one segment at a time*.
+    *   Design detailed LLM prompt specifically for processing *segmented transcripts* to generate TCF-style exercises (as previously refined).  Ensure prompt clearly instructs the LLM to:
+        *   Process one segment at a time
+        *   Structure dialogue with speaker identification
+        *   Generate TCF-style questions and answers
+        *   Identify relevant topics (2-4) from predefined categories
+        *   Estimate TCF difficulty level
     *   Code in `llm_json_generator.py` to:
-        *   Receive a single segmented transcript as input.
-        *   Call LLM API with the segmented transcript and the TCF prompt.
-        *   Parse the JSON output from the LLM.
-        *   Implement error handling for API calls and JSON parsing.
+        *   Receive a single segmented transcript as input
+        *   Call LLM API with the segmented transcript and TCF prompt
+        *   Parse and validate the JSON output including topics
+        *   Implement error handling for API calls and JSON parsing
 
 7.  **Testing and Iterative Prompt Refinement with Segmented Transcripts:**
     *   Test `llm_json_generator.py` with *segmented transcripts* output from `audio_transcriber.py`.
@@ -60,53 +65,92 @@
         *   Structure the frontend to clearly present exercises *segment by segment*.
         *   Remove any old logic related to full transcript processing by LLM.
 
-**Phase 4: Interactive Learning UI for Segmented Exercises**
+**Phase 4: Vector DB Integration and Topic-Based Learning**
 
-9.  **Implement Interactive UI in `app.py` for Segmented Exercises:**
-    *   For each segment displayed in the UI:
-        *   Present the question and answer options (radio buttons/numbered list) for the *current segment*.
-        *   Implement answer submission and feedback logic:
-            *   Retrieve `correct_answer_index` from the JSON data for the *current segment*.
-            *   Compare user answer to correct answer.
-            *   Display "Correct/Incorrect" feedback and show the correct answer.
-            *   Provide a "Next Segment" button to move to the next exercise segment.
+9. **Set up Vector DB Infrastructure:**
+   - Install and configure ChromaDB
+   - Design document structure for sequences
+   - Create embeddings pipeline
+   - Set up data persistence
 
-**Phase 5: Audio Playback for Segments and Data Persistence**
+10. **Implement Sequence Storage:**
+    - Store processed sequences in Vector DB
+    - Generate and store embeddings
+    - Link audio files
+    - Add metadata and topic tags
 
-10. **Integrate Segment Audio Playback in `app.py`:**
-    *   Ensure `audio_segmenter.py` saves segmented audio files with predictable naming.
-    *   Modify `app.py` to:
-        *   Locate the segmented audio file corresponding to the currently displayed exercise segment.
-        *   Add an audio player in the Streamlit app to play the audio *for the current dialogue segment*.
+11. **Implement Topic-Based Retrieval:**
+    - Create topic selection interface
+    - Implement semantic search
+    - Add sequence ordering logic
+    - Handle audio file retrieval
 
-11. **Implement `data_manager.py` and Segmented Data Storage:**
-    *   Define data structure to store exercise data *per segment*, including dialogue, question, answers, correct index, *and the path to the segmented audio file*.
-    *   Update `data_manager.py` functions to:
-        *   Format segment data into the defined structure.
-        *   Save segmented data to a structured JSON file (or potentially separate files per segment if easier to manage initially).
-        *   Load segmented data from the JSON file(s).
-        *   Modify `app.py` to:
-        *   Load segmented exercise data from `data_manager.py`.
-        *   Potentially implement basic topic/video selection (loading data for a specific video processed).
+**Phase 5: Interactive Learning UI (Current Focus)**
 
-**Phase 6: Vector Database Integration for Segmented Data (Optional)**
+12. **Implement Interactive UI in `app.py` for Segmented Exercises:**
+    - For each segment displayed in the UI:
+      - Present the question and answer options (radio buttons/numbered list)
+      - Implement answer submission and feedback logic
+      - Display "Correct/Incorrect" feedback
+      - Provide navigation controls
+    - Add session state management to track:
+      - Current segment index
+      - User's selected answers
+      - Score tracking
+      - Exercise history
 
-12. **Set up Vector Database (ChromaDB) for Segmented Data:**
+13. **Add User Progress and Session Management:**
+    - Implement session state persistence
+    - Add progress indicators
+    - Create summary view
+    - Track performance statistics
+
+14. **Enhance Exercise Navigation and Control:**
+    - Add navigation controls
+    - Implement exercise flow control
+    - Add keyboard shortcuts
+    - Prevent accidental progression
+
+**Phase 6: Audio Playback and Data Persistence**
+
+15. **Integrate Audio Playback:**
+    - Add audio player controls
+    - Implement playback features:
+      - Play/pause/replay
+      - Speed control
+      - Segment looping
+    - Add visual audio timeline
+
+16. **Implement Data Persistence:**
+    - Store exercise data
+    - Save user progress
+    - Track completion status
+    - Manage audio file storage
+
+**Testing and Refinement:**
+- Rigorous testing of interactive features
+- User feedback collection
+- Performance optimization
+- UI/UX improvements based on testing
+
+**Next Steps:**
+1. Begin implementing interactive answer submission
+2. Add session state management
+3. Create progress tracking system
+4. Develop navigation controls
+5. Test and refine user interaction flow
+
+**Phase 7: Vector Database Integration for Segmented Data (Optional)**
+
+17. **Set up Vector Database (ChromaDB) for Segmented Data:**
     *   Install and set up ChromaDB locally (if not done in Phase 1).
     *   Explore ChromaDB Python library for handling segmented data.
 
-13. **Implement `vector_db_manager.py` for Segmented Data:**
+18. **Implement `vector_db_manager.py` for Segmented Data:**
     *   Functions to connect to ChromaDB and create collections suitable for *segmented exercises*.
     *   Embed dialogue/question text *for each segment individually*.
     *   Save *segmented exercise data* to VectorDB, including embeddings and metadata linking back to segments.
     *   Implement topic/video-based search function in `vector_db_manager.py` to retrieve relevant *segments*.
 
-14. **Integrate Vector DB in `app.py` for Segmented Exercises:**
-    *   On topic/video selection, use `vector_db_manager.py` to fetch *segmented exercises* from ChromaDB.
-    *   Display fetched exercises *segment by segment* for the learning session.
-
-**Testing and Refinement (Throughout all phases):**
-
-*   Rigorous testing after each step, focusing on segmented processing and data flow.
-*   User testing (optional) for feedback on segmented exercise format and UI.
-*   Refine code, prompts, UI/UX based on testing and feedback, ensuring smooth flow between segments in the learning UI.
+19. **Integrate Vector DB in `app.py` for Segmented Exercises:**
+    *   On topic/video selection, use `
