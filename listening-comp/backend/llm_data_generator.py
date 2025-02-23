@@ -10,8 +10,8 @@ from openai import OpenAI
 from dotenv import load_dotenv
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARNING)
 
 # Load environment variables
 load_dotenv()
@@ -62,9 +62,207 @@ def create_prompt(transcript: str) -> str:
         str: The formatted prompt
     """
     template = load_prompt_template()
+    if not template:
+        return None
     return template.replace('{here_the_transcript}', transcript)
 
+def validate_learning_content(content):
+    """
+    Validates that the generated learning content has the correct structure and data types.
+    
+    Args:
+        content (dict): The learning content to validate
+        
+    Returns:
+        bool: True if content is valid, False otherwise
+    """
+    try:
+        # Log the content being validated
+        logger.debug("Validating content structure:")
+        logger.debug(json.dumps(content, indent=2, ensure_ascii=False))
+        
+        # Check if all required keys are present
+        required_keys = ['dialogue', 'question', 'answers', 'correct_answer_index']
+        if not all(key in content for key in required_keys):
+            missing_keys = [key for key in required_keys if key not in content]
+            logger.error(f"Missing required keys: {missing_keys}")
+            return False
+            
+        # Validate dialogue structure
+        if not isinstance(content['dialogue'], list):
+            logger.error("Dialogue must be a list")
+            return False
+            
+        for i, turn in enumerate(content['dialogue']):
+            if not isinstance(turn, list) or len(turn) != 2:
+                logger.error(f"Dialogue turn {i} must be a list of [speaker, text], got: {turn}")
+                return False
+            if not isinstance(turn[0], str) or not isinstance(turn[1], str):
+                logger.error(f"Dialogue turn {i} must contain two strings, got types: {type(turn[0])}, {type(turn[1])}")
+                return False
+                
+        # Validate question
+        if not isinstance(content['question'], str):
+            logger.error(f"Question must be a string, got: {type(content['question'])}")
+            return False
+            
+        # Validate answers
+        if not isinstance(content['answers'], list):
+            logger.error(f"Answers must be a list, got: {type(content['answers'])}")
+            return False
+            
+        if len(content['answers']) != 4:
+            logger.error(f"Answers must contain exactly 4 items, got: {len(content['answers'])}")
+            return False
+            
+        for i, answer in enumerate(content['answers']):
+            if not isinstance(answer, str):
+                logger.error(f"Answer {i} must be a string, got: {type(answer)}")
+                return False
+                
+        # Validate correct_answer_index
+        if not isinstance(content['correct_answer_index'], int):
+            logger.error(f"correct_answer_index must be an integer, got: {type(content['correct_answer_index'])}")
+            return False
+            
+        if content['correct_answer_index'] not in [0, 1, 2, 3]:
+            logger.error(f"correct_answer_index must be 0, 1, 2, or 3, got: {content['correct_answer_index']}")
+            return False
+            
+        # Validate optional speakers_info if present
+        if 'speakers_info' in content:
+            if not isinstance(content['speakers_info'], list):
+                logger.error(f"speakers_info must be a list, got: {type(content['speakers_info'])}")
+                return False
+            for i, speaker in enumerate(content['speakers_info']):
+                if not isinstance(speaker, str):
+                    logger.error(f"Speaker {i} in speakers_info must be a string, got: {type(speaker)}")
+                    return False
+                    
+        logger.debug("Content validation successful")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Validation error: {str(e)}")
+        return False
+
 def generate_learning_content(transcript: str) -> Dict[str, Any]:
+    """
+    Generates learning content from a transcript using OpenAI's API.
+    
+    Args:
+        transcript (str): The transcript to generate content from
+        
+    Returns:
+        Dict[str, Any]: Dictionary containing:
+            - success (bool): Whether generation was successful
+            - error (Optional[str]): Error message if any
+            - content (Optional[List]): Generated content if successful
+            - debug_info (Dict): Debug information including raw response
+    """
+    try:
+        # Create the prompt
+        prompt = create_prompt(transcript)
+        if not prompt:
+            return {
+                'success': False,
+                'error': 'Failed to create prompt',
+                'content': None,
+                'debug_info': {'error': 'Prompt creation failed'}
+            }
+            
+        # Call OpenAI API
+        response = client.chat.completions.create(
+            model="gpt-4-turbo-preview",
+            messages=[
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": transcript}
+            ],
+            temperature=0.7,
+            max_tokens=2000,
+            response_format={ "type": "json_object" }  # Request JSON response
+        )
+        
+        # Get the raw response content
+        raw_content = response.choices[0].message.content
+        
+        # Log the raw response for debugging
+        logger.info("Raw LLM Response:")
+        logger.info(raw_content)
+        
+        # Clean the response content - remove markdown code block if present
+        cleaned_content = raw_content.strip()
+        if cleaned_content.startswith("```"):
+            # Find the first and last ``` and extract content between them
+            start_idx = cleaned_content.find("\n") + 1
+            end_idx = cleaned_content.rfind("```")
+            if end_idx == -1:  # No closing ```
+                end_idx = len(cleaned_content)
+            cleaned_content = cleaned_content[start_idx:end_idx].strip()
+        
+        # Parse the response
+        try:
+            content = json.loads(cleaned_content)
+            # If content is a list with one item, take the first item
+            if isinstance(content, list) and len(content) > 0:
+                content = content[0]
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse JSON response: {str(e)}")
+            logger.error("Raw content that failed to parse:")
+            logger.error(raw_content)
+            logger.error("Cleaned content that failed to parse:")
+            logger.error(cleaned_content)
+            return {
+                'success': False,
+                'error': f'Failed to parse JSON response: {str(e)}',
+                'content': None,
+                'debug_info': {
+                    'raw_response': raw_content,
+                    'cleaned_response': cleaned_content,
+                    'error_type': 'JSONDecodeError',
+                    'error_details': str(e)
+                }
+            }
+            
+        # Validate the content
+        if not validate_learning_content(content):
+            logger.error("Content validation failed")
+            return {
+                'success': False,
+                'error': 'Content validation failed',
+                'content': None,
+                'debug_info': {
+                    'raw_response': raw_content,
+                    'cleaned_response': cleaned_content,
+                    'parsed_content': content,
+                    'error_type': 'ValidationError'
+                }
+            }
+            
+        return {
+            'success': True,
+            'error': None,
+            'content': [content],  # Wrap in list for backward compatibility
+            'debug_info': {
+                'raw_response': raw_content,
+                'cleaned_response': cleaned_content,
+                'token_usage': response.usage.model_dump() if response.usage else None
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error generating learning content: {str(e)}")
+        return {
+            'success': False,
+            'error': str(e),
+            'content': None,
+            'debug_info': {
+                'error_type': type(e).__name__,
+                'error_details': str(e)
+            }
+        }
+
+def generate_learning_content_old(transcript: str) -> Dict[str, Any]:
     """
     Generate learning content from transcript using LLM.
     
@@ -75,7 +273,7 @@ def generate_learning_content(transcript: str) -> Dict[str, Any]:
         Dict[str, Any]: Dictionary containing:
             - success: bool indicating if generation was successful
             - error: Optional error message if success is False
-            - content: Generated learning content in JSON format if success is True
+            - content: Generated learning content if success is True
             - debug_info: Dictionary containing debug information
     """
     try:
@@ -137,7 +335,7 @@ def generate_learning_content(transcript: str) -> Dict[str, Any]:
         return {
             'success': True,
             'error': None,
-            'content': parsed_content,
+            'content': [parsed_content],  # Wrap in list for backward compatibility
             'debug_info': {
                 'original_transcript': transcript,
                 'prompt_used': prompt,
@@ -187,50 +385,4 @@ def generate_learning_content(transcript: str) -> Dict[str, Any]:
                 'error_type': type(e).__name__,
                 'request_data': request_data if 'request_data' in locals() else None
             }
-        }
-
-def validate_learning_content(content: List[Dict[str, Any]]) -> bool:
-    """
-    Validate the structure and content of generated learning content.
-    
-    Args:
-        content (List[Dict[str, Any]]): The generated content to validate
-        
-    Returns:
-        bool: True if content is valid, False otherwise
-    """
-    try:
-        if not isinstance(content, list):
-            return False
-            
-        # Validate each section
-        for section in content:
-            # Check required keys
-            required_keys = {'dialogue', 'question', 'answers', 'correct_answer_index'}
-            if not all(key in section for key in required_keys):
-                return False
-            
-            # Validate dialogue structure
-            if not isinstance(section['dialogue'], list):
-                return False
-            for turn in section['dialogue']:
-                if not isinstance(turn, list) or len(turn) != 2:
-                    return False
-            
-            # Validate answers
-            if not isinstance(section['answers'], list) or len(section['answers']) != 4:
-                return False
-            
-            # Validate correct_answer_index
-            if not isinstance(section['correct_answer_index'], int) or not 0 <= section['correct_answer_index'] <= 3:
-                return False
-            
-            # Validate speakers_info if present
-            if 'speakers_info' in section and not isinstance(section['speakers_info'], list):
-                return False
-                
-        return True
-        
-    except Exception as e:
-        print(f"Validation error: {str(e)}")
-        return False 
+        } 

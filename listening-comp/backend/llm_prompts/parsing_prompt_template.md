@@ -39,71 +39,46 @@ Vous recevrez un transcript YouTube en français sous forme de texte brut. Ce tr
     *   Pour chaque ensemble de quatre options de réponses, **identifiez avec soin et précision l'index (0, 1, 2, ou 3) de l' *unique réponse définitivement correcte***.
     *   **Vérifiez et revérifiez que l' `index_réponse_correcte` pointe *toujours* et sans exception vers l'option de réponse réellement correcte dans le tableau `answers`, en utilisant un indexage basé sur 0.**  Un `index_réponse_correcte` incorrect sera considéré comme un échec majeur.
 
-5.  **Sortie JSON Structurée :** Formattez votre sortie sous forme de **liste JSON**. Chaque élément de la liste doit être un objet JSON représentant un ensemble dialogue-question-réponses. L'objet JSON doit avoir les clés **en anglais** et la structure exacte suivantes, avec les *valeurs* en **français fluide et grammaticalement parfait** :
+5.  **Sortie JSON Structurée :** Formattez votre sortie comme un **objet JSON unique** représentant un ensemble dialogue-question-réponses. L'objet JSON doit avoir les clés **en anglais** et la structure exacte suivante, avec les *valeurs* en **français fluide et grammaticalement parfait** :
 
-    ```json
-    [
-      {
-        "dialogue": [          // **Dialogue est une LISTE DE LISTES (ou de tuples) DE TOURS DE PAROLE**
-          ["Speaker 1", "Bonjour, comment vas-tu ?"],  // **Chaque tour de parole est une LISTE (ou un tuple) : [Identifiant Locuteur, Texte]**
-          ["Speaker 2", "Très bien, merci. Et toi ?"]
-        ],
-        "question": "...",     // TCF-style question (French)
-        "answers": [          // Array of 4 answer options (French)
-          "option 1",
-          "option 2",
-          "option 3",
-          "option 4"
-        ],
-        "correct_answer_index": 0, // Index (basé sur 0) de la réponse correcte (entier : 0, 1, 2 ou 3)
-        "speakers_info": ["Speaker 1", "Speaker 2"] // (Optionnel, Identifiants des locuteurs - LISTE DES IDENTIFIANTS UNIQUES)
-      },
-      // ... d'autres objets JSON pour chaque ensemble dialogue-question-réponses extrait
-    ]
-    ```
-    **Note Importante :** Le champ `"dialogue"` doit impérativement être formaté comme une **liste de listes (ou de tuples)**, où chaque élément interne représente un tour de parole et contient **deux éléments : l'identifiant du locuteur (chaîne de caractères) et le texte de son intervention (chaîne de caractères)**.  Assurez-vous que tout le texte français (dans `"dialogue"`, `"question"`, et `"answers"`) est fluide et d'une grammaire impeccable. Le champ `"speakers_info"` est une liste *optionnelle* qui doit contenir les identifiants uniques de tous les locuteurs identifiés dans le dialogue, dans l'ordre d'apparition.
+{
+  "dialogue": [          // **Dialogue est une LISTE DE LISTES (ou de tuples) DE TOURS DE PAROLE**
+    ["Speaker 1", "Bonjour, comment vas-tu ?"],  // **Chaque tour de parole est une LISTE (ou un tuple) : [Identifiant Locuteur, Texte]**
+    ["Speaker 2", "Très bien, merci. Et toi ?"]
+  ],
+  "question": "...",     // TCF-style question (French)
+  "answers": [          // Array of 4 answer options (French)
+    "option 1",
+    "option 2",
+    "option 3",
+    "option 4"
+  ],
+  "correct_answer_index": 0, // Index (basé sur 0) de la réponse correcte (entier : 0, 1, 2 ou 3)
+  "speakers_info": ["Speaker 1", "Speaker 2"] // (Optionnel, Identifiants des locuteurs - LISTE DES IDENTIFIANTS UNIQUES)
+}
+
+**Note Importante :** Le champ `"dialogue"` doit impérativement être formaté comme une **liste de listes (ou de tuples)**, où chaque élément interne représente un tour de parole et contient **deux éléments : l'identifiant du locuteur (chaîne de caractères) et le texte de son intervention (chaîne de caractères)**.  Assurez-vous que tout le texte français (dans `"dialogue"`, `"question"`, et `"answers"`) est fluide et d'une grammaire impeccable. Le champ `"speakers_info"` est une liste *optionnelle* qui doit contenir les identifiants uniques de tous les locuteurs identifiés dans le dialogue, dans l'ordre d'apparition.
 
 **Exemple de Sortie Attendue (JSON - avec clés en anglais, valeurs en français, dialogue structuré COMME UNE LISTE DE LISTES, et style TCF) :**
 
-```json
-[
-  {
-    "dialogue": [
-      ["Locuteur 1", "Salut Marie, ça va ? Tu n'as pas l'air en forme."],
-      ["Marie", "Non, je suis fatiguée ce matin. J'ai passé une très mauvaise nuit."],
-      ["Marie", "Les voisins du dessous ont fait la fête jusqu'à 3 heures du matin."],
-      ["Locuteur 1", "Tu n'es pas descendu les voir ?"],
-      ["Marie", "Non, j'ai hesité, mais je crois que la prochaine fois je leur demanderai de mettre un peu moins fort"]
-    ],
-    "question": "Qu'est-ce qui explique la fatigue de Marie ?",
-    "answers": [
-      "Un excès de travail récent.",
-      "Une insomnie due au stress.",
-      "Le bruit de la fête des voisins.",
-      "Un léger problème de santé passager."
-    ],
-    "correct_answer_index": 2,
-    "speakers_info": ["Locuteur 1", "Marie"]
-  },
-  {
-    "dialogue": [
-      ["Locuteur 1", "Au fait, des nouvelles pour ton entretien d'embauche de la semaine dernière ?"],
-      ["Locuteur 2", "Rien encore.  Je consulte ma boîte mail chaque matin."],
-      ["Locuteur 1", "Tu devrais peut-être les relancer, non ?"],
-      ["Locuteur 2", "Oui, sûrement. On m'avait dit qu'il y avait beaucoup de candidats."]
-    ],
-    "question": "De quoi parlent les deux locuteurs ?",
-    "answers": [
-      "De l'organisation d'un voyage.",
-      "De l'attente d'une réponse pour un emploi.",
-      "De la préparation d'une réunion importante.",
-      "Des difficultés de communication avec une entreprise."
-    ],
-    "correct_answer_index": 1,
-    "speakers_info": ["Locuteur 1", "Locuteur 2"]
-  }
-]
-```
+{
+  "dialogue": [
+    ["Locuteur 1", "Salut Marie, ça va ? Tu n'as pas l'air en forme."],
+    ["Marie", "Non, je suis fatiguée ce matin. J'ai passé une très mauvaise nuit."],
+    ["Marie", "Les voisins du dessous ont fait la fête jusqu'à 3 heures du matin."],
+    ["Locuteur 1", "Tu n'es pas descendu les voir ?"],
+    ["Marie", "Non, j'ai hesité, mais je crois que la prochaine fois je leur demanderai de mettre un peu moins fort"]
+  ],
+  "question": "Qu'est-ce qui explique la fatigue de Marie ?",
+  "answers": [
+    "Un excès de travail récent.",
+    "Une insomnie due au stress.",
+    "Le bruit de la fête des voisins.",
+    "Un léger problème de santé passager."
+  ],
+  "correct_answer_index": 2,
+  "speakers_info": ["Locuteur 1", "Marie"]
+}
 
 Important Considerations:
 
@@ -112,9 +87,11 @@ Important Considerations:
 - Accuracy is Paramount: Especially for correct_answer_index. Double-check absolutely everything. An error in the index of the correct answer is unacceptable.
 - Dialogue Structure as List of Lists: Imperatively respect the structure of the dialogue as a list of lists, as specified and illustrated in the examples. This is a precise JSON format that is expected.
 - Priority to Logical Sense: Ensure that the created dialogues make logical sense and mimic a natural French conversation.
+- JSON Format: Return your response as a single JSON object, not wrapped in any code block markers or other formatting.
+
 Process:
 
-You will receive the French transcript. Process it by following all the detailed tasks and requirements above. Return your output as a single JSON string, formatted as a list of JSON objects, exactly matching the structure presented in the "Expected Output Example" section. Ensure that all produced text (dialogues, questions, answers) is in fluent and grammatically impeccable French, and that the JSON structure is perfectly compliant, especially for the "dialogue" field which must be a list of lists.
+You will receive the French transcript. Process it by following all the detailed tasks and requirements above. Return your output as a single JSON object, exactly matching the structure presented in the examples. Ensure that all produced text (dialogues, questions, answers) is in fluent and grammatically impeccable French, and that the JSON structure is perfectly compliant, especially for the "dialogue" field which must be a list of lists.
 
 Transcript to Process:
 

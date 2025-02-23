@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import json
 import time
+import logging
 
 # Add backend directory to Python path
 backend_path = str(Path(__file__).parent.parent / 'backend')
@@ -16,6 +17,8 @@ from transcript_extractor import get_transcript
 from timestamp_extractor import extract_sequence_timestamps
 from audio_segmenter import segment_audio
 from audio_transcriber import transcribe_audio_segments
+from llm_data_generator import generate_learning_content
+from test_modules import setup_logging
 
 # Set page config
 st.set_page_config(
@@ -111,8 +114,11 @@ def sort_sequence_files(files):
             return float('inf')  # Put files without sequence number at the end
     return sorted(files, key=get_sequence_num)
 
-def process_video(youtube_url: str):
+def process_video(youtube_url: str, debug: bool = False):
     """Process a YouTube video through the pipeline."""
+    
+    # Set up logging based on debug mode
+    setup_logging(debug)
     
     # Step 1: Get transcript
     st.markdown(
@@ -202,7 +208,7 @@ def process_video(youtube_url: str):
             if "error" in transcriptions:
                 st.error(f"❌ Transcription failed: {transcriptions['error']}")
                 return
-            
+                
             st.success("✅ Transcription completed")
             
             # Sort filenames by sequence number
@@ -222,6 +228,102 @@ def process_video(youtube_url: str):
                 # Add a separator between sequences
                 st.markdown("---")
 
+    # Step 5: Generate TCF Exercises
+    st.markdown(
+        '<div class="step-header">'
+        '<h3>Step 5: TCF Exercise Generation</h3>'
+        '<div class="step-spinner"></div>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+    with st.spinner("Generating TCF exercises..."):
+        with st.expander("Show Details", expanded=False):
+            if "error" in transcriptions:
+                st.error("❌ Cannot generate exercises: No transcriptions available")
+                return
+                
+            st.info("🤖 Generating TCF-style exercises using AI...")
+            
+            # Sort filenames by sequence number
+            sorted_filenames = sort_sequence_files(transcriptions.keys())
+            
+            # Generate exercises for each sequence
+            for filename in sorted_filenames:
+                transcript = transcriptions[filename]
+                if transcript.startswith("ERROR:"):
+                    continue
+                    
+                # Extract sequence number for display
+                seq_num = filename.split('sequence_')[-1].split('.')[0]
+                st.markdown(f"**Sequence {seq_num}:**")
+                
+                # Generate exercise
+                result = generate_learning_content(transcript)
+                
+                if result['success']:
+                    # The content is a list of exercises, but we'll use just the first one
+                    # since we're processing segment by segment
+                    exercise = result['content'][0] if result['content'] else None
+                    
+                    if exercise:
+                        # Display dialogue
+                        st.markdown("**Dialogue:**")
+                        for speaker, text in exercise['dialogue']:
+                            st.markdown(f"**{speaker}:** {text}")
+                            
+                        # Display question and answers
+                        st.markdown("\n**Question:**")
+                        st.markdown(exercise['question'])
+                        
+                        st.markdown("\n**Options:**")
+                        for i, answer in enumerate(exercise['answers']):
+                            if i == exercise['correct_answer_index']:
+                                st.markdown(f"✅ {chr(65+i)}. {answer}")
+                            else:
+                                st.markdown(f"⬜ {chr(65+i)}. {answer}")
+                                
+                        # Display speakers info if available
+                        if 'speakers_info' in exercise:
+                            st.markdown("\n**Locuteurs identifiés:**")
+                            st.markdown(", ".join(exercise['speakers_info']))
+                            
+                        # Display debug info in columns if available
+                        if 'debug_info' in result:
+                            st.markdown("---")
+                            st.markdown("**🔍 Debug Information**")
+                            cols = st.columns(2)
+                            with cols[0]:
+                                st.markdown("**Model Used:**")
+                                st.code(result['debug_info'].get('model_used', 'N/A'))
+                                if 'token_usage' in result['debug_info']:
+                                    st.markdown("**Token Usage:**")
+                                    st.json(result['debug_info']['token_usage'])
+                            with cols[1]:
+                                st.markdown("**Original Transcript:**")
+                                st.text_area("", result['debug_info'].get('original_transcript', 'N/A'), height=100, key=f"debug_transcript_{seq_num}")
+                    else:
+                        st.error("❌ No exercise generated for this segment")
+                else:
+                    st.error(f"❌ Failed to generate exercise: {result['error']}")
+                    # Display error debug info in columns
+                    if 'debug_info' in result:
+                        st.markdown("---")
+                        st.markdown("**🔍 Error Debug Information**")
+                        cols = st.columns(2)
+                        with cols[0]:
+                            st.markdown("**Error Type:**")
+                            st.code(result['debug_info'].get('error_type', 'Unknown'))
+                            st.markdown("**Error Details:**")
+                            st.code(result['debug_info'].get('error_details', 'No details available'))
+                        with cols[1]:
+                            st.markdown("**Original Transcript:**")
+                            st.text_area("", result['debug_info'].get('original_transcript', 'N/A'), height=100, key=f"error_transcript_{seq_num}")
+                
+                # Add a separator between sequences
+                st.markdown("---")
+            
+            st.success("✅ Exercise generation completed")
+
 def main():
     st.title("🎧 Language Listening App - Pipeline Testing")
     st.markdown("""
@@ -231,7 +333,11 @@ def main():
     2. Timestamp extraction
     3. Audio segmentation
     4. Audio transcription
+    5. TCF exercise generation
     """)
+    
+    # Add debug mode toggle
+    debug_mode = st.sidebar.checkbox("Enable Debug Output", value=False, help="Show detailed debug logs")
     
     # YouTube URL input
     youtube_url = st.text_input(
@@ -242,7 +348,7 @@ def main():
     # Process button
     if st.button("🚀 Process Video"):
         if youtube_url:
-            process_video(youtube_url)
+            process_video(youtube_url, debug=debug_mode)
         else:
             st.warning("⚠️ Please enter a YouTube URL")
 
