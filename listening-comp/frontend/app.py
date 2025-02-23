@@ -4,6 +4,7 @@ Main Streamlit application for the Language Listening App.
 import sys
 import os
 from pathlib import Path
+import json
 
 # Add backend directory to Python path
 backend_path = str(Path(__file__).parent.parent / 'backend')
@@ -100,22 +101,49 @@ st.markdown("""
 
 def display_debug_info(debug_info: dict):
     """Display debug information in a collapsible section."""
-    with st.expander("🔍 Debug Information"):
-        st.markdown("### API Request Details")
-        st.markdown("**Model Used:** " + debug_info['model_used'])
-        if debug_info.get('token_usage'):
-            st.markdown("**Token Usage:** " + str(debug_info['token_usage']))
-        
-        st.markdown("### Prompt Used")
-        st.code(debug_info['prompt_used'], language='markdown')
-        
-        st.markdown("### Raw LLM Response")
+    with st.expander("🔍 Debug Information", expanded=True):  # Set to expanded by default
+        # Display API Request
+        st.markdown("### 📤 API Request")
+        if debug_info.get('request_data'):
+            st.code(json.dumps(debug_info['request_data'], indent=2), language='json')
+        else:
+            st.warning("No request data available")
+
+        # Display Raw Response
+        st.markdown("### 📥 API Response")
         if debug_info.get('raw_response'):
             st.code(debug_info['raw_response'], language='json')
-        
+        else:
+            st.warning("No response data available")
+
+        # Display Error Information if any
         if debug_info.get('error_details'):
-            st.markdown("### Error Details")
-            st.error(debug_info['error_details'])
+            st.markdown("### ❌ Error Details")
+            st.error(f"Error Type: {debug_info.get('error_type', 'Unknown')}")
+            st.error(f"Error Message: {debug_info['error_details']}")
+
+        # Display Token Usage
+        if debug_info.get('token_usage'):
+            st.markdown("### 📊 Token Usage")
+            st.code(json.dumps(debug_info['token_usage'], indent=2), language='json')
+
+        # Display Model Information
+        st.markdown("### 🤖 Model Information")
+        st.info(f"Model Used: {debug_info.get('model_used', 'Unknown')}")
+
+        # Display Original Transcript
+        st.markdown("### 📝 Original Transcript")
+        if debug_info.get('original_transcript'):
+            st.text_area("", debug_info['original_transcript'], height=200)
+        else:
+            st.warning("No transcript available")
+
+        # Display Prompt Used
+        st.markdown("### 💭 Prompt Used")
+        if debug_info.get('prompt_used'):
+            st.text_area("", debug_info['prompt_used'], height=200)
+        else:
+            st.warning("No prompt available")
 
 def display_learning_content(content: list):
     """Display the parsed learning content."""
@@ -219,11 +247,12 @@ def main():
                                     """.format(result['debug_info']['original_transcript'].replace('\n', '<br>')), 
                                     unsafe_allow_html=True)
                             
-                            # Debug information
-                            display_debug_info(result['debug_info'])
-                            
                         else:
                             st.error(f"❌ Error generating learning content: {result['error']}")
+                        
+                        # Always show debug information, regardless of success or failure
+                        if 'debug_info' in result:
+                            display_debug_info(result['debug_info'])
                 else:
                     st.error(f"❌ Error fetching transcript: {transcript_result['error']}")
         else:
