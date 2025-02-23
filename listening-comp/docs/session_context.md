@@ -43,39 +43,55 @@
 
 ### Phase 2: LLM Prompt Engineering and Data Generation
 
-#### Step 1: LLM Integration Setup (In Progress)
+#### Step 3: UI Improvements and Debug Control (Latest)
+- Added debug mode toggle in UI sidebar
+- Improved exercise display format with better visual organization
+- Fixed nested expander issues in Streamlit UI
+- Added unique keys to prevent DuplicateWidgetID errors
+- Enhanced exercise layout with two-column design
+- Improved visual hierarchy with proper heading levels
+- Added speaker-specific emojis for better dialogue visualization
+- Removed unnecessary debug information display
+- Translated French UI text to English for consistency
+
+#### Step 2: Error Handling and Validation (Previous)
+- Enhanced error handling in LLM response processing
+- Added markdown code block stripping
+- Improved validation with detailed logging
+- Fixed validation error messages
+- Added structured response format with debug info
+- Added raw response logging for debugging
+
+#### Step 1: LLM Integration Setup (Completed)
 - Created llm_data_generator.py module
 - Implemented OpenAI API integration
 - Designed initial prompt for learning content generation
 - Added content validation
 - Structured JSON output format
 
-#### Step 2: Timestamp Extraction and Audio Segmentation (Completed)
-- Created timestamp_extractor.py module for identifying sequence boundaries
-- Implemented gap-based timestamp extraction with minimum entries requirement
-- Created audio_segmenter.py for downloading and segmenting audio
-- Integrated yt-dlp for reliable audio downloading
-- Added audio segmentation based on extracted timestamps
-- Updated .gitignore to exclude generated audio and transcript files
+### Phase 3: Frontend Enhancement
 
-**Next Step:** Test and refine LLM prompt with sample transcripts
+#### Step 1: UI Improvements (Latest)
+- Added custom CSS for better styling
+- Implemented expandable sections for detailed stage output
+- Added progress indicators and emojis
+- Improved error message display
+- Enhanced exercise display with better formatting
+- Added two-column layout for questions and answers
+- Implemented debug mode toggle in sidebar
+
+**Next Steps:**
+1. Add user interaction features for exercises
+2. Implement progress tracking
+3. Add session persistence
+4. Enhance error recovery mechanisms
 
 ## Key Decisions
-- Using Streamlit for rapid frontend development
-- Implementing modular backend structure
-- Using youtube-transcript-api for reliable transcript extraction
-- Including type hints for better code maintainability
-- Setting up environment variables for API keys
-- Simplified transcript fetching to directly request French language
-- Enhanced UI with custom CSS and better component organization
-- Using GPT-3.5-turbo for learning content generation
-- Structured JSON format for Q&A content
-- Using yt-dlp instead of youtube-dl for more reliable audio downloads
-- Implementing minimum entries requirement for sequence extraction to ensure meaningful content
-- Using OpenAI's Whisper API for accurate French audio transcription
-- Implementing comprehensive error handling and logging in audio pipeline
-- Using ChromaDB for semantic search and data persistence
-- Using OpenAI's text-embedding-3-small model for vector embeddings
-- Focusing on pipeline testing before moving to advanced features
-- Using expandable sections for detailed stage output
-- Including audio playback for immediate verification 
+- Added debug mode toggle for better debugging control
+- Improved UI layout with two-column design for exercises
+- Removed nested expanders to fix Streamlit limitations
+- Enhanced visual hierarchy with proper heading levels
+- Added speaker-specific emojis for better dialogue visualization
+- Standardized on English for UI text
+- Removed unnecessary debug information from UI
+- Added unique keys to prevent widget ID conflicts 

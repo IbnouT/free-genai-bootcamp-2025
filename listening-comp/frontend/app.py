@@ -236,93 +236,74 @@ def process_video(youtube_url: str, debug: bool = False):
         '</div>',
         unsafe_allow_html=True
     )
-    with st.spinner("Generating TCF exercises..."):
-        with st.expander("Show Details", expanded=False):
-            if "error" in transcriptions:
-                st.error("❌ Cannot generate exercises: No transcriptions available")
-                return
-                
-            st.info("🤖 Generating TCF-style exercises using AI...")
+    
+    if "error" in transcriptions:
+        st.error("❌ Cannot generate exercises: No transcriptions available")
+        return
+        
+    st.info("🤖 Generating TCF-style exercises using AI...")
+    
+    # Sort filenames by sequence number
+    sorted_filenames = sort_sequence_files(transcriptions.keys())
+    
+    # Generate exercises for each sequence
+    for filename in sorted_filenames:
+        transcript = transcriptions[filename]
+        if transcript.startswith("ERROR:"):
+            continue
             
-            # Sort filenames by sequence number
-            sorted_filenames = sort_sequence_files(transcriptions.keys())
+        # Extract sequence number for display
+        seq_num = filename.split('sequence_')[-1].split('.')[0]
+        
+        # Generate exercise
+        result = generate_learning_content(transcript)
+        
+        if result['success']:
+            # The content is a list of exercises, but we'll use just the first one
+            # since we're processing segment by segment
+            exercise = result['content'][0] if result['content'] else None
             
-            # Generate exercises for each sequence
-            for filename in sorted_filenames:
-                transcript = transcriptions[filename]
-                if transcript.startswith("ERROR:"):
-                    continue
-                    
-                # Extract sequence number for display
-                seq_num = filename.split('sequence_')[-1].split('.')[0]
-                st.markdown(f"**Sequence {seq_num}:**")
+            if exercise:
+                # Create a visually distinct section for each exercise
+                st.markdown(f"## 📚 Exercise {seq_num}")
                 
-                # Generate exercise
-                result = generate_learning_content(transcript)
+                # Display dialogue in a conversation-like format
+                st.markdown("### 🗣️ Dialogue")
+                for speaker, text in exercise['dialogue']:
+                    # Use different emojis for different speakers
+                    emoji = "👨" if speaker.lower().startswith("homme") else "👩" if speaker.lower().startswith("femme") else "🗣️"
+                    st.markdown(f"{emoji} **{speaker}**  \n{text}")
                 
-                if result['success']:
-                    # The content is a list of exercises, but we'll use just the first one
-                    # since we're processing segment by segment
-                    exercise = result['content'][0] if result['content'] else None
-                    
-                    if exercise:
-                        # Display dialogue
-                        st.markdown("**Dialogue:**")
-                        for speaker, text in exercise['dialogue']:
-                            st.markdown(f"**{speaker}:** {text}")
-                            
-                        # Display question and answers
-                        st.markdown("\n**Question:**")
-                        st.markdown(exercise['question'])
-                        
-                        st.markdown("\n**Options:**")
-                        for i, answer in enumerate(exercise['answers']):
-                            if i == exercise['correct_answer_index']:
-                                st.markdown(f"✅ {chr(65+i)}. {answer}")
-                            else:
-                                st.markdown(f"⬜ {chr(65+i)}. {answer}")
-                                
-                        # Display speakers info if available
-                        if 'speakers_info' in exercise:
-                            st.markdown("\n**Locuteurs identifiés:**")
-                            st.markdown(", ".join(exercise['speakers_info']))
-                            
-                        # Display debug info in columns if available
-                        if 'debug_info' in result:
-                            st.markdown("---")
-                            st.markdown("**🔍 Debug Information**")
-                            cols = st.columns(2)
-                            with cols[0]:
-                                st.markdown("**Model Used:**")
-                                st.code(result['debug_info'].get('model_used', 'N/A'))
-                                if 'token_usage' in result['debug_info']:
-                                    st.markdown("**Token Usage:**")
-                                    st.json(result['debug_info']['token_usage'])
-                            with cols[1]:
-                                st.markdown("**Original Transcript:**")
-                                st.text_area("", result['debug_info'].get('original_transcript', 'N/A'), height=100, key=f"debug_transcript_{seq_num}")
-                    else:
-                        st.error("❌ No exercise generated for this segment")
-                else:
-                    st.error(f"❌ Failed to generate exercise: {result['error']}")
-                    # Display error debug info in columns
-                    if 'debug_info' in result:
-                        st.markdown("---")
-                        st.markdown("**🔍 Error Debug Information**")
-                        cols = st.columns(2)
-                        with cols[0]:
-                            st.markdown("**Error Type:**")
-                            st.code(result['debug_info'].get('error_type', 'Unknown'))
-                            st.markdown("**Error Details:**")
-                            st.code(result['debug_info'].get('error_details', 'No details available'))
-                        with cols[1]:
-                            st.markdown("**Original Transcript:**")
-                            st.text_area("", result['debug_info'].get('original_transcript', 'N/A'), height=100, key=f"error_transcript_{seq_num}")
+                # Create columns for question and answers
+                col1, col2 = st.columns([1, 1])
                 
-                # Add a separator between sequences
-                st.markdown("---")
-            
-            st.success("✅ Exercise generation completed")
+                with col1:
+                    # Display question in a highlighted box
+                    st.markdown("### ❓ Question")
+                    st.info(exercise['question'])
+                
+                with col2:
+                    # Display answers in a cleaner format
+                    st.markdown("### 📝 Answer Options")
+                    for i, answer in enumerate(exercise['answers']):
+                        is_correct = i == exercise['correct_answer_index']
+                        marker = "✅" if is_correct else "⚪"
+                        letter = chr(65 + i)  # Convert 0,1,2,3 to A,B,C,D
+                        st.markdown(f"{marker} **Option {letter}**  \n{answer}")
+                
+                # Display speakers info if available (in English)
+                if 'speakers_info' in exercise:
+                    st.markdown("### 👥 Identified Speakers")
+                    st.markdown(" • " + "\n • ".join(exercise['speakers_info']))
+            else:
+                st.error("❌ No exercise generated for this segment")
+        else:
+            st.error(f"❌ Failed to generate exercise: {result['error']}")
+        
+        # Add a separator between sequences
+        st.markdown("---")
+    
+    st.success("✅ Exercise generation completed")
 
 def main():
     st.title("🎧 Language Listening App - Pipeline Testing")

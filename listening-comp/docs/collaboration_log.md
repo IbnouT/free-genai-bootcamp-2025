@@ -147,3 +147,93 @@
 - Validation helps catch LLM formatting issues early
 - Type hints improve code maintainability
 - Separating prompt creation from API calls improves flexibility 
+
+### Step 3: UI Improvements and Debug Control
+
+#### Challenges
+- Nested expanders causing Streamlit API errors
+- Duplicate widget IDs in text areas
+- Inconsistent language in UI (mix of French and English)
+- Cluttered debug information display
+- Poor visual organization of exercises
+
+#### Solutions
+- Restructured UI to avoid nested expanders
+- Added unique keys to all text areas
+- Standardized UI text to English
+- Removed unnecessary debug information
+- Implemented two-column layout for exercises
+- Added speaker-specific emojis
+- Enhanced visual hierarchy with proper heading levels
+- Added debug mode toggle in sidebar
+
+#### Code Quality Assessment
+- Cleaner UI code structure
+- Better component organization
+- Improved error handling
+- Enhanced user experience
+- More maintainable widget structure
+- Consistent styling throughout
+
+#### Insights
+- Streamlit has limitations with nested components
+- Unique keys are crucial for multiple similar components
+- Visual hierarchy improves user experience
+- Debug information should be toggleable
+- Two-column layout makes better use of space
+- Emojis can enhance visual understanding
+- Consistent language is important for UX
+
+### Step 2: Error Handling and Validation
+
+#### Challenges
+- JSON parsing errors with LLM responses
+- Inconsistent error messages
+- Difficulty debugging LLM output
+- Markdown formatting in responses
+
+#### Solutions
+- Added markdown code block stripping
+- Improved validation with detailed logging
+- Enhanced error messages with specific details
+- Added structured response format
+- Implemented raw response logging
+
+#### Code Quality Assessment
+- More robust error handling
+- Better debugging capabilities
+- Clearer error messages
+- Structured validation process
+
+#### Insights
+- LLM responses need careful cleaning
+- Detailed error messages help debugging
+- Raw response logging is crucial for troubleshooting
+- Structured validation improves reliability
+
+## Ongoing Improvements
+
+### Current Focus
+1. UI Enhancement
+   - Better visual organization
+   - Improved user feedback
+   - Cleaner exercise display
+   - Debug mode control
+
+2. Error Handling
+   - More robust validation
+   - Better error messages
+   - Enhanced debugging capabilities
+
+3. Code Quality
+   - Consistent styling
+   - Better component organization
+   - Improved maintainability
+   - Enhanced user experience
+
+### Next Steps
+1. Implement user interaction features
+2. Add progress tracking
+3. Enhance error recovery
+4. Add session persistence
+5. Improve performance monitoring 
